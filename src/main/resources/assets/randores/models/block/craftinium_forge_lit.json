@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "randores:blocks/craftinium_forge_top",
+    "front": "randores:blocks/craftinium_forge_front_on",
+    "side": "randores:blocks/craftinium_forge_side"
+  }
+}

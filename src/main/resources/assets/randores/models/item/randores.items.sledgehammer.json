@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "randores:items/sledgehammer",
+    "layer1": "randores:items/sledgehammer_overlay"
+  }
+}

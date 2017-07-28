@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "randores:items/circular_gem",
+    "layer1": "randores:items/circular_gem_overlay"
+  }
+}

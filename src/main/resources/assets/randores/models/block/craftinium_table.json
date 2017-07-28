@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "randores:blocks/craftinium_table_front",
+        "down": "randores:blocks/craftinium_table_bottom",
+        "up": "randores:blocks/craftinium_table_top",
+        "north": "randores:blocks/craftinium_table_front",
+        "east": "randores:blocks/craftinium_table_side",
+        "south": "randores:blocks/craftinium_table_side",
+        "west": "randores:blocks/craftinium_table_side"
+    }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "randores:items/battleaxe",
+    "layer1": "randores:items/battleaxe_overlay"
+  }
+}

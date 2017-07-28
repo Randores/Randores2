@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "randores:items/pickaxe",
+    "layer1": "randores:items/pickaxe_overlay"
+  }
+}

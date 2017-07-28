@@ -1,0 +1,5 @@
+{
+    "recipes": {
+        "general": "com.gmail.socraticphoenix.randores.game.recipe.RandoresRecipeFactory"
+    }
+}

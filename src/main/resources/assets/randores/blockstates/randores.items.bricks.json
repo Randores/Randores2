@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "all": "randores:blocks/bricks",
+      "overlay": "randores:blocks/bricks_overlay",
+      "particle": "randores:blocks/bricks"
+    },
+    "model": "randores:overlay_block",
+    "uvlock": true
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

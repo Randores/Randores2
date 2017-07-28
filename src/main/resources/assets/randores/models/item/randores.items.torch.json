@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "randores:blocks/torch",
+        "layer1": "randores:blocks/torch_overlay"
+    }
+}

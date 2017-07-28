@@ -1,0 +1,16 @@
+[
+{
+  "modid": "randores",
+  "name": "Randores",
+  "description": "Adds 256^3 ores to the game",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/SocraticPhoenix/Randores/wiki",
+  "updateUrl": "",
+  "authorList": ["Socratic_Phoenix"],
+  "credits": "\n - Andyghandi: Created most of the ore textures\n - ACGamingYT: German translation",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

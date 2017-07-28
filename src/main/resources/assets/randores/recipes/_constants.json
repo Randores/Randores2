@@ -1,0 +1,9 @@
+[
+    {
+        "name": "CRAFTINIUM",
+        "ingredient": {
+            "item": "randores:craftinium_lump",
+            "data": 0
+        }
+    }
+]

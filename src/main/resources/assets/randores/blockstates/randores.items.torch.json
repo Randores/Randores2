@@ -1,0 +1,19 @@
+{
+  "defaults": {
+    "textures": {
+      "torch": "randores:blocks/torch",
+      "overlay": "randores:blocks/torch_overlay"
+    },
+    "model":"randores:block/overlay_torch_wall",
+    "uvlock": true
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "facing=up": { "model": "randores:block/overlay_torch" },
+    "facing=east": {},
+    "facing=south": { "y": 90 },
+    "facing=west": { "y": 180 },
+    "facing=north": { "y": 270 }
+  }
+}

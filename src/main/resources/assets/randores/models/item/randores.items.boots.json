@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "randores:items/boots",
+    "layer1": "randores:items/boots_overlay"
+  }
+}

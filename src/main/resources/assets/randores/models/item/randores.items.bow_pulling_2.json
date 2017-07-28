@@ -1,0 +1,7 @@
+{
+    "parent": "randores:item/randores.items.bow",
+    "textures": {
+        "layer0": "randores:items/bow_pulling_2",
+        "layer1": "randores:items/bow_pulling_2_overlay"
+    }
+}

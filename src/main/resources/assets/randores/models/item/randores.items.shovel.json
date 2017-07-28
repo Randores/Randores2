@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "randores:items/shovel",
+    "layer1": "randores:items/shovel_overlay"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "normal": {"model": "randores:craftinium_forge"},
+    "facing=north": { "model": "randores:craftinium_forge" },
+    "facing=south": { "model": "randores:craftinium_forge", "y": 180 },
+    "facing=west":  { "model": "randores:craftinium_forge", "y": 270 },
+    "facing=east":  { "model": "randores:craftinium_forge", "y": 90 }
+  }
+}
