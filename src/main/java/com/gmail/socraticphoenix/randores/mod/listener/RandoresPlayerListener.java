@@ -22,7 +22,10 @@
 package com.gmail.socraticphoenix.randores.mod.listener;
 
 import com.gmail.socraticphoenix.randores.Randores;
+import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
+import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
+import com.gmail.socraticphoenix.randores.mod.network.RandoresDefinePacket;
 import com.gmail.socraticphoenix.randores.mod.network.RandoresNetworking;
 import com.gmail.socraticphoenix.randores.mod.network.RandoresSeedPacket;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +35,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -54,8 +58,20 @@ public class RandoresPlayerListener {
             World world = ((EntityPlayerMP) player).world;
             UUID id = playerMP.getUniqueID();
             long seed = RandoresSeed.getSeed(world);
+            String name = world.getWorldInfo().getWorldName();
             if (!this.playersSeed.containsKey(id) || this.playersSeed.get(id) != seed) {
-                RandoresNetworking.INSTANCE.sendTo(new RandoresSeedPacket().setSeed(seed).setOreCount(Randores.getCount()), playerMP);
+                if(MaterialDefinitionRegistry.containsCustom(name)) {
+                    Randores.info("Sending custom definition data to player " + playerMP.getName() + "...");
+                    List<MaterialDefinition> definitions = MaterialDefinitionRegistry.getCustom(name);
+                    RandoresNetworking.INSTANCE.sendTo(new RandoresSeedPacket().setSeed(0), playerMP);
+                    for(MaterialDefinition definition : definitions) {
+                        RandoresNetworking.INSTANCE.sendTo(new RandoresDefinePacket().setDefinition(definition), playerMP);
+                    }
+                    Randores.info("Sent custom definition data to player " + playerMP.getName() + ".");
+                } else {
+                    Randores.info("Sending seed " + seed + " and ore count " + Randores.getCount() + " to player " + playerMP.getName() + ".");
+                    RandoresNetworking.INSTANCE.sendTo(new RandoresSeedPacket().setSeed(seed).setOreCount(Randores.getCount()), playerMP);
+                }
             }
             this.playersSeed.put(id, seed);
         }
@@ -69,8 +85,20 @@ public class RandoresPlayerListener {
             World world = ((EntityPlayerMP) player).world;
             UUID id = playerMP.getUniqueID();
             long seed = RandoresSeed.getSeed(world);
+            String name = world.getWorldInfo().getWorldName();
             if (!this.playersSeed.containsKey(id) || this.playersSeed.get(id) != seed) {
-                RandoresNetworking.INSTANCE.sendTo(new RandoresSeedPacket().setSeed(seed).setOreCount(Randores.getCount()), playerMP);
+                if(MaterialDefinitionRegistry.containsCustom(name)) {
+                    Randores.info("Sending custom definition data to player " + playerMP.getName() + "...");
+                    List<MaterialDefinition> definitions = MaterialDefinitionRegistry.getCustom(name);
+                    RandoresNetworking.INSTANCE.sendTo(new RandoresSeedPacket().setSeed(0), playerMP);
+                    for(MaterialDefinition definition : definitions) {
+                        RandoresNetworking.INSTANCE.sendTo(new RandoresDefinePacket().setDefinition(definition), playerMP);
+                    }
+                    Randores.info("Sent custom definition data to player " + playerMP.getName() + ".");
+                } else {
+                    Randores.info("Sending seed " + seed + " and ore count " + Randores.getCount() + " to player " + playerMP.getName() + ".");
+                    RandoresNetworking.INSTANCE.sendTo(new RandoresSeedPacket().setSeed(seed).setOreCount(Randores.getCount()), playerMP);
+                }
             }
             this.playersSeed.put(id, seed);
         }

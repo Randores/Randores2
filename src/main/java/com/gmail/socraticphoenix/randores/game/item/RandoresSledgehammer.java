@@ -51,6 +51,14 @@ public class RandoresSledgehammer extends Item implements IRandoresItem {
         this(ComponentType.craftable(type));
     }
 
+
+    public String getItemStackDisplayName(ItemStack stack) {
+        if(RandoresItemData.hasData(stack)) {
+            return MaterialDefinitionRegistry.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type().from(m)), () -> super.getItemStackDisplayName(stack));
+        }
+        return super.getItemStackDisplayName(stack);
+    }
+
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return (enchantment instanceof EmpoweredEnchantment || enchantment.type.canEnchantItem(Items.DIAMOND_SWORD)) && !(enchantment instanceof EnchantmentSweepingEdge);

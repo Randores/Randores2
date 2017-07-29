@@ -7,7 +7,7 @@
       "particle": "randores:blocks/bricks"
     },
     "model": "randores:overlay_block",
-    "uvlock": true
+    "uvlock": false
   },
   "variants": {
     "normal": [{}],

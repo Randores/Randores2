@@ -5,9 +5,11 @@
         "CC"
     ],
     "key": {
-        "C": "#CRAFTINIUM"
+        "C": {
+            "item": "#CRAFTINIUM"
+        }
     },
     "result": {
-        
+        "item": "randores:craftinium_table"
     }
 }

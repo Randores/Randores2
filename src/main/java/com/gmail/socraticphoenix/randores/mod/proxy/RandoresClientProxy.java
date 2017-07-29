@@ -21,6 +21,7 @@
  */
 package com.gmail.socraticphoenix.randores.mod.proxy;
 
+import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.game.RandoresColors;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -30,13 +31,15 @@ public class RandoresClientProxy implements RandoresProxy {
 
     @Override
     public void preInitSided(FMLPreInitializationEvent ev) {
-
+        Randores.info("Randores is running client side.");
     }
 
     @Override
     public void initSided(FMLInitializationEvent ev) {
+        Randores.info("Registering block and item colors...");
         RandoresColors.registerBlocks();
         RandoresColors.registerItems();
+        Randores.info("Registered block and item colors.");
     }
 
     @Override

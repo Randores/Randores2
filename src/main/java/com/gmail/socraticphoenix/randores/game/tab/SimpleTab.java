@@ -22,20 +22,21 @@
 package com.gmail.socraticphoenix.randores.game.tab;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class SimpleTab extends CreativeTabs {
-    private Item icon;
+import java.util.function.Supplier;
 
-    public SimpleTab(String label, Item item) {
+public class SimpleTab extends CreativeTabs {
+    private Supplier<ItemStack> icon;
+
+    public SimpleTab(String label, Supplier<ItemStack> icon) {
         super(label);
-        this.icon = item;
+        this.icon = icon;
     }
 
     @Override
     public ItemStack getTabIconItem() {
-        return new ItemStack(this.icon);
+        return this.icon.get();
     }
 
 }

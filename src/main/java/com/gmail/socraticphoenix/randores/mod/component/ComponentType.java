@@ -22,6 +22,18 @@
 package com.gmail.socraticphoenix.randores.mod.component;
 
 public class ComponentType {
+    private static ComponentType[] craftable;
+    private static ComponentType oreType = new ComponentType(null, true);
+    private static ComponentType materialType = new ComponentType(null, true);
+
+    static {
+        CraftableType[] values = CraftableType.values();
+        craftable = new ComponentType[values.length];
+        for (int i = 0; i < values.length; i++) {
+            craftable[values[i].ordinal()] = new ComponentType(values[i], false);
+        }
+    }
+
     private CraftableType type;
     private boolean ore;
 
@@ -31,20 +43,20 @@ public class ComponentType {
     }
 
     public static ComponentType craftable(CraftableType type) {
-        return new ComponentType(type, false);
+        return craftable[type.ordinal()];
     }
 
     public static ComponentType ore() {
-        return new ComponentType(null, true);
+        return oreType;
     }
 
     public static ComponentType material() {
-        return new ComponentType(null, false);
+        return materialType;
     }
 
     public boolean has(MaterialDefinition definition) {
         if(this.type != null) {
-            return definition.getCraftables().stream().filter(c -> c.getType() == this.type).findFirst().isPresent();
+            return definition.getCraftables().stream().anyMatch(c -> c.getType() == this.type);
         } else {
             return true;
         }
@@ -52,7 +64,7 @@ public class ComponentType {
 
     public Component from(MaterialDefinition definition) {
         if(this.type != null) {
-            return definition.getCraftables().stream().filter(c -> c.getType() == this.type).findFirst().get();
+            return definition.getCraftables().stream().filter(c -> c.getType() == this.type).findFirst().orElse(null);
         } else if (this.ore) {
             return definition.getOre();
         } else {
@@ -60,4 +72,13 @@ public class ComponentType {
         }
     }
 
+    public boolean is(Component component) {
+        if(this.type != null) {
+            return component instanceof CraftableComponent && ((CraftableComponent) component).getType() == this.type;
+        } else if (this.ore) {
+            return component instanceof OreComponent;
+        } else {
+            return component instanceof MaterialComponent;
+        }
+    }
 }

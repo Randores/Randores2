@@ -21,5 +21,43 @@
  */
 package com.gmail.socraticphoenix.randores.game.recipe.forge;
 
-public class RandoresForgeUpgradeRecipeFactory {
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.JsonUtils;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.IRecipeFactory;
+import net.minecraftforge.common.crafting.JsonContext;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class RandoresForgeUpgradeRecipeFactory implements IRecipeFactory {
+
+    @Override
+    public IRecipe parse(JsonContext context, JsonObject json) {
+        int clamp = JsonUtils.getInt(json, "clamp");
+        boolean combining = JsonUtils.getBoolean(json, "combining");
+
+        JsonArray upgradeList = JsonUtils.getJsonArray(json, "upgrades");
+        Map<Ingredient, Double> upgrades = new LinkedHashMap<>();
+        int n = 0;
+        for (JsonElement element : upgradeList) {
+            if (element.isJsonObject()) {
+                JsonObject upgrade = element.getAsJsonObject();
+                double amount = JsonUtils.getFloat(upgrade, "amount");
+                Ingredient ingredient = CraftingHelper.getIngredient(upgrade.get("ingredient"), context);
+                upgrades.put(ingredient, amount);
+            } else {
+                throw new JsonSyntaxException("Expected " + n + " to be a JsonObject, was " + JsonUtils.toString(json));
+            }
+            n++;
+        }
+
+        return new RandoresForgeUpgradeRecipe(clamp, combining, upgrades);
+    }
+
 }

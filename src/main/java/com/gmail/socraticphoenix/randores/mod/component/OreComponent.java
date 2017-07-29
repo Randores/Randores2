@@ -21,6 +21,10 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component;
 
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Name;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serializable;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.SerializationConstructor;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 import com.gmail.socraticphoenix.randores.game.block.RandoresBlocks;
 import com.gmail.socraticphoenix.randores.game.item.RandoresItemBlock;
 import com.gmail.socraticphoenix.randores.translations.Keys;
@@ -28,34 +32,50 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 
+@Serializable
 public class OreComponent implements Component {
     private RandoresItemBlock item;
 
+    @Serialize(value = "material", reflect = false)
     private MaterialComponent material;
+    @Serialize(value = "dimension", reflect = false)
     private Dimension dimension;
 
-    private int maxDrops;
+    @Serialize(value = "minDrops", reflect = false)
     private int minDrops;
+    @Serialize(value = "maxDrops", reflect = false)
+    private int maxDrops;
 
-    private int maxVein;
+    @Serialize(value = "minVein", reflect = false)
     private int minVein;
+    @Serialize(value = "maxVein", reflect = false)
+    private int maxVein;
 
-    private int maxY;
+    @Serialize(value = "minY", reflect = false)
     private int minY;
+    @Serialize(value = "maxY", reflect = false)
+    private int maxY;
 
+    @Serialize(value = "minOccurrences", reflect = false)
     private int minOccurrences;
+    @Serialize(value = "maxOccurrences", reflect = false)
     private int maxOccurrences;
 
+    @Serialize(value = "smeltingXp", reflect = false)
     private float smeltingXp;
-
-    private float hardness;
-    private float resistance;
-
+    @Serialize(value = "requiresSmelting", reflect = false)
     private boolean requiresSmelting;
 
+    @Serialize(value = "hardness", reflect = false)
+    private float hardness;
+    @Serialize(value = "resistance", reflect = false)
+    private float resistance;
+
+    @Serialize(value = "harvestLevel", reflect = false)
     private int harvestLevel;
 
-    public OreComponent(MaterialComponent material, Dimension dimension, int maxDrops, int minDrops, int maxVein, int minVein, int maxY, int minY, int minOccurrences, int maxOccurrences, boolean requiresSmelting, float smeltingXp, float hardness, float resistance, int harvestLevel) {
+    @SerializationConstructor
+    public OreComponent(@Name("material") MaterialComponent material, @Name("dimension") Dimension dimension, @Name("maxDrops") int maxDrops, @Name("minDrops") int minDrops, @Name("maxVein") int maxVein, @Name("minVein") int minVein, @Name("maxY") int maxY, @Name("minY") int minY, @Name("minOccurrences") int minOccurrences, @Name("maxOccurrences") int maxOccurrences, @Name("requiresSmelting") boolean requiresSmelting, @Name("smeltingXp") float smeltingXp, @Name("hardness") float hardness, @Name("resistance") float resistance, @Name("harvestLevel") int harvestLevel) {
         this.material = material;
         this.dimension = dimension;
         this.maxDrops = maxDrops;

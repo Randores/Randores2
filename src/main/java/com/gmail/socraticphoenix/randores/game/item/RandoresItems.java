@@ -100,7 +100,7 @@ public class RandoresItems {
         items.add(battleaxe);
 
         sledgehammer = new RandoresSledgehammer(CraftableType.SLEDGEHAMMER);
-        sledgehammer.setUnlocalizedName(Keys.SLEDGEHAMMER).setCreativeTab(new RandoresTab("randores_sledgehammer", sledgehammer));
+        sledgehammer.setUnlocalizedName(Keys.SLEDGEHAMMER).setCreativeTab(new RandoresTab("randores_sledgehammers", sledgehammer));
         items.add(sledgehammer);
 
         helmet = new RandoresItemArmor(CraftableType.HELMET, EntityEquipmentSlot.HEAD);

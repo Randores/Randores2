@@ -27,7 +27,7 @@ compileJava {
 minecraft {
     version = "1.12-14.21.1.2387"
     runDir = "run"
-    
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
@@ -50,6 +50,10 @@ repositories {
         name "jitpack.io"
         url "https://jitpack.io"
     }
+
+    maven {
+        url "http://tehnut.info/maven"
+    }
 }
 
 dependencies {
@@ -58,8 +62,9 @@ dependencies {
     library "com.github.PlutoPowered:Collect:master-SNAPSHOT"
     library "com.github.PlutoPowered:InverseY:master-SNAPSHOT"
     library "com.github.PlutoPowered:Mirror:master-SNAPSHOT"
-
     library "com.github.PlutoPowered:JLSC:master-SNAPSHOT"
+
+    shadow "mcp.mobius.waila:Hwyla:1.8.19-B33_1.12"
 }
 
 processResources {
@@ -70,11 +75,11 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
@@ -82,7 +87,7 @@ processResources {
 }
 
 //Tasks
-task javadocJar(type: Jar, dependsOn: javadoc){
+task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = "javadoc"
     from javadoc.destinationDir
 }
@@ -97,9 +102,3 @@ shadowJar {
     relocate "com.gmail.socraticphoenix", "com.gmail.socraticphoenix.randores.lib"
 }
 //End Tasks
-
-//Configurations
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-//End configurations

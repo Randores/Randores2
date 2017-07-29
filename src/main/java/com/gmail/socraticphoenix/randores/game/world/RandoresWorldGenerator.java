@@ -24,13 +24,14 @@ package com.gmail.socraticphoenix.randores.game.world;
 import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.game.block.RandoresOre;
 import com.gmail.socraticphoenix.randores.game.block.RandoresTileEntity;
+import com.gmail.socraticphoenix.randores.game.crafting.CraftingBlocks;
+import com.gmail.socraticphoenix.randores.mod.component.Dimension;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
 import com.gmail.socraticphoenix.randores.mod.component.OreComponent;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
 import com.gmail.socraticphoenix.randores.util.probability.IntRange;
-import com.gmail.socraticphoenix.randores.util.probability.RandoresProbability;
 import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -54,11 +55,17 @@ public class RandoresWorldGenerator implements IWorldGenerator {
         if (!world.isRemote) {
             long seed = RandoresSeed.getSeed(world);
             List<MaterialDefinition> assoc = MaterialDefinitionRegistry.getAll(seed);
-            for(MaterialDefinition definition : assoc) {
-                if((Randores.getConfigObj().getModules().isDimensionLess() || definition.getOre().getDimension().getId() == world.provider.getDimension()) && RandoresProbability.percentChance(25, random)) {
+            int count = Randores.getConfigObj().getModules().isYoutubeMode() ? 70 : 50;
+            for (int i = 0; i < count; i++) {
+                MaterialDefinition definition = assoc.get(random.nextInt(assoc.size()));
+                if((Randores.getConfigObj().getModules().isDimensionLess() || definition.getOre().getDimension().getId() == world.provider.getDimension())) {
                     OreComponent component = definition.getOre();
                     this.generateOre(component.getBlock().getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, component.getHarvestLevel()), definition.getData(), world, random, chunkX * 16, chunkZ * 16, component.getMaxVein(), component.getMinVein(), component.getMaxY(), component.getMinY(), component.getMaxOccurrences(), component.getMinOccurrences(), component.getDimension().getGenerateIn());
                 }
+            }
+
+            if(Randores.getConfigObj().getModules().isDimensionLess() || Dimension.OVERWORLD.getId() == world.provider.getDimension()) {
+                this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, 2, world.getHeight(), 0, 25, 5, Dimension.OVERWORLD.getGenerateIn());
             }
         }
     }

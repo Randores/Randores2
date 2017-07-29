@@ -21,6 +21,10 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component;
 
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Name;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serializable;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.SerializationConstructor;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 import com.gmail.socraticphoenix.randores.game.tome.TomeGui;
 import com.gmail.socraticphoenix.randores.mod.component.ability.Ability;
 import com.gmail.socraticphoenix.randores.mod.component.ability.AbilitySeries;
@@ -49,50 +53,68 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Serializable
 public class MaterialDefinition {
     public static final Map<Character, Item> CRAFTING_MAPPINGS = new HashMap<>();
 
+    @Serialize(value = "color", reflect = false)
     private Color color;
+    @Serialize(value = "name", reflect = false)
     private String name;
 
-    private OreComponent ore;
     private MaterialComponent material;
-    private List<CraftableComponent> craftables;
     private List<Component> components;
 
+    @Serialize(value = "properties", reflect = false)
+    private List<MaterialProperty> propertiesList;
     private Map<String, MaterialProperty> properties;
 
     private Item.ToolMaterial toolMaterial;
     private ItemArmor.ArmorMaterial armorMaterial;
 
+    @Serialize(value = "abilities", reflect = false)
     private AbilitySeries abilitySeries;
 
     private long seed;
     private int totalArmor;
     private int index;
 
-    public MaterialDefinition(Color color, OreComponent ore, List<CraftableComponent> craftables, List<MaterialProperty> properties, AbilitySeries series, long seed, int index) {
+    @Serialize(value = "ore", reflect = false)
+    private OreComponent ore;
+    @Serialize(value = "components", reflect = false)
+    private List<CraftableComponent> craftables;
+
+    @SerializationConstructor
+    public MaterialDefinition(@Name("color") Color color, @Name("name") String name, @Name("ore") OreComponent ore, @Name("components") List<CraftableComponent> craftables, @Name("properties") List<MaterialProperty> properties, @Name("abilities") AbilitySeries series) {
         this.abilitySeries = series;
         this.color = color;
         this.ore = ore;
         this.material = ore.getMaterial();
         this.craftables = craftables;
-        this.name = RandoresNameAlgorithm.name(this.color);
+        this.name = name;
         this.toolMaterial = EnumHelper.addToolMaterial(this.name, this.material.getHarvestLevel(), this.material.getMaxUses(), this.material.getEfficiency(), this.material.getDamage(), this.material.getEnchantability());
         this.totalArmor = sum(this.material.getArmorReduction());
         this.armorMaterial = EnumHelper.addArmorMaterial(this.name, "randores:armor", this.material.getMaxUses() / 10, this.material.getArmorReduction(), this.material.getEnchantability(), SoundEvents.ITEM_ARMOR_EQUIP_IRON, this.material.getToughness());
-        this.seed = seed;
-        this.index = index;
 
         this.components = new ArrayList<>();
         this.components.addAll(this.craftables);
         this.components.add(this.ore);
         this.components.add(this.material);
 
+        this.propertiesList = properties;
         this.properties = new HashMap<>();
         for (MaterialProperty property : properties) {
             this.properties.put(property.name(), property);
         }
+    }
+
+    public void provideData(long seed, int index) {
+        if(this.seed != 0) {
+            throw new IllegalStateException("Provided data twice");
+        }
+
+        this.seed = seed;
+        this.index = index;
     }
 
     public String formatLocalName(Component sub) {

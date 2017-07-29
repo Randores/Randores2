@@ -21,23 +21,37 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component;
 
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Name;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serializable;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.SerializationConstructor;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 import com.gmail.socraticphoenix.randores.game.item.RandoresItems;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 
+@Serializable
 public class MaterialComponent implements Component {
     private Item item;
 
+    @Serialize(value = "type", reflect = false)
     private MaterialType type;
+    @Serialize(value = "armorReduction", reflect = false, comments = "Armor reduction values for helmet, chestplate, leggings, and boots, in that order")
     private int[] armorReduction;
+    @Serialize(value = "harvestLevel", reflect = false, comments = "The harvest level tools made from this material work on")
     private int harvestLevel;
+    @Serialize(value = "durability", reflect = false)
     private int maxUses;
+    @Serialize(value = "efficiency", reflect = false)
     private float efficiency;
+    @Serialize(value = "damage", reflect = false)
     private float damage;
+    @Serialize(value = "toughness", reflect = false)
     private float toughness;
+    @Serialize(value = "enchantability", reflect = false)
     private int enchantability;
 
-    public MaterialComponent(MaterialType type, int[] armorReduction, int harvestLevel, int maxUses, float efficiency, float damage, float toughness, int enchantability) {
+    @SerializationConstructor
+    public MaterialComponent(@Name("type") MaterialType type, @Name("armorReduction") int[] armorReduction, @Name("harvestLevel") int harvestLevel, @Name("durability") int maxUses, @Name("efficiency") float efficiency, @Name("damage") float damage, @Name("toughness") float toughness, @Name("enchantability") int enchantability) {
         this.type = type;
         this.armorReduction = armorReduction;
         this.harvestLevel = harvestLevel;

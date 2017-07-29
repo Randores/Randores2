@@ -21,6 +21,10 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component.ability;
 
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Name;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serializable;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.SerializationConstructor;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 import com.gmail.socraticphoenix.randores.mod.listener.ScheduleListener;
 import com.google.common.base.Supplier;
 import net.minecraft.entity.EntityLivingBase;
@@ -28,13 +32,19 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
+@Serializable
 public class AbilitySeries {
+    @Serialize(value = "armorPassive", reflect = false)
     private List<Ability> armorPassive;
+    @Serialize(value = "armorActive", reflect = false)
     private List<Ability> armorActive;
+    @Serialize(value = "projectile", reflect = false)
     private List<Ability> projectile;
+    @Serialize(value = "melee", reflect = false)
     private List<Ability> melee;
 
-    public AbilitySeries(List<Ability> armorPassive, List<Ability> armorActive, List<Ability> melee, List<Ability> projectile) {
+    @SerializationConstructor
+    public AbilitySeries(@Name("armorPassive") List<Ability> armorPassive, @Name("armorActive") List<Ability> armorActive, @Name("melee") List<Ability> melee, @Name("projectile") List<Ability> projectile) {
         this.armorActive = armorActive;
         this.armorPassive = armorPassive;
         this.projectile = projectile;

@@ -4,16 +4,15 @@
       "torch": "randores:blocks/torch",
       "overlay": "randores:blocks/torch_overlay"
     },
-    "model":"randores:block/overlay_torch_wall",
-    "uvlock": true
+    "uvlock": false
   },
   "variants": {
     "normal": [{}],
     "inventory": [{}],
     "facing=up": { "model": "randores:block/overlay_torch" },
-    "facing=east": {},
-    "facing=south": { "y": 90 },
-    "facing=west": { "y": 180 },
-    "facing=north": { "y": 270 }
+    "facing=east": { "model":"randores:block/overlay_torch_wall" },
+    "facing=south": { "y": 90, "model":"randores:block/overlay_torch_wall" },
+    "facing=west": { "y": 180, "model":"randores:block/overlay_torch_wall" },
+    "facing=north": { "y": 270, "model":"randores:block/overlay_torch_wall" }
   }
 }

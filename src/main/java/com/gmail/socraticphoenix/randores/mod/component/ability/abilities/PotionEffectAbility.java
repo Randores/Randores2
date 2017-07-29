@@ -21,6 +21,10 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component.ability.abilities;
 
+import com.gmail.socraticphoenix.jlsc.value.annotation.ConversionConstructor;
+import com.gmail.socraticphoenix.jlsc.value.annotation.Convert;
+import com.gmail.socraticphoenix.jlsc.value.annotation.Convertible;
+import com.gmail.socraticphoenix.jlsc.value.annotation.Index;
 import com.gmail.socraticphoenix.randores.mod.component.ability.Ability;
 import com.gmail.socraticphoenix.randores.mod.component.ability.AbilityContext;
 import com.gmail.socraticphoenix.randores.mod.component.ability.AbilityStage;
@@ -33,10 +37,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@Convertible
 public class PotionEffectAbility implements Ability {
+    @Convert(value = 0, reflect = false)
     private Potion potion;
 
-    public PotionEffectAbility(Potion potion) {
+    @ConversionConstructor
+    public PotionEffectAbility(@Index(0) Potion potion) {
         this.potion = potion;
     }
 

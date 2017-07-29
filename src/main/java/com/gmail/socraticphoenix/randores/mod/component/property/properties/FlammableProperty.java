@@ -21,13 +21,20 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component.property.properties;
 
+import com.gmail.socraticphoenix.jlsc.value.annotation.ConversionConstructor;
+import com.gmail.socraticphoenix.jlsc.value.annotation.Convert;
+import com.gmail.socraticphoenix.jlsc.value.annotation.Convertible;
+import com.gmail.socraticphoenix.jlsc.value.annotation.Index;
 import com.gmail.socraticphoenix.randores.mod.component.property.IntProperty;
 import com.gmail.socraticphoenix.randores.mod.component.property.Properties;
 
+@Convertible
 public class FlammableProperty implements IntProperty {
+    @Convert(value = 0, reflect = false)
     private int burnTime;
 
-    public FlammableProperty(int burnTime) {
+    @ConversionConstructor
+    public FlammableProperty(@Index(0) int burnTime) {
         this.burnTime = burnTime;
     }
 

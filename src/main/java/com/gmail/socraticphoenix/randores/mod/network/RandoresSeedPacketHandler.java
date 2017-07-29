@@ -22,7 +22,9 @@
 package com.gmail.socraticphoenix.randores.mod.network;
 
 
+import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionGenerator;
+import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -41,10 +43,21 @@ public class RandoresSeedPacketHandler implements IMessageHandler<RandoresSeedPa
             @SideOnly(Side.CLIENT)
             public void run() {
                 final long seed = message.getSeed();
-                final int count = message.getOreCount();
-                MaterialDefinitionGenerator.removeAllExcept(seed);
-                RandoresSeed.setClientSeed(seed);
-                MaterialDefinitionGenerator.registerDefinitionsIfNeeded(seed, count);
+                if(seed != 0) {
+                    final int count = message.getOreCount();
+                    Randores.info("Received randores seed " + seed + " and ore count " + count + ".",
+                            "Registering definitions if needed...");
+                    MaterialDefinitionGenerator.removeAllExcept(seed);
+                    RandoresSeed.setClientSeed(seed);
+                    MaterialDefinitionGenerator.registerDefinitionsIfNeeded(seed, count, null);
+                    Randores.info("Registered needed definitions.",
+                            "Statistics:");
+                    MaterialDefinitionGenerator.logStatistics(MaterialDefinitionRegistry.getAll(seed));
+                } else {
+                    Randores.info("Received server request to remove all definitions, removing...");
+                    MaterialDefinitionGenerator.removeAllExcept(0);
+                    Randores.info("Definitions removed.");
+                }
             }
         };
         Minecraft.getMinecraft().addScheduledTask(runnable);

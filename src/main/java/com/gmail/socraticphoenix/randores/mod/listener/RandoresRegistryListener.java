@@ -21,6 +21,7 @@
  */
 package com.gmail.socraticphoenix.randores.mod.listener;
 
+import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.game.block.RandoresBlocks;
 import com.gmail.socraticphoenix.randores.game.crafting.CraftingBlocks;
 import com.gmail.socraticphoenix.randores.game.crafting.CraftingItems;
@@ -36,22 +37,28 @@ public class RandoresRegistryListener {
 
     @SubscribeEvent
     public void onBlockRegister(RegistryEvent.Register<Block> ev) {
+        Randores.info("Registering blocks...");
         CraftingBlocks.registerBlocks(ev.getRegistry());
         RandoresBlocks.registerBlocks(ev.getRegistry());
+        Randores.info("Registered blocks.");
     }
 
     @SubscribeEvent
     public void onItemRegister(RegistryEvent.Register<Item> ev) {
+        Randores.info("Registering items...");
         CraftingBlocks.registerItems(ev.getRegistry());
         CraftingItems.register(ev.getRegistry());
 
         RandoresBlocks.registerItems(ev.getRegistry());
         RandoresItems.register(ev.getRegistry());
+        Randores.info("Registered items.");
     }
 
     @SubscribeEvent
     public void onEnchantRegister(RegistryEvent.Register<Enchantment> ev) {
+        Randores.info("Registering enchantments...");
         ev.getRegistry().register(EmpoweredEnchantment.INSTANCE);
+        Randores.info("Registered enchantments.");
     }
 
 }

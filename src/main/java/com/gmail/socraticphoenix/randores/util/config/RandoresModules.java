@@ -27,17 +27,17 @@ import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 
 @Serializable
 public class RandoresModules {
-    @Serialize(value = "mobequip")
+    @Serialize(value = "mobequip", comments = "If true, zombies, skeletons, and vindicators will randomly be equipped with randores items")
     private boolean mobEquip;
-    @Serialize(value = "dungeonloot")
+    @Serialize(value = "dungeonloot", comments = "If true, loot chests from dungeons, villages, etc. will spawn with randores items")
     private boolean dungeonLoot;
-    @Serialize(value = "dimensionless")
+    @Serialize(value = "dimensionless", comments = {"If true, randores will not check the dimension before spawning ore", "Ores that are set in stone will only spawn in stone, set in endstone will only spawn in endstone, etc.", "However, ores will spawn in any dimension with the necessary blocks, rather than just the overworld, end, and nether."})
     private boolean dimensionLess;
-    @Serialize(value = "starterkit")
+    @Serialize(value = "starterkit", comments = "If true, players that log in for the first time will be given a random set of randores items")
     private boolean starterKit;
-    @Serialize(value = "altar")
+    @Serialize(value = "altar", comments = "If true, small brick structures will spawn in the overworld, with chests full of randores items inside")
     private boolean altar;
-    @Serialize(value = "youtubemode")
+    @Serialize(value = "youtubemode", comments = {"If true, the chance that ore will spawn and, if altars is true, that altars will spawn, will be nearly doubled", "This makes it much easier to show off randores"})
     private boolean youtubeMode;
 
     @SerializationConstructor

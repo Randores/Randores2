@@ -21,17 +21,25 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component;
 
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Name;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serializable;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.SerializationConstructor;
+import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 import com.gmail.socraticphoenix.randores.game.block.RandoresBlocks;
 import com.gmail.socraticphoenix.randores.game.item.RandoresItems;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 
+@Serializable
 public class CraftableComponent implements Component {
+    @Serialize(value = "type", reflect = false)
     private CraftableType type;
+    @Serialize(value = "quantity", reflect = false)
     private int quantity;
     private Item item;
 
-    public CraftableComponent(CraftableType type, int quantity) {
+    @SerializationConstructor
+    public CraftableComponent(@Name("type") CraftableType type, @Name("quantity") int quantity) {
         this.type = type;
         this.quantity = quantity;
         switch (type) {

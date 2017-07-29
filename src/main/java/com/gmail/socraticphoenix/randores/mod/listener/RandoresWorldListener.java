@@ -21,40 +21,82 @@
  */
 package com.gmail.socraticphoenix.randores.mod.listener;
 
+import com.gmail.socraticphoenix.jlsc.JLSCArray;
+import com.gmail.socraticphoenix.jlsc.JLSCConfiguration;
+import com.gmail.socraticphoenix.jlsc.JLSCException;
 import com.gmail.socraticphoenix.randores.Randores;
+import com.gmail.socraticphoenix.randores.mod.component.Dimension;
+import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionGenerator;
+import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RandoresWorldListener {
-    private List<Long> loaded = new ArrayList<Long>();
+    private List<Long> loaded = new ArrayList<>();
 
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload ev) {
         World world = ev.getWorld();
-        if (!world.isRemote) {
+        if (!world.isRemote && world.provider.getDimension() == Dimension.OVERWORLD.getId()) {
             long seed = RandoresSeed.getSeed(world);
-            this.loaded.remove(seed);
-            if (!this.loaded.contains(seed)) {
+            if (this.loaded.contains(seed)) {
+                this.loaded.remove(seed);
+                Randores.info("Removing definitions for seed " + seed + ".");
                 MaterialDefinitionGenerator.removeDefinitions(seed);
             }
         }
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load ev) throws IOException {
+    public void onWorldLoad(WorldEvent.Load ev) throws IOException, JLSCException {
         World world = ev.getWorld();
-        if (!world.isRemote) {
+        if (!world.isRemote && world.provider.getDimension() == Dimension.OVERWORLD.getId()) {
             long seed = RandoresSeed.getSeed(world);
-            this.loaded.add(seed);
-            MaterialDefinitionGenerator.registerDefinitionsIfNeeded(seed, Randores.getCount());
+            if (!this.loaded.contains(seed)) {
+                this.loaded.add(seed);
+                File dir = world.getSaveHandler().getWorldDirectory();
+                File custom = new File(dir, "randores_custom.jlsc");
+                File custom2 = new File(dir, "randores_custom.cjlsc");
+                if (custom.exists()) {
+                    Randores.info("Discovered custom definitions for world " + dir.getName() + ".",
+                            "Loading custom definitions...");
+                    JLSCConfiguration configuration = JLSCConfiguration.fromText(custom);
+                    createCustomFrom(configuration, world.getWorldInfo().getWorldName(), seed);
+                } else if (custom2.exists()) {
+                    Randores.info("Discovered compressed custom definitions for world " + dir.getName() + ".",
+                            "Loading custom definitions...");
+                    JLSCConfiguration configuration = JLSCConfiguration.fromCompressed(custom2);
+                    createCustomFrom(configuration, world.getWorldInfo().getWorldName(), seed);
+                } else {
+                    Randores.info("Registering definitions for seed " + seed + ".");
+                    MaterialDefinitionGenerator.registerDefinitionsIfNeeded(seed, Randores.getCount(), world);
+                }
+                Randores.info("Statistics:");
+                MaterialDefinitionGenerator.logStatistics(MaterialDefinitionRegistry.getAll(seed));
+            }
         }
+    }
+
+    private void createCustomFrom(JLSCConfiguration configuration, String name, long seed) {
+        JLSCArray array = configuration.getArray("definitions").get();
+        List<MaterialDefinition> definitions = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            MaterialDefinition definition = array.getAs(i, MaterialDefinition.class).get();
+            Randores.info("Loaded custom definition " + definition.getName());
+            definition.provideData(seed, i);
+            definitions.add(definition);
+        }
+        Randores.info("Registering loaded definitions...");
+        MaterialDefinitionRegistry.registerCustom(name, definitions);
+        Randores.info("Loaded custom definitions.");
     }
 
 }

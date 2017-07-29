@@ -21,6 +21,12 @@
  */
 package com.gmail.socraticphoenix.randores.mod.component;
 
+import com.gmail.socraticphoenix.jlsc.JLSCArray;
+import com.gmail.socraticphoenix.jlsc.JLSCCompound;
+import com.gmail.socraticphoenix.jlsc.JLSCConfiguration;
+import com.gmail.socraticphoenix.jlsc.JLSCException;
+import com.gmail.socraticphoenix.jlsc.JLSCFormat;
+import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.game.item.RandoresItems;
 import com.gmail.socraticphoenix.randores.game.item.constructable.ConstructableAxe;
 import com.gmail.socraticphoenix.randores.game.item.constructable.ConstructablePickaxe;
@@ -39,15 +45,49 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
+import net.minecraft.world.World;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 public class MaterialDefinitionGenerator {
+
+    public static void logStatistics(List<MaterialDefinition> definitions) {
+        Logger logger = Randores.getLogger();
+        Map<Dimension, Integer> dimCount = new LinkedHashMap<>();
+        for (Dimension dimension : Dimension.values()) {
+            dimCount.put(dimension, 0);
+        }
+        Map<MaterialType, Integer> mCount = new LinkedHashMap<>();
+        for (MaterialType type : MaterialType.values()) {
+            mCount.put(type, 0);
+        }
+
+        for (MaterialDefinition def : definitions) {
+            Dimension dim = def.getOre().getDimension();
+            MaterialType mat = def.getMaterial().getType();
+            dimCount.put(dim, dimCount.get(dim) + 1);
+            mCount.put(mat, mCount.get(mat) + 1);
+        }
+        logger.info("Definition Count: " + definitions.size());
+        logger.info("Ores per Dimension: ");
+        for (Map.Entry<Dimension, Integer> entry : dimCount.entrySet()) {
+            logger.info("    " + entry.getKey().name() + ": " + entry.getValue() + " ore(s)");
+        }
+        logger.info("Material Types: ");
+        for (Map.Entry<MaterialType, Integer> entry : mCount.entrySet()) {
+            logger.info("    " + entry.getKey().name() + ": " + entry.getValue() + " ore(s)");
+        }
+    }
 
     public static Set<Color> generateColors(Random random, int count) {
         Set<Color> set = new LinkedHashSet<>();
@@ -57,16 +97,29 @@ public class MaterialDefinitionGenerator {
         return set;
     }
 
-    public static void registerDefinitionsIfNeeded(long seed, int count) {
-        if(!MaterialDefinitionRegistry.contains(seed)) {
+    public static void registerDefinitionsIfNeeded(long seed, int count, World world) {
+        if (!MaterialDefinitionRegistry.contains(seed)) {
             List<MaterialDefinition> definitions = makeDefinitions(generateColors(new Random(seed), count), seed);
+            if(Randores.getConfigObj().isConvert() && world != null && !world.isRemote) {
+                Randores.info("Beginning conversion to custom definitions...");
+                JLSCArray array = new JLSCArray();
+                definitions.forEach(array::add);
+                JLSCConfiguration conf = new JLSCConfiguration(new JLSCCompound().toConcurrent(), new File(world.getSaveHandler().getWorldDirectory(), "randores_custom.cjlsc"), JLSCFormat.COMPRESSED_BYTES, true);
+                conf.put("definitions", array);
+                try {
+                    conf.save();
+                    Randores.info("Finished converting to custom definitions.");
+                } catch (IOException | JLSCException e) {
+                    Randores.getLogger().error("FATAL ERROR: Failed to convert to custom definitions", e);
+                }
+            }
             definitions.forEach(MaterialDefinitionRegistry::register);
             applyBackers(definitions);
         }
     }
 
     public static void removeDefinitions(long seed) {
-        if(MaterialDefinitionRegistry.contains(seed)) {
+        if (MaterialDefinitionRegistry.contains(seed)) {
             List<MaterialDefinition> definitions = MaterialDefinitionRegistry.getAll(seed);
             removeBackers(definitions);
             MaterialDefinitionRegistry.removeAll(seed);
@@ -96,7 +149,7 @@ public class MaterialDefinitionGenerator {
             RandoresItems.boots.removeBacker(itemData);
         }
     }
-    
+
     public static void applyBackers(List<MaterialDefinition> definitions) {
         for (MaterialDefinition definition : definitions) {
             long seed = definition.getSeed();
@@ -277,13 +330,14 @@ public class MaterialDefinitionGenerator {
             }
 
 
-            MaterialDefinition definition = new MaterialDefinition(color, ore, components, properties, AbilityRegistry.buildSeries(new Random(b.getLong("abilitySeed"))), seed, c);
+            MaterialDefinition definition = new MaterialDefinition(color, RandoresNameAlgorithm.name(color), ore, components, properties, AbilityRegistry.buildSeries(new Random(b.getLong("abilitySeed"))));
+            definition.provideData(seed, c);
             definitions.add(definition);
             c++;
         }
         return definitions;
     }
-    
+
     private static int[] clampArmor(int[] reduc) {
         for (int i = 0; i < reduc.length; i++) {
             if (reduc[i] < 1) {

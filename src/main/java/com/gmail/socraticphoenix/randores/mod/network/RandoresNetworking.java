@@ -31,6 +31,7 @@ public class RandoresNetworking {
 
     public static void initNetwork() {
         RandoresNetworking.INSTANCE.registerMessage(RandoresSeedPacketHandler.class, RandoresSeedPacket.class, netId++, Side.CLIENT);
+        RandoresNetworking.INSTANCE.registerMessage(RandoresDefinePacketHandler.class, RandoresDefinePacket.class, netId++, Side.CLIENT);
     }
 
 }

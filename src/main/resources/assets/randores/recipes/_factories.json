@@ -1,5 +1,6 @@
 {
     "recipes": {
-        "general": "com.gmail.socraticphoenix.randores.game.recipe.RandoresRecipeFactory"
+        "general": "com.gmail.socraticphoenix.randores.game.recipe.RandoresRecipeFactory",
+        "forge_upgrade": "com.gmail.socraticphoenix.randores.game.recipe.forge.RandoresForgeUpgradeRecipeFactory"
     }
 }

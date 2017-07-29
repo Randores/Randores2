@@ -67,14 +67,16 @@ import java.util.function.Supplier;
 public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRandoresItem {
     private Map<RandoresItemData, ItemArmor> handlers = new HashMap<>();
     private ComponentType type;
+    private EntityEquipmentSlot slot;
 
     public RandoresItemArmor(ComponentType type, EntityEquipmentSlot equipmentSlotIn) {
         super(ARMOR_DEFAULT, getRenderIndex(equipmentSlotIn), equipmentSlotIn);
         this.type = type;
+        this.slot = equipmentSlotIn;
     }
 
     public void registerBacker(RandoresItemData data, ArmorMaterial material) {
-        this.handlers.put(data, new ItemArmor(material, this.renderIndex, this.getEquipmentSlot()));
+        this.handlers.put(data, new ItemArmor(material, this.renderIndex, this.slot));
     }
 
     public void removeBacker(RandoresItemData data) {

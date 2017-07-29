@@ -29,15 +29,22 @@ import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 
 @Serializable
 public class RandoresConfig {
-    @Serialize(value = "count", reflect = false)
+    @Serialize(value = "count", reflect = false, comments = "The number of ores to create in a single player world")
     private int count;
+    @Serialize(value = "convert", reflect = false, comments = {"If true, generated definitions will be saved as custom ones", "After first being generated, these definitions will behave like custom definitions"})
+    private boolean convert;
     @Serialize(value = "modules", reflect = false)
     private RandoresModules modules;
 
     @SerializationConstructor
-    public RandoresConfig(@Name("count") int count, @Name("modules") RandoresModules modules) {
+    public RandoresConfig(@Name("count") int count, @Name("convert") boolean convert, @Name("modules") RandoresModules modules) {
         this.count = count;
         this.modules = modules;
+        this.convert = convert;
+    }
+
+    public boolean isConvert() {
+        return this.convert;
     }
 
     public int getCount() {

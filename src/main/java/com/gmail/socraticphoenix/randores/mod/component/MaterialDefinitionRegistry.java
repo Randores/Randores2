@@ -25,20 +25,39 @@ import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class MaterialDefinitionRegistry {
+    private static Map<String, List<MaterialDefinition>> custom = new LinkedHashMap<>();
+
+    private static final Object lock = new Object();
+    private static Map<Long, List<MaterialDefinition>> definitionsBySeed = new LinkedHashMap<>();
     private static Map<RandoresItemData, MaterialDefinition> definitions = new LinkedHashMap<>();
 
+    public static List<MaterialDefinition> getCustom(String wld) {
+        return custom.get(wld);
+    }
+
+    public static void registerCustom(String wld, List<MaterialDefinition> definitions) {
+        custom.put(wld, definitions);
+    }
+
+    public static boolean containsCustom(String wld) {
+        return custom.containsKey(wld);
+    }
+
     public static MaterialDefinition get(int index, long seed) {
-        return definitions.get(new RandoresItemData(index, seed));
+        synchronized (lock) {
+            return definitions.get(new RandoresItemData(index, seed));
+        }
     }
 
     public static void delegateVoid(RandoresItemData data, Consumer<MaterialDefinition> consumer, Runnable def) {
@@ -66,7 +85,9 @@ public class MaterialDefinitionRegistry {
     }
 
     public static boolean contains(int index, long seed) {
-        return definitions.containsKey(new RandoresItemData(index, seed));
+        synchronized (lock) {
+            return definitions.containsKey(new RandoresItemData(index, seed));
+        }
     }
 
     public static boolean contains(RandoresItemData data) {
@@ -78,32 +99,54 @@ public class MaterialDefinitionRegistry {
     }
 
     public static boolean contains(long seed) {
-        return definitions.keySet().stream().anyMatch(i -> i.getSeed() == seed);
+        synchronized (lock) {
+            return definitionsBySeed.containsKey(seed);
+        }
     }
 
     public static void register(MaterialDefinition definition) {
-        RandoresItemData data = new RandoresItemData(definition.getIndex(), definition.getSeed());
-        definitions.put(data, definition);
+        synchronized (lock) {
+            RandoresItemData data = new RandoresItemData(definition.getIndex(), definition.getSeed());
+            definitions.put(data, definition);
+            definitionsBySeed.computeIfAbsent(data.getSeed(), l -> new ArrayList<>()).add(definition);
+        }
     }
 
     public static void remove(RandoresItemData data) {
-        definitions.remove(data);
+        synchronized (lock) {
+            MaterialDefinition rem = definitions.remove(data);
+            List<MaterialDefinition> defs = definitionsBySeed.get(data.getSeed());
+            defs.remove(rem);
+            if(defs.isEmpty()) {
+                definitionsBySeed.remove(data.getSeed());
+            }
+        }
     }
 
     public static void removeAll(long seed) {
-        definitions.entrySet().removeIf(e -> e.getKey().getSeed() == seed);
+        synchronized (lock) {
+            definitions.entrySet().removeIf(e -> e.getKey().getSeed() == seed);
+            definitionsBySeed.remove(seed);
+        }
     }
 
     public static void removeAllExcept(long seed) {
-        definitions.entrySet().removeIf(e -> e.getKey().getSeed() != seed);
+        synchronized (lock) {
+            definitions.entrySet().removeIf(e -> e.getKey().getSeed() != seed);
+            definitionsBySeed.entrySet().removeIf(e -> e.getKey() != seed);
+        }
     }
 
     public static List<MaterialDefinition> getAll(long seed) {
-        return definitions.entrySet().stream().filter(e -> e.getKey().getSeed() == seed).map(Entry::getValue).collect(Collectors.toList());
+        synchronized (lock) {
+            return definitionsBySeed.getOrDefault(seed, new ArrayList<>());
+        }
     }
 
     public static List<MaterialDefinition> getAllExcept(long seed) {
-        return definitions.entrySet().stream().filter(e -> e.getKey().getSeed() != seed).map(Entry::getValue).collect(Collectors.toList());
+        synchronized (lock) {
+            return definitionsBySeed.entrySet().stream().filter(e -> e.getKey() != seed).map(Map.Entry::getValue).flatMap(Collection::stream).collect(Collectors.toList());
+        }
     }
 
 }

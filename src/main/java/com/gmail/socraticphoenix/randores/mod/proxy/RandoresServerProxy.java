@@ -21,6 +21,7 @@
  */
 package com.gmail.socraticphoenix.randores.mod.proxy;
 
+import com.gmail.socraticphoenix.randores.Randores;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -29,7 +30,7 @@ public class RandoresServerProxy implements RandoresProxy {
 
     @Override
     public void preInitSided(FMLPreInitializationEvent ev) {
-
+        Randores.info("Randores is running server side.");
     }
 
     @Override

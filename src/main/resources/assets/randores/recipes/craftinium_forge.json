@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "CCC",
+        "C C",
+        "CCC"
+    ],
+    "key": {
+        "C": {
+            "item": "#CRAFTINIUM"
+        }
+    },
+    "result": {
+        "item": "randores:craftinium_forge",
+        "nbt": {
+            "randores": {
+                "furnace_speed": 1
+            }
+        }
+    }
+}

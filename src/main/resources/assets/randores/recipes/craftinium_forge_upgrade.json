@@ -1,0 +1,48 @@
+{
+    "type": "randores:forge_upgrade",
+    "clamp": 200,
+    "combining": true,
+    "upgrades": [
+        {
+            "amount": 0.125,
+            "ingredient": {
+                "item": "#CRAFTINIUM"
+            }
+        },
+        {
+            "amount": 1,
+            "ingredient": {
+                "type": "forge:ore_dict",
+                "ore": "ingotIron"
+            }
+        },
+        {
+            "amount": 2,
+            "ingredient": {
+                "type": "forge:ore_dict",
+                "ore": "ingotGold"
+            }
+        },
+        {
+            "amount": 3,
+            "ingredient": {
+                "type": "forge:ore_dict",
+                "ore": "gemDiamond"
+            }
+        },
+        {
+            "amount": 4,
+            "ingredient": {
+                "type": "forge:ore_dict",
+                "ore": "gemEmerald"
+            }
+        },
+        {
+            "amount": 200,
+            "ingredient": {
+                "type": "forge:ore_dict",
+                "ore": "netherStar"
+            }
+        }
+    ]
+}
