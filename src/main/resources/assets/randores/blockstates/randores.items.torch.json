@@ -1,18 +1,9 @@
 {
-  "defaults": {
-    "textures": {
-      "torch": "randores:blocks/torch",
-      "overlay": "randores:blocks/torch_overlay"
-    },
-    "uvlock": false
-  },
   "variants": {
-    "normal": [{}],
-    "inventory": [{}],
-    "facing=up": { "model": "randores:block/overlay_torch" },
-    "facing=east": { "model":"randores:block/overlay_torch_wall" },
-    "facing=south": { "y": 90, "model":"randores:block/overlay_torch_wall" },
-    "facing=west": { "y": 180, "model":"randores:block/overlay_torch_wall" },
-    "facing=north": { "y": 270, "model":"randores:block/overlay_torch_wall" }
+    "facing=up": { "model": "randores:overlay_torch" },
+    "facing=east": { "model": "randores:overlay_torch_wall" },
+    "facing=south": { "model": "randores:overlay_torch_wall", "y": 90 },
+    "facing=west": { "model": "randores:overlay_torch_wall", "y": 180 },
+    "facing=north": { "model": "randores:overlay_torch_wall", "y": 270 }
   }
 }

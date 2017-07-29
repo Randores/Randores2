@@ -46,7 +46,6 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.Color;
 import java.io.File;
@@ -62,7 +61,6 @@ import java.util.Set;
 public class MaterialDefinitionGenerator {
 
     public static void logStatistics(List<MaterialDefinition> definitions) {
-        Logger logger = Randores.getLogger();
         Map<Dimension, Integer> dimCount = new LinkedHashMap<>();
         for (Dimension dimension : Dimension.values()) {
             dimCount.put(dimension, 0);
@@ -78,14 +76,14 @@ public class MaterialDefinitionGenerator {
             dimCount.put(dim, dimCount.get(dim) + 1);
             mCount.put(mat, mCount.get(mat) + 1);
         }
-        logger.info("Definition Count: " + definitions.size());
-        logger.info("Ores per Dimension: ");
+        Randores.info("Definition Count: " + definitions.size());
+        Randores.info("Ores per Dimension: ");
         for (Map.Entry<Dimension, Integer> entry : dimCount.entrySet()) {
-            logger.info("    " + entry.getKey().name() + ": " + entry.getValue() + " ore(s)");
+            Randores.info("    " + entry.getKey().name() + ": " + entry.getValue() + " ore(s)");
         }
-        logger.info("Material Types: ");
+        Randores.info("Material Types: ");
         for (Map.Entry<MaterialType, Integer> entry : mCount.entrySet()) {
-            logger.info("    " + entry.getKey().name() + ": " + entry.getValue() + " ore(s)");
+            Randores.info("    " + entry.getKey().name() + ": " + entry.getValue() + " ore(s)");
         }
     }
 
@@ -104,7 +102,7 @@ public class MaterialDefinitionGenerator {
                 Randores.info("Beginning conversion to custom definitions...");
                 JLSCArray array = new JLSCArray();
                 definitions.forEach(array::add);
-                JLSCConfiguration conf = new JLSCConfiguration(new JLSCCompound().toConcurrent(), new File(world.getSaveHandler().getWorldDirectory(), "randores_custom.cjlsc"), JLSCFormat.COMPRESSED_BYTES, true);
+                JLSCConfiguration conf = new JLSCConfiguration(new JLSCCompound().toConcurrent(), new File(world.getSaveHandler().getWorldDirectory(), "randores_custom.jlsc"), JLSCFormat.TEXT, true);
                 conf.put("definitions", array);
                 try {
                     conf.save();

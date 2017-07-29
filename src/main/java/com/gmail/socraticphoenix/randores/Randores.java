@@ -38,6 +38,7 @@ import com.gmail.socraticphoenix.randores.game.entity.RandoresArrow;
 import com.gmail.socraticphoenix.randores.game.gui.RandoresGuiHandler;
 import com.gmail.socraticphoenix.randores.game.item.RandoresItems;
 import com.gmail.socraticphoenix.randores.game.recipe.RandoresForgeRecipe;
+import com.gmail.socraticphoenix.randores.game.tab.RandoresArmorTab;
 import com.gmail.socraticphoenix.randores.game.tab.SimpleTab;
 import com.gmail.socraticphoenix.randores.game.world.RandoresWorldGenerator;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
@@ -91,6 +92,7 @@ import java.util.Optional;
 
 @Mod(modid = "randores")
 public class Randores {
+    public static CreativeTabs TAB_ARMOR;
     public static CreativeTabs TAB_CRAFTING;
 
     @SidedProxy(modId = "randores", clientSide = "com.gmail.socraticphoenix.randores.mod.proxy.RandoresClientProxy", serverSide = "com.gmail.socraticphoenix.randores.mod.proxy.RandoresServerProxy")
@@ -111,6 +113,7 @@ public class Randores {
                 "Building item, block, and tab objects...");
 
         Randores.TAB_CRAFTING = new SimpleTab("randores_crafting", () -> new ItemStack(CraftingBlocks.tableItem));
+        Randores.TAB_ARMOR = new RandoresArmorTab();
 
         RandoresItems.init();
         RandoresBlocks.init();

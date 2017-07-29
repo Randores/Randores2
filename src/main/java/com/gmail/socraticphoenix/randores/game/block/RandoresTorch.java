@@ -41,6 +41,8 @@ import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -48,6 +50,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -70,9 +73,13 @@ public class RandoresTorch extends BlockTorch implements IRandoresItem {
         harvesters.set(null);
     }
 
+    @Override
+    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
+        this.dropBlockAsItemWithChance(worldIn, pos, state, worldIn.getTileEntity(pos), chance, fortune);
+    }
+
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, TileEntity entity, float chance, int fortune) {
-        if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots)
-        {
+        if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots) {
             NonNullList<ItemStack> drops = NonNullList.create();
             RandoresItemHelper.getRawDrop(drops, entity, state);
             chance = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldIn, pos, state, fortune, chance, false, harvesters.get());
@@ -82,6 +89,22 @@ public class RandoresTorch extends BlockTorch implements IRandoresItem {
                     spawnAsEntity(worldIn, pos, drop);
                 }
             }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+        EnumFacing enumfacing = stateIn.getValue(FACING);
+        double d0 = (double) pos.getX() + 0.5D;
+        double d1 = (double) pos.getY() + 0.7D;
+        double d2 = (double) pos.getZ() + 0.5D;
+
+        if (enumfacing.getAxis().isHorizontal()) {
+            EnumFacing enumfacing1 = enumfacing.getOpposite();
+            worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + 0.27D * (double) enumfacing1.getFrontOffsetX(), d1 + 0.22D, d2 + 0.27D * (double) enumfacing1.getFrontOffsetZ(), 0.0D, 0.0D, 0.0D);
+        } else {
+            worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, 0.0D, 0.0D, 0.0D);
         }
     }
 

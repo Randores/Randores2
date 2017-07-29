@@ -39,6 +39,12 @@ public class CraftiniumForgeGui extends GuiContainer {
         this.tileEntity = tileEntity;
     }
 
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String s = I18n.format(Keys.CRAFTINIUM_FORGE);
         this.fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 4210752);

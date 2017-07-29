@@ -72,6 +72,11 @@ public class RandoresBlock extends Block implements IRandoresItem {
         harvesters.set(null);
     }
 
+    @Override
+    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
+        this.dropBlockAsItemWithChance(worldIn, pos, state, worldIn.getTileEntity(pos), chance, fortune);
+    }
+
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, TileEntity entity, float chance, int fortune) {
         if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots)
         {

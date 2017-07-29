@@ -4,7 +4,7 @@
     "textures": {
       "all": "randores:blocks/bricks",
       "overlay": "randores:blocks/bricks_overlay",
-      "particle": "randores:blocks/bricks"
+      "particle": "randores:blocks/bricks_overlay"
     },
     "model": "randores:overlay_block",
     "uvlock": false

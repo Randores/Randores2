@@ -21,6 +21,7 @@
  */
 package com.gmail.socraticphoenix.randores.game.item;
 
+import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.game.tab.RandoresTab;
 import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialType;
@@ -104,19 +105,19 @@ public class RandoresItems {
         items.add(sledgehammer);
 
         helmet = new RandoresItemArmor(CraftableType.HELMET, EntityEquipmentSlot.HEAD);
-        helmet.setUnlocalizedName(Keys.HELMET).setCreativeTab(new RandoresTab("randores_helmets", helmet));
+        helmet.setUnlocalizedName(Keys.HELMET).setCreativeTab(Randores.TAB_ARMOR);
         items.add(helmet);
 
         chestplate = new RandoresItemArmor(CraftableType.CHESTPLATE, EntityEquipmentSlot.CHEST);
-        chestplate.setUnlocalizedName(Keys.CHESTPLATE).setCreativeTab(new RandoresTab("randores_chestplates", chestplate));
+        chestplate.setUnlocalizedName(Keys.CHESTPLATE).setCreativeTab(Randores.TAB_ARMOR);
         items.add(chestplate);
 
         leggings = new RandoresItemArmor(CraftableType.LEGGINGS, EntityEquipmentSlot.LEGS);
-        leggings.setUnlocalizedName(Keys.LEGGINGS).setCreativeTab(new RandoresTab("randores_leggings", leggings));
+        leggings.setUnlocalizedName(Keys.LEGGINGS).setCreativeTab(Randores.TAB_ARMOR);
         items.add(leggings);
 
         boots = new RandoresItemArmor(CraftableType.BOOTS, EntityEquipmentSlot.FEET);
-        boots.setUnlocalizedName(Keys.BOOTS).setCreativeTab(new RandoresTab("randores_boots", boots));
+        boots.setUnlocalizedName(Keys.BOOTS).setCreativeTab(Randores.TAB_ARMOR);
         items.add(boots);
 
         for(Item item : items) {
