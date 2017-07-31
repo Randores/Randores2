@@ -83,7 +83,7 @@ public class RandoresMobEquip {
                                 }
                             }
                         } else if (entity instanceof EntityVindicator) {
-                            List<Component> applicable = new ArrayList<Component>();
+                            List<Component> applicable = new ArrayList<>();
                             applicable.add(ComponentType.craftable(CraftableType.BATTLEAXE).from(material));
                             applicable.add(ComponentType.craftable(CraftableType.AXE).from(material));
 

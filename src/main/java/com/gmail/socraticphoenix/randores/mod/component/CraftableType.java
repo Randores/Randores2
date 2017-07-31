@@ -25,12 +25,6 @@ import com.gmail.socraticphoenix.randores.translations.Keys;
 import net.minecraft.client.resources.I18n;
 
 public enum CraftableType {
-    /*
-     * X = Material
-     * S = Stick
-     * T = Torch
-     * R = stRing
-     */
     AXE(Keys.AXE, false, true, true, false, true, true),
     HOE(Keys.HOE, false, true, true, false, true, false),
     PICKAXE(Keys.PICKAXE, false, true, true, false, true, true),

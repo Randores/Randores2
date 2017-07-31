@@ -251,7 +251,7 @@ public class MaterialDefinitionGenerator {
                     (float) Math.round(rarity / 7),
                     b.getInt("oreHarvest"));
 
-            List<CraftableComponent> components = new ArrayList<CraftableComponent>();
+            List<CraftableComponent> components = new ArrayList<>();
             components.add(new CraftableComponent(CraftableType.BRICKS, 4));
             components.add(new CraftableComponent(CraftableType.TORCH, 4));
 
