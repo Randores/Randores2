@@ -43,6 +43,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -62,22 +63,32 @@ public class RandoresBlock extends Block implements IRandoresItem {
     }
 
     @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return RandoresItemHelper.getRawDrop(world.getTileEntity(pos), state);
+    }
+
+    @Override
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+        return RandoresItemHelper.getRawDrop(worldIn.getTileEntity(pos), state);
+    }
+
+    @Override
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
         player.addStat(StatList.getBlockStats(this));
         player.addExhaustion(0.005F);
 
         harvesters.set(player);
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-        this.dropBlockAsItemWithChance(worldIn, pos, state, te, 1f, i);
+        this.dropBlockAsItemWithChanceImpl(worldIn, pos, state, te, 1f, i);
         harvesters.set(null);
     }
 
     @Override
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
-        this.dropBlockAsItemWithChance(worldIn, pos, state, worldIn.getTileEntity(pos), chance, fortune);
+        this.dropBlockAsItemWithChanceImpl(worldIn, pos, state, worldIn.getTileEntity(pos), chance, fortune);
     }
 
-    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, TileEntity entity, float chance, int fortune) {
+    public void dropBlockAsItemWithChanceImpl(World worldIn, BlockPos pos, IBlockState state, TileEntity entity, float chance, int fortune) {
         if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots)
         {
             NonNullList<ItemStack> drops = NonNullList.create();
@@ -90,6 +101,12 @@ public class RandoresBlock extends Block implements IRandoresItem {
                 }
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public String getHarvestTool(IBlockState state) {
+        return "pickaxe";
     }
 
     @Override

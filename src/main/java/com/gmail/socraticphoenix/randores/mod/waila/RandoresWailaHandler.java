@@ -52,16 +52,17 @@ public class RandoresWailaHandler implements IWailaDataProvider {
 
     public static void callbackRegister(IWailaRegistrar registrar) {
         registrar.registerStackProvider(new RandoresWailaHandler(false), IRandoresItem.class);
+        registrar.registerBodyProvider(new RandoresWailaHandler(false), IRandoresItem.class);
         registrar.registerBodyProvider(new RandoresWailaHandler(true), CraftiniumForgeTileEntity.class);
         registrar.registerNBTProvider(new RandoresWailaHandler(true), CraftiniumForgeTileEntity.class);
     }
 
     @Override
     public ItemStack getWailaStack(IWailaDataAccessor iWailaDataAccessor, IWailaConfigHandler iWailaConfigHandler) {
-        if(!this.forgeMode && iWailaDataAccessor.getBlock() instanceof IRandoresItem) {
+        if (!this.forgeMode && iWailaDataAccessor.getBlock() instanceof IRandoresItem) {
             ItemStack stack = new ItemStack(((IRandoresItem) iWailaDataAccessor.getBlock()).getThis());
             TileEntity entity = iWailaDataAccessor.getTileEntity();
-            if(entity != null && entity instanceof RandoresTileEntity) {
+            if (entity != null && entity instanceof RandoresTileEntity) {
                 ((RandoresTileEntity) entity).getData().applyTo(stack);
             }
             return stack;
@@ -83,7 +84,7 @@ public class RandoresWailaHandler implements IWailaDataProvider {
             int cookTime = randores.getInteger("cook_time");
             int totalCookTime = randores.getInteger("cook_time_total");
             int burnTime = randores.getInteger("burn_time");
-            if(burnTime > 0) {
+            if (burnTime > 0) {
                 ItemStackHandler input = new ItemStackHandler();
                 ItemStackHandler output = new ItemStackHandler();
                 ItemStackHandler fuel = new ItemStackHandler();

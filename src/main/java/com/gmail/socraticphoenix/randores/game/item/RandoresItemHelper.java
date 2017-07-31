@@ -23,6 +23,9 @@ package com.gmail.socraticphoenix.randores.game.item;
 
 import com.gmail.socraticphoenix.randores.game.IRandoresItem;
 import com.gmail.socraticphoenix.randores.game.block.RandoresTileEntity;
+import com.gmail.socraticphoenix.randores.mod.component.Component;
+import com.gmail.socraticphoenix.randores.mod.component.ComponentType;
+import com.gmail.socraticphoenix.randores.mod.component.CraftableComponent;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
 import com.gmail.socraticphoenix.randores.mod.component.ability.EmpoweredEnchantment;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
@@ -35,15 +38,41 @@ import net.minecraft.util.NonNullList;
 public class RandoresItemHelper {
 
     public static void doEmpowered(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        if(stack.getItem() instanceof IRandoresItem && EmpoweredEnchantment.appliedTo(stack) && RandoresItemData.hasData(stack)) {
-            MaterialDefinitionRegistry.delegateVoid(new RandoresItemData(stack), m -> m.getAbilitySeries().onMeleeHit(attacker, target), () -> {});
+        if (stack.getItem() instanceof IRandoresItem && EmpoweredEnchantment.appliedTo(stack) && RandoresItemData.hasData(stack)) {
+            IRandoresItem item = (IRandoresItem) stack.getItem();
+            ComponentType type = item.type();
+            MaterialDefinitionRegistry.delegateVoid(new RandoresItemData(stack), m -> {
+                if(type.has(m)) {
+                    Component component = type.from(m);
+                    if(component instanceof CraftableComponent) {
+                        CraftableComponent craftableComponent = (CraftableComponent) component;
+                        if(craftableComponent.getType().isTool() || craftableComponent.getType().isDamage()) {
+                            m.getAbilitySeries().onMeleeHit(attacker, target);
+                        }
+                    }
+                }
+            }, () -> {});
         }
     }
 
-    public static void getRawDrop(NonNullList<ItemStack> drops, TileEntity entity, IBlockState state) {
-        if(entity != null && entity instanceof RandoresTileEntity) {
+    public static ItemStack getRawDrop(TileEntity entity, IBlockState state) {
+        if (entity != null && entity instanceof RandoresTileEntity) {
             RandoresItemData data = ((RandoresTileEntity) entity).getData();
-            if(RandoresItemBlock.ITEM_BY_BLOCK.containsKey(state.getBlock())) {
+            if (RandoresItemBlock.ITEM_BY_BLOCK.containsKey(state.getBlock())) {
+                RandoresItemBlock itemBlock = RandoresItemBlock.ITEM_BY_BLOCK.get(state.getBlock());
+                ItemStack stack = new ItemStack(itemBlock);
+                data.applyTo(stack);
+                return stack;
+            }
+        }
+
+        return new ItemStack(state.getBlock());
+    }
+
+    public static void getRawDrop(NonNullList<ItemStack> drops, TileEntity entity, IBlockState state) {
+        if (entity != null && entity instanceof RandoresTileEntity) {
+            RandoresItemData data = ((RandoresTileEntity) entity).getData();
+            if (RandoresItemBlock.ITEM_BY_BLOCK.containsKey(state.getBlock())) {
                 RandoresItemBlock itemBlock = RandoresItemBlock.ITEM_BY_BLOCK.get(state.getBlock());
                 ItemStack stack = new ItemStack(itemBlock);
                 data.applyTo(stack);

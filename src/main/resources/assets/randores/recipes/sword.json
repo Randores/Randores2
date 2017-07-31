@@ -1,0 +1,16 @@
+{
+    "type": "randores:item",
+    "pattern": [
+        " # ",
+        " # ",
+        " S "
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "stickWood"
+        }
+    },
+    "component": "sword",
+    "quantity": 1
+}

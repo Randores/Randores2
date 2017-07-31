@@ -37,11 +37,10 @@ import com.gmail.socraticphoenix.randores.game.crafting.table.CraftiniumRecipeRe
 import com.gmail.socraticphoenix.randores.game.entity.RandoresArrow;
 import com.gmail.socraticphoenix.randores.game.gui.RandoresGuiHandler;
 import com.gmail.socraticphoenix.randores.game.item.RandoresItems;
-import com.gmail.socraticphoenix.randores.game.recipe.RandoresForgeRecipe;
+import com.gmail.socraticphoenix.randores.game.recipe.RandoresCraftiniumSmelt;
 import com.gmail.socraticphoenix.randores.game.tab.RandoresArmorTab;
 import com.gmail.socraticphoenix.randores.game.tab.SimpleTab;
 import com.gmail.socraticphoenix.randores.game.world.RandoresWorldGenerator;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.mod.component.ability.AbilityRegistry;
 import com.gmail.socraticphoenix.randores.mod.component.ability.abilities.PotionEffectAbility;
 import com.gmail.socraticphoenix.randores.mod.component.property.RandoresFuelHandler;
@@ -62,9 +61,6 @@ import com.gmail.socraticphoenix.randores.util.config.RandoresConfig;
 import com.gmail.socraticphoenix.randores.util.config.RandoresJLSC;
 import com.gmail.socraticphoenix.randores.util.config.RandoresModules;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
@@ -195,19 +191,16 @@ public class Randores {
         Randores.offensiveWords.addAll(RandoresResourceManager.getResourceLines("offensive_words.txt"));
         info("Curse words loaded.",
                 "Registering entities and recipes...");
+
         GameRegistry.registerFuelHandler(new RandoresFuelHandler());
         EntityRegistry.registerModEntity(new ResourceLocation("randores:randores_arrow"), RandoresArrow.class, "randores:randores_arrow", 0, this, 20, 1, true);
         GameRegistry.registerTileEntity(CraftiniumForgeTileEntity.class, "craftinium_forge");
         GameRegistry.registerTileEntity(RandoresTileEntity.class, "randores_data");
 
-        MaterialDefinition.CRAFTING_MAPPINGS.put('S', Items.STICK);
-        MaterialDefinition.CRAFTING_MAPPINGS.put('T', Item.getItemFromBlock(Blocks.TORCH));
-        MaterialDefinition.CRAFTING_MAPPINGS.put('R', Items.STRING);
-
         CraftiniumRecipeRegistry.register(new CraftiniumDelegateRecipe());
 
         CraftiniumSmeltRegistry.register(new CraftiniumDelegateSmelt());
-        CraftiniumSmeltRegistry.register(new RandoresForgeRecipe());
+        CraftiniumSmeltRegistry.register(new RandoresCraftiniumSmelt());
 
         info("Registered entities and recipes.",
                 "Initializing network...");

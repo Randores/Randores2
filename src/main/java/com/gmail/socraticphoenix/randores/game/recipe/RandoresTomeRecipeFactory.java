@@ -1,8 +1,8 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 socraticphoenix@gmail.com
- * Copyright (c) 2016 contributors
+ * Copyright (c) 2017 socraticphoenix@gmail.com
+ * Copyright (c) 2017 contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,32 +19,19 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.randores.game.crafting;
+package com.gmail.socraticphoenix.randores.game.recipe;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
+import com.google.gson.JsonObject;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.IRecipeFactory;
+import net.minecraftforge.common.crafting.JsonContext;
 
-import java.util.Random;
-
-public class CraftiniumOre extends Block {
-
-    public CraftiniumOre() {
-        super(Material.ROCK);
-        this.setSoundType(SoundType.STONE).setHardness(3.0F).setResistance(5.0F).setUnlocalizedName("craftinium_ore");
-        this.setHarvestLevel("pickaxe", 2);
-    }
+public class RandoresTomeRecipeFactory implements IRecipeFactory {
 
     @Override
-    public int quantityDropped(Random random) {
-        return 8;
-    }
-
-    @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return CraftingItems.craftiniumLump;
+    public IRecipe parse(JsonContext context, JsonObject json) {
+        return new RandoresTomeRecipe(CraftingHelper.getIngredient(json.get("book"), context));
     }
 
 }

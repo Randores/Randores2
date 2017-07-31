@@ -32,7 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class RandoresForgeRecipe implements CraftiniumSmelt {
+public class RandoresCraftiniumSmelt implements CraftiniumSmelt {
 
     @Override
     public boolean matches(ItemStack in, World worldIn, BlockPos forge) {

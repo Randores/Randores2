@@ -55,7 +55,10 @@ public class RandoresWorldGenerator implements IWorldGenerator {
         if (!world.isRemote) {
             long seed = RandoresSeed.getSeed(world);
             List<MaterialDefinition> assoc = MaterialDefinitionRegistry.getAll(seed);
-            int count = Randores.getConfigObj().getModules().isYoutubeMode() ? 70 : 50;
+            int count = 100;
+            if(Randores.getConfigObj().getModules().isYoutubeMode()) {
+                count *= 2;
+            }
             for (int i = 0; i < count; i++) {
                 MaterialDefinition definition = assoc.get(random.nextInt(assoc.size()));
                 if((Randores.getConfigObj().getModules().isDimensionLess() || definition.getOre().getDimension().getId() == world.provider.getDimension())) {
@@ -65,7 +68,7 @@ public class RandoresWorldGenerator implements IWorldGenerator {
             }
 
             if(Randores.getConfigObj().getModules().isDimensionLess() || Dimension.OVERWORLD.getId() == world.provider.getDimension()) {
-                this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, 2, world.getHeight(), 0, 25, 5, Dimension.OVERWORLD.getGenerateIn());
+                this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, 2, world.getHeight(), 0, 100, 50, Dimension.OVERWORLD.getGenerateIn());
             }
         }
     }
@@ -172,7 +175,7 @@ public class RandoresWorldGenerator implements IWorldGenerator {
                                         if (worldIn.setBlockState(blockpos, oreBlock, 2)) {
                                             TileEntity entity = worldIn.getTileEntity(blockpos);
                                             if (entity != null && entity instanceof RandoresTileEntity) {
-                                                ((RandoresTileEntity) entity).setData(data);
+                                                ((RandoresTileEntity) entity).setDataUnsafe(data.getIndex(), data.getSeed());
                                             }
                                         }
                                     }

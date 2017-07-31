@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ScheduleListener {
-    private static Map<Runnable, Integer> tasks = new IdentityHashMap<Runnable, Integer>();
+    private static Map<Runnable, Integer> tasks = new IdentityHashMap<>();
 
     public static void schedule(Runnable runnable, int delay) {
         ScheduleListener.tasks.put(runnable, delay);
@@ -39,7 +39,7 @@ public class ScheduleListener {
 
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent ev) {
-        List<Runnable> queued = new ArrayList<Runnable>();
+        List<Runnable> queued = new ArrayList<>();
         Iterator<Map.Entry<Runnable, Integer>> iterator = tasks.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Runnable, Integer> entry = iterator.next();

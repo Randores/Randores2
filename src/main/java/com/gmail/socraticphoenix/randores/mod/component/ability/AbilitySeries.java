@@ -79,12 +79,7 @@ public class AbilitySeries {
             AbilityContext context = new AbilityContext(source, entity, AbilityType.ARMOR_ACTIVE);
             first.apply(source.getPositionVector(), entity, context);
             if (1 < this.armorActive.size()) {
-                RunNextAbility nextAbility = new RunNextAbility(this.armorActive, 1, entity, context, new Supplier<Vec3d>() {
-                    @Override
-                    public Vec3d get() {
-                        return source.getPositionVector();
-                    }
-                });
+                RunNextAbility nextAbility = new RunNextAbility(this.armorActive, 1, entity, context, source::getPositionVector);
                 ScheduleListener.schedule(nextAbility, first.delayAfter());
             }
         }
@@ -96,12 +91,7 @@ public class AbilitySeries {
             AbilityContext context = new AbilityContext(attacker, target, AbilityType.PROJECTILE);
             first.apply(target.getPositionVector(), attacker, context);
             if (1 < this.projectile.size()) {
-                RunNextAbility nextAbility = new RunNextAbility(this.projectile, 1, attacker, context, new Supplier<Vec3d>() {
-                    @Override
-                    public Vec3d get() {
-                        return target.getPositionVector();
-                    }
-                });
+                RunNextAbility nextAbility = new RunNextAbility(this.projectile, 1, attacker, context, target::getPositionVector);
                 ScheduleListener.schedule(nextAbility, first.delayAfter());
             }
         }
@@ -113,12 +103,7 @@ public class AbilitySeries {
             AbilityContext context = new AbilityContext(attacker, null, AbilityType.PROJECTILE);
             first.apply(location, attacker, context);
             if (1 < this.projectile.size()) {
-                RunNextAbility nextAbility = new RunNextAbility(this.projectile, 1, attacker, context, new Supplier<Vec3d>() {
-                    @Override
-                    public Vec3d get() {
-                        return location;
-                    }
-                });
+                RunNextAbility nextAbility = new RunNextAbility(this.projectile, 1, attacker, context, () -> location);
                 ScheduleListener.schedule(nextAbility, first.delayAfter());
             }
         }
@@ -130,12 +115,7 @@ public class AbilitySeries {
             AbilityContext context = new AbilityContext(attacker, target, AbilityType.MELEE);
             first.apply(target.getPositionVector(), attacker, context);
             if (1 < this.melee.size()) {
-                RunNextAbility nextAbility = new RunNextAbility(this.melee, 1, attacker, context, new Supplier<Vec3d>() {
-                    @Override
-                    public Vec3d get() {
-                        return target.getPositionVector();
-                    }
-                });
+                RunNextAbility nextAbility = new RunNextAbility(this.melee, 1, attacker, context, target::getPositionVector);
                 ScheduleListener.schedule(nextAbility, first.delayAfter());
             }
         }
@@ -181,12 +161,16 @@ public class AbilitySeries {
         @Override
         public void run() {
             Ability ability = this.abilities.get(this.index);
-            ability.apply(this.location.get(), this.activator, this.context);
+            boolean flag = ability.apply(this.location.get(), this.activator, this.context);
 
             int next = this.index + 1;
-            if (next < abilities.size()) {
+            if (next < abilities.size() && flag) {
                 RunNextAbility nextAbility = new RunNextAbility(this.abilities, next, this.activator, this.context, this.location);
-                ScheduleListener.schedule(nextAbility, ability.delayAfter());
+                if(abilities.get(next).delayAfter() == 0) {
+                    nextAbility.run();
+                } else {
+                    ScheduleListener.schedule(nextAbility, ability.delayAfter());
+                }
             }
         }
 

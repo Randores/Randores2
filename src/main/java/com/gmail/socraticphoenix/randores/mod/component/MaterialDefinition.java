@@ -25,6 +25,8 @@ import com.gmail.socraticphoenix.jlsc.serialization.annotation.Name;
 import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serializable;
 import com.gmail.socraticphoenix.jlsc.serialization.annotation.SerializationConstructor;
 import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
+import com.gmail.socraticphoenix.randores.game.recipe.RandoresItemRecipe;
+import com.gmail.socraticphoenix.randores.game.recipe.RandoresRecipeFactory;
 import com.gmail.socraticphoenix.randores.game.tome.TomeGui;
 import com.gmail.socraticphoenix.randores.mod.component.ability.Ability;
 import com.gmail.socraticphoenix.randores.mod.component.ability.AbilitySeries;
@@ -55,7 +57,6 @@ import java.util.Map;
 
 @Serializable
 public class MaterialDefinition {
-    public static final Map<Character, Item> CRAFTING_MAPPINGS = new HashMap<>();
 
     @Serialize(value = "color", reflect = false)
     private Color color;
@@ -204,7 +205,6 @@ public class MaterialDefinition {
         return new RandoresItemData(this.getIndex(), this.getSeed());
     }
 
-    @SideOnly(Side.CLIENT)
     public List<TomeGui.Element> buildPages() {
         List<TomeGui.Element> pages = new ArrayList<TomeGui.Element>();
         String title = TextFormatting.DARK_AQUA + I18n.format(Keys.TOME).replace("${name}", this.getName()) + TextFormatting.RESET;
@@ -244,25 +244,31 @@ public class MaterialDefinition {
         pages.add(new TomeGui.FurnaceElement(title + "\n" + TextFormatting.DARK_GREEN + this.formatLocalName(this.material), new ItemStack(Items.STICK), this.ore.createStack(this.getData()), this.material.createStack(this.getData()), Keys.OBTAINING));
         for (CraftableComponent component : this.craftables) {
             ItemStack[][] recipe = new ItemStack[3][3];
-            String[] template = component.getType().getRecipe();
-            for (int i = 0; i < template.length; i++) {
-                String row = template[i];
-                for (int j = 0; j < row.length(); j++) {
-                    char c = row.charAt(j);
-                    ItemStack stack = null;
-                    if (c == 'X') {
-                        stack = this.material.createStack(this.getData());
-                    } else if (CRAFTING_MAPPINGS.containsKey(c)) {
-                        stack = new ItemStack(CRAFTING_MAPPINGS.get(c));
-                    }
-                    if (stack != null) {
-                        recipe[i][j] = stack;
+            RandoresItemRecipe itemRecipe = RandoresRecipeFactory.RECIPES.get(component.getType());
+            if(itemRecipe != null) {
+                char[][] grid = itemRecipe.getGrid();
+                for (int y = 0; y < grid.length; y++) {
+                    char[] row = grid[y];
+                    for (int x = 0; x < row.length; x++) {
+                        ItemStack stack = null;
+                        char c = row[x];
+                        if(c == '#') {
+                            stack = this.material.createStack(this.getData());
+                        } else if (itemRecipe.getMappings().containsKey(c)) {
+                            ItemStack[] matching = itemRecipe.getMappings().get(c).getMatchingStacks();
+                            if(matching.length > 0) {
+                                stack = matching[0];
+                            }
+                        }
+
+                        recipe[y][x] = stack;
                     }
                 }
-            }
 
-            ItemStack result = component.createStack(this.getData());
-            pages.add(new TomeGui.CraftingElement(title + "\n" + TextFormatting.DARK_GREEN + this.formatLocalName(component), recipe, result, Keys.RECIPES));
+                ItemStack result = component.createStack(this.getData());
+                result.setCount(itemRecipe.getQuantity());
+                pages.add(new TomeGui.CraftingElement(title + "\n" + TextFormatting.DARK_GREEN + this.formatLocalName(component), recipe, result, Keys.RECIPES));
+            }
         }
 
         if (this.hasProperty(Properties.FLAMMABLE)) {

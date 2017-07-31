@@ -33,7 +33,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraftforge.common.util.EnumHelper;
 
 public interface IRandoresItem {
-    ItemArmor.ArmorMaterial ARMOR_DEFAULT = EnumHelper.addArmorMaterial("randores_armor", "randores:armor", 100, new int[]{1, 1, 1, 1}, 1, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.5f);
+    ItemArmor.ArmorMaterial ARMOR_DEFAULT = EnumHelper.addArmorMaterial("randores_armor", "randores:armor", 100, new int[]{0, 0, 0, 0}, 1, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0f);
     ItemTool.ToolMaterial TOOL_DEFAULT = EnumHelper.addToolMaterial("MATERIAL_DEFAULT", 1, 100, 1, 1, 1);
 
     ComponentType type();

@@ -26,13 +26,18 @@ import com.gmail.socraticphoenix.randores.game.item.RandoresMaterial;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
 import javax.annotation.Nullable;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class RandoresTomeRecipe implements IRecipe {
+    private Ingredient book;
+
+    public RandoresTomeRecipe(Ingredient book) {
+        this.book = book;
+    }
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
@@ -41,7 +46,7 @@ public class RandoresTomeRecipe implements IRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem() instanceof ItemBook) {
+                if (this.book.apply(stack)) {
                     if (book) {
                         return false;
                     } else {

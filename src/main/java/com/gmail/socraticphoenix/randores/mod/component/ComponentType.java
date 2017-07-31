@@ -24,7 +24,7 @@ package com.gmail.socraticphoenix.randores.mod.component;
 public class ComponentType {
     private static ComponentType[] craftable;
     private static ComponentType oreType = new ComponentType(null, true);
-    private static ComponentType materialType = new ComponentType(null, true);
+    private static ComponentType materialType = new ComponentType(null, false);
 
     static {
         CraftableType[] values = CraftableType.values();

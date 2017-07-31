@@ -31,24 +31,23 @@ public enum CraftableType {
      * T = Torch
      * R = stRing
      */
-    AXE(Keys.AXE, false, true, true, false, true, true, "XX", "SX", "S "),
-    HOE(Keys.HOE, false, true, true, false, true, false, "XX", "S ", "S "),
-    PICKAXE(Keys.PICKAXE, false, true, true, false, true, true, "XXX", " S ", " S "),
-    SHOVEL(Keys.SHOVEL, false, true, true, false, true, true, "X", "S", "S"),
-    SWORD(Keys.SWORD, false, true, true, false, true, false, "X", "X", "S"),
-    STICK(Keys.STICK, false, false, false, false, false, false, "X ", "X "),
-    BOOTS(Keys.BOOTS, false, true, true, true, true, false, "X X", "X X"),
-    CHESTPLATE(Keys.CHESTPLATE, false, true, true, true, true, false, "X X", "XXX", "XXX"),
-    HELMET(Keys.HELMET, false, true, true, true, true, false, "XXX", "X X"),
-    LEGGINGS(Keys.LEGGINGS, false, true, true, true, true, false, "XXX", "X X", "X X"),
-    BATTLEAXE(Keys.BATTLEAXE, false, true, true, false, true, true, "XXX", "XSX", " S "),
-    SLEDGEHAMMER(Keys.SLEDGEHAMMER, false, true, true, false, true, false, " XX", " SX", "S  "),
-    BOW(Keys.BOW, false, true, true, false, false, false, " XR", "S R", " XR"),
-    BRICKS(Keys.BRICKS, true, false, false, false, false, false, "XX", "XX"),
-    TORCH(Keys.TORCH, true, false, false, false, false, false, " X ", "XTX", " X ");
+    AXE(Keys.AXE, false, true, true, false, true, true),
+    HOE(Keys.HOE, false, true, true, false, true, false),
+    PICKAXE(Keys.PICKAXE, false, true, true, false, true, true),
+    SHOVEL(Keys.SHOVEL, false, true, true, false, true, true),
+    SWORD(Keys.SWORD, false, true, true, false, true, false),
+    STICK(Keys.STICK, false, false, false, false, false, false),
+    BOOTS(Keys.BOOTS, false, true, true, true, false, false),
+    CHESTPLATE(Keys.CHESTPLATE, false, true, true, true, false, false),
+    HELMET(Keys.HELMET, false, true, true, true, false, false),
+    LEGGINGS(Keys.LEGGINGS, false, true, true, true, false, false),
+    BATTLEAXE(Keys.BATTLEAXE, false, true, true, false, true, true),
+    SLEDGEHAMMER(Keys.SLEDGEHAMMER, false, true, true, false, true, false),
+    BOW(Keys.BOW, false, true, true, false, false, false),
+    BRICKS(Keys.BRICKS, true, false, false, false, false, false),
+    TORCH(Keys.TORCH, true, false, false, false, false, false);
 
     private String name;
-    private String[] recipe;
 
     private boolean block;
     private boolean enchant;
@@ -57,8 +56,7 @@ public enum CraftableType {
     private boolean damage;
     private boolean tool;
 
-    CraftableType(String name, boolean block, boolean enchant, boolean durable, boolean armor, boolean damage, boolean tool, String... recipe) {
-        this.recipe = recipe;
+    CraftableType(String name, boolean block, boolean enchant, boolean durable, boolean armor, boolean damage, boolean tool) {
         this.name = name;
         this.enchant = enchant;
         this.durable = durable;
@@ -98,10 +96,6 @@ public enum CraftableType {
 
     public String getLocalName() {
         return I18n.format(this.getName());
-    }
-
-    public String[] getRecipe() {
-        return this.recipe;
     }
 
 }

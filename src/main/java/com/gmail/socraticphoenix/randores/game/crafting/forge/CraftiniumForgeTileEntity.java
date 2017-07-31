@@ -228,14 +228,14 @@ public class CraftiniumForgeTileEntity extends TileEntity implements ITickable {
             CraftiniumSmelt rec = CraftiniumSmeltRegistry.findMatching(this.input.getStackInSlot(0), this.world, this.pos);
             if (rec != null) {
                 ItemStack output = rec.result(this.input.getStackInSlot(0), this.world, this.pos);
-                output = new ItemStack(output.getItem(), rec.maxResult(this.input.getStackInSlot(0), this.world, this.pos));
+                output.setCount(rec.maxResult(this.input.getStackInSlot(0), this.world, this.pos));
                 if (output.isEmpty()) {
                     return false;
                 } else {
                     ItemStack currentResult = this.output.getStackInSlot(0);
                     if (currentResult.isEmpty()) {
                         return true;
-                    } else if (!currentResult.getItem().equals(output.getItem())) {
+                    } else if (!ItemStack.areItemsEqual(output, currentResult) || !ItemStack.areItemStackTagsEqual(output, currentResult)) {
                         return false;
                     } else {
                         int result = currentResult.getCount() + output.getCount();

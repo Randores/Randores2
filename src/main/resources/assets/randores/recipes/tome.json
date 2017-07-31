@@ -1,0 +1,6 @@
+{
+    "type": "randores:tome",
+    "book": {
+        "item": "minecraft:book"
+    }
+}

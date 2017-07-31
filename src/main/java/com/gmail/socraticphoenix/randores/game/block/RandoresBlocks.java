@@ -23,17 +23,18 @@ package com.gmail.socraticphoenix.randores.game.block;
 
 import com.gmail.socraticphoenix.randores.game.item.RandoresItemBlock;
 import com.gmail.socraticphoenix.randores.game.tab.RandoresTab;
-import com.gmail.socraticphoenix.randores.translations.Keys;
 import com.gmail.socraticphoenix.randores.mod.component.ComponentType;
 import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
 import com.gmail.socraticphoenix.randores.mod.component.Dimension;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialType;
+import com.gmail.socraticphoenix.randores.translations.Keys;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
@@ -133,6 +134,7 @@ public class RandoresBlocks {
         for(Item item : blockItems) {
             registry.register(item);
         }
+        OreDictionary.registerOre("torch", RandoresBlocks.torchItem);
     }
 
     public static void registerBlocks(IForgeRegistry<Block> registry) {

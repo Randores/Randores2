@@ -1,0 +1,9 @@
+{
+    "type": "randores:item",
+    "pattern": [
+        "# ",
+        " #"
+    ],
+    "component": "stick",
+    "quantity": 2
+}

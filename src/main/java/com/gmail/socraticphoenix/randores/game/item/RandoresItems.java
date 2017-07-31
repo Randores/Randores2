@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
@@ -139,6 +140,7 @@ public class RandoresItems {
         for(Item item : items) {
             registry.register(item);
         }
+        OreDictionary.registerOre("stickWood", RandoresItems.stick);
     }
 
     public static void registerModels() {

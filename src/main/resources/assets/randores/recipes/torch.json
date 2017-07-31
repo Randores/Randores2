@@ -1,0 +1,16 @@
+{
+    "type": "randores:item",
+    "pattern": [
+        " # ",
+        "#T#",
+        " # "
+    ],
+    "key": {
+        "T": {
+            "type": "forge:ore_dict",
+            "ore": "torch"
+        }
+    },
+    "component": "torch",
+    "quantity": 4
+}

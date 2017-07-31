@@ -1,0 +1,10 @@
+{
+    "type": "randores:item",
+    "pattern": [
+        "# #",
+        "###",
+        "###"
+    ],
+    "component": "chestplate",
+    "quantity": 1
+}

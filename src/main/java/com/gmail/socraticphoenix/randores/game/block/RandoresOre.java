@@ -36,11 +36,14 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -68,6 +71,16 @@ public class RandoresOre extends RandoresBlock implements IRandoresItem {
     public MaterialType getMaterialType() {
         return this.materialType;
     }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        ItemStack stack = placer.getHeldItem(hand);
+        if(RandoresItemData.hasData(stack)) {
+            return MaterialDefinitionRegistry.delegate(new RandoresItemData(stack), def -> this.getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, def.getOre().getHarvestLevel()), () -> this.getDefaultState());
+        }
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
+    }
+
 
     @Override
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {

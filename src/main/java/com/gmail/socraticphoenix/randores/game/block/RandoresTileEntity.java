@@ -83,6 +83,10 @@ public class RandoresTileEntity extends TileEntity {
         this.markDirty();
     }
 
+    public void setDataUnsafe(int index, long seed) {
+        this.data.set(index, seed);
+    }
+
     public int getIndex() {
         return this.data.getIndex();
     }

@@ -23,13 +23,14 @@ package com.gmail.socraticphoenix.randores.mod.component.ability;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class AbilityRegistry {
-    private static Map<AbilityType, Map<AbilityStage, List<Ability>>> abilities = new HashMap<AbilityType, Map<AbilityStage, List<Ability>>>();
-    private static AbilityStage[] stages = {AbilityStage.FIRST, AbilityStage.MIDDLE, AbilityStage.LAST};
+    private static Map<AbilityType, Map<AbilityStage, List<Ability>>> abilities = new HashMap<>();
 
     public static void register(Ability ability) {
         for (AbilityType type : AbilityType.values()) {
@@ -67,10 +68,10 @@ public class AbilityRegistry {
     }
 
     public static AbilitySeries buildSeries(Random random) {
-        List<Ability> armorPassive = new ArrayList<Ability>();
-        List<Ability> armorUpdate = new ArrayList<Ability>();
-        List<Ability> melee = new ArrayList<Ability>();
-        List<Ability> projectile = new ArrayList<Ability>();
+        Set<Ability> armorPassive = new LinkedHashSet<>();
+        Set<Ability> armorUpdate = new LinkedHashSet<>();
+        Set<Ability> melee = new LinkedHashSet<>();
+        Set<Ability> projectile = new LinkedHashSet<>();
 
         if (random.nextBoolean() && contains(AbilityType.ARMOR_PASSIVE, AbilityStage.FIRST))
             armorPassive.add(randomSelect(AbilityType.ARMOR_PASSIVE, AbilityStage.FIRST, random));
@@ -95,7 +96,13 @@ public class AbilityRegistry {
         if (random.nextBoolean() && contains(AbilityType.PROJECTILE, AbilityStage.LAST))
             projectile.add(randomSelect(AbilityType.PROJECTILE, AbilityStage.LAST, random));
 
-        return new AbilitySeries(armorPassive, armorUpdate, melee, projectile);
+        return new AbilitySeries(list(armorPassive), list(armorUpdate), list(melee), list(projectile));
+    }
+
+    public static <T> List<T> list(Set<T> set) {
+        List<T> list = new ArrayList<>();
+        list.addAll(set);
+        return list;
     }
 
     public static Ability randomSelect(AbilityType type, AbilityStage stage, Random random) {
@@ -105,7 +112,7 @@ public class AbilityRegistry {
     }
 
     public static List<Ability> randomSelect(AbilityType type, AbilityStage stage, Random random, int size) {
-        List<Ability> abilities = new ArrayList<Ability>();
+        List<Ability> abilities = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             int s = AbilityRegistry.size(type, stage);
             if (s != 0) {

@@ -36,9 +36,6 @@ import com.gmail.socraticphoenix.randores.mod.component.property.properties.Flam
 import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
 import com.gmail.socraticphoenix.randores.util.probability.RandomNumberBuilder;
 import com.gmail.socraticphoenix.randores.util.probability.RandoresProbability;
-import com.google.common.base.Function;
-import javax.annotation.Nullable;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
@@ -171,7 +168,7 @@ public class MaterialDefinitionGenerator {
     }
 
     public static List<MaterialDefinition> makeDefinitions(Set<Color> colors, long seed) {
-        List<MaterialDefinition> definitions = new ArrayList<MaterialDefinition>();
+        List<MaterialDefinition> definitions = new ArrayList<>();
         int c = 0;
         for (Color color : colors) {
             Random random = new Random(color.getRGB());
@@ -179,61 +176,25 @@ public class MaterialDefinitionGenerator {
             b.expRand("material", 2.5, 0, MaterialType.values().length)
                     .rand("dimension", Dimension.values().length)
                     .oneSidedInflectedNormalRand("uses", 20, 6000, 2000)
-                    .op(new Function<Number, Number>() {
-                        @Nullable
-                        @Override
-                        public Number apply(@Nullable Number input) {
-                            return input.intValue() - input.intValue() % 10;
-                        }
-                    })
+                    .op(input -> input.intValue() - input.intValue() % 10)
                     .inflectedNormalRand("commonality", 10, 70, 40, 25)
                     .copy("commonality", "commonalityInt")
-                    .op(new Function<Number, Number>() {
-                        @Nullable
-                        @Override
-                        public Number apply(@Nullable Number input) {
-                            return input.intValue();
-                        }
-                    })
+                    .op(Number::intValue)
                     .copy("commonality", "rarity")
-                    .op(new Function<Number, Number>() {
-                        @Nullable
-                        @Override
-                        public Number apply(@Nullable Number input) {
-                            return 80 - input.doubleValue();
-                        }
-                    })
+                    .op(input -> 80 - input.doubleValue())
                     .copy("commonalityInt", "rarityInt")
-                    .op(new Function<Number, Number>() {
-                        @Nullable
-                        @Override
-                        public Number apply(@Nullable Number input) {
-                            return 80 - input.intValue();
-                        }
-                    })
+                    .op(input -> 80 - input.intValue())
                     .oneSidedInflectedNormalRand("efficiencyVar", 0, 10, 2)
                     .oneSidedInflectedNormalRand("damageVar", 0, 10, 3)
                     .oneSidedInflectedNormalRand("enchantVar", 0, 20, 5)
                     .rand("toughness", 3)
                     .oneSidedInflectedNormalRand("maxYVar", 20, 100, 20)
                     .expRand("minYVar", 2, 0, b.getDouble("commonality"))
-                    .op(new Function<Number, Number>() {
-                        @Nullable
-                        @Override
-                        public Number apply(@Nullable Number input) {
-                            return Math.floor(input.doubleValue());
-                        }
-                    })
+                    .op(input -> Math.floor(input.doubleValue()))
                     .put("maxOccurrences", b.getInt("commonalityInt") / 20 + 1)
                     .rand("occurrencesVar", b.getInt("maxOccurrences"))
                     .oneSidedInflectedNormalRand("maxDrops", 1, 6, 3)
-                    .op(new Function<Number, Number>() {
-                        @Nullable
-                        @Override
-                        public Number apply(@Nullable Number input) {
-                            return Math.floor(input.doubleValue());
-                        }
-                    })
+                    .op(input -> Math.floor(input.doubleValue()))
                     .oneSidedInflectedNormalRand("minDrops", 0, b.getInt("maxDrops"), 1)
                     .clamp(1, b.getInt("maxDrops"))
                     .put("maxVein", (int) (b.getDouble("commonality") / 8) + 2)
@@ -251,8 +212,8 @@ public class MaterialDefinitionGenerator {
                     .percentChance("battleaxe", 30)
                     .percentChance("sledgehammer", 30)
                     .randLong("abilitySeed")
-                    .rand("oreHarvest", Blocks.DIAMOND_ORE.getHarvestLevel(Blocks.DIAMOND_ORE.getDefaultState()))
-                    .clamp(1, Blocks.DIAMOND_ORE.getHarvestLevel(Blocks.DIAMOND_ORE.getDefaultState()))
+                    .rand("oreHarvest", 3)
+                    .op(i -> i.intValue() + 1)
             ;
 
             MaterialType type = MaterialType.values()[b.getInt("material")];
@@ -270,8 +231,8 @@ public class MaterialDefinitionGenerator {
                     b.getInt("uses"),
                     (int) (rarity / 6 + b.getDouble("efficiencyVar")),
                     (int) (rarity / 13 + b.getDouble("damageVar")),
-                    (int) (rarity / 3 + b.getDouble("enchantVar")),
-                    b.getInt("toughness"));
+                    b.getInt("toughness"),
+                    (int) (rarity / 3 + b.getDouble("enchantVar")));
 
             Dimension dimension = Dimension.values()[b.getInt("dimension")];
             OreComponent ore = new OreComponent(material,

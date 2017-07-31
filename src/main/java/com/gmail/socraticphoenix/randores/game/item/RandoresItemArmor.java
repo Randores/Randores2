@@ -102,7 +102,8 @@ public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRand
 
     @Override
     public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
-        return this.delegate(armor, i -> i.damageReduceAmount, () -> 0);
+        //return this.delegate(armor, i -> i.damageReduceAmount, () -> 0);
+        return 0; //TODO update when bug is fixed
     }
 
     @Override

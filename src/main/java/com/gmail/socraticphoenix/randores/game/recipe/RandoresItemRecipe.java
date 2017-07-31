@@ -22,32 +22,53 @@
 package com.gmail.socraticphoenix.randores.game.recipe;
 
 import com.gmail.socraticphoenix.randores.game.item.RandoresMaterial;
-import com.gmail.socraticphoenix.randores.mod.component.CraftableComponent;
+import com.gmail.socraticphoenix.randores.mod.component.Component;
+import com.gmail.socraticphoenix.randores.mod.component.ComponentType;
+import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
 import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
 import javax.annotation.Nullable;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreIngredient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class RandoresItemRecipe implements IRecipe {
-    private Map<Character, Ingredient> mappings = new HashMap<Character, Ingredient>() {{
-        put('S', new OreIngredient("stickWood"));
-        put('T', new OreIngredient("torch"));
-        put('R', new OreIngredient("string"));
-    }};
+    private Map<Character, Ingredient> mappings;
+    private ComponentType type;
+    private char[][] grid;
+    private int quantity;
+
+    public RandoresItemRecipe(Map<Character, Ingredient> mappings, CraftableType type, char[][] grid, int quantity) {
+        this.mappings = mappings;
+        this.type = ComponentType.craftable(type);
+        this.grid = reduceBlank(grid);
+        this.quantity = quantity;
+    }
+
+    public Map<Character, Ingredient> getMappings() {
+        return this.mappings;
+    }
+
+    public ComponentType getType() {
+        return this.type;
+    }
+
+    public char[][] getGrid() {
+        return this.grid;
+    }
+
+    public int getQuantity() {
+        return this.quantity;
+    }
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
@@ -57,17 +78,15 @@ public class RandoresItemRecipe implements IRecipe {
             if (MaterialDefinitionRegistry.contains(data)) {
                 List<ItemStack[][]> invAdjusted = extractReduceMirror(inv);
                 MaterialDefinition definition = MaterialDefinitionRegistry.get(data);
-                for (CraftableComponent craftable : definition.getCraftables()) {
-                    char[][] grid = genGrid(craftable.getType().getRecipe());
-                    for(ItemStack[][] invView : invAdjusted) {
-                        if(matches(grid, invView, definition)) {
+                if (this.type.has(definition)) {
+                    for (ItemStack[][] invView : invAdjusted) {
+                        if (matches(grid, invView, definition)) {
                             return true;
                         }
                     }
                 }
             }
         }
-
         return false;
     }
 
@@ -77,18 +96,11 @@ public class RandoresItemRecipe implements IRecipe {
         if (itemDataOptional.isPresent()) {
             RandoresItemData data = itemDataOptional.get();
             if (MaterialDefinitionRegistry.contains(data)) {
-                List<ItemStack[][]> invAdjusted = extractReduceMirror(inv);
                 MaterialDefinition definition = MaterialDefinitionRegistry.get(data);
-                for (CraftableComponent craftable : definition.getCraftables()) {
-                    char[][] grid = genGrid(craftable.getType().getRecipe());
-                    for(ItemStack[][] invView : invAdjusted) {
-                        if(matches(grid, invView, definition)) {
-                            ItemStack stack = craftable.createStack(data);
-                            stack.setCount(craftable.quantity());
-                            return stack;
-                        }
-                    }
-                }
+                Component component = this.type.from(definition);
+                ItemStack res = definition.createStack(component);
+                res.setCount(this.quantity);
+                return res;
             }
         }
 
@@ -138,23 +150,20 @@ public class RandoresItemRecipe implements IRecipe {
             for (int x = 0; x < grid[y].length; x++) {
                 char c = grid[y][x];
                 ItemStack stack = inv[y][x];
-                if (c == ' ' && (stack == null || stack.isEmpty())) {
-                    return false;
-                } else if (c == 'X') {
+                if (c == ' ') {
+                    if (stack != null && !stack.isEmpty()) {
+                        return false;
+                    }
+                } else if (c == '#') {
                     if (!(stack.getItem() instanceof RandoresMaterial) || !RandoresItemData.hasData(stack) || !new RandoresItemData(stack).equals(definition.getData())) {
                         return false;
                     }
                 } else {
-                    Item target = MaterialDefinition.CRAFTING_MAPPINGS.get(c);
+                    Ingredient target = this.mappings.get(c);
                     if (target == null) {
                         return false;
-                    } else if (target == stack.getItem()) {
-                        return true;
-                    } else {
-                        Ingredient ingredient = this.mappings.get(c);
-                        if (!ingredient.apply(stack)) {
-                            return false;
-                        }
+                    } else if (!target.apply(stack)) {
+                        return false;
                     }
                 }
             }
@@ -168,7 +177,8 @@ public class RandoresItemRecipe implements IRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (RandoresItemData.hasData(stack) && stack.getItem() instanceof RandoresMaterial) {
-                if (data != null) {
+                RandoresItemData stackData = new RandoresItemData(stack);
+                if (data != null && !data.equals(stackData)) {
                     return Optional.empty();
                 }
                 data = new RandoresItemData(stack);
@@ -179,20 +189,12 @@ public class RandoresItemRecipe implements IRecipe {
 
     public List<ItemStack[][]> extractReduceMirror(InventoryCrafting inv) {
         ItemStack[][] grid = new ItemStack[inv.getHeight()][inv.getWidth()];
-        for (int y = 0; y < grid.length; y++) {
-            for (int x = 0; x < grid[y].length; x++) {
-                grid[y][x] = inv.getStackInRowAndColumn(y, x);
+        for (int y = 0; y < inv.getHeight(); y++) {
+            for (int x = 0; x < inv.getWidth(); x++) {
+                grid[y][x] = inv.getStackInRowAndColumn(x, y);
             }
         }
         return mirror(reduceBlank(grid));
-    }
-
-    public char[][] genGrid(String[] recipe) {
-        char[][] grid = new char[recipe.length][];
-        for (int i = 0; i < recipe.length; i++) {
-            grid[i] = recipe[i].toCharArray();
-        }
-        return grid;
     }
 
     public List<ItemStack[][]> mirror(ItemStack[][] reduced) {
@@ -225,48 +227,128 @@ public class RandoresItemRecipe implements IRecipe {
     }
 
     public int[] getSize(ItemStack[][] inv) {
+        int widthK = inv[0].length;
+        int heightK = inv.length;
+
         int width = inv[0].length;
         int height = inv.length;
         int widthOff = 0;
         int heightOff = 0;
 
-        boolean full = false;
-        for (int y = 0; y < inv.length; y++) {
-            boolean empty = true;
-            for (int x = 0; x < inv[0].length; x++) {
-                if (inv[y][x] != null && !inv[y][x].isEmpty()) {
-                    empty = false;
-                    full = true;
-                    break;
+        top:
+        for (int y = 0; y < heightK; y++) {
+            for (int x = 0; x < widthK; x++) {
+                ItemStack stack = inv[y][x];
+                if (stack != null && !stack.isEmpty()) {
+                    break top;
                 }
             }
+            height--;
+            heightOff++;
+        }
 
-            if (empty) {
-                height--;
-                if (!full) {
-                    heightOff++;
+        bottom:
+        for (int y = heightK - 1; y >= 0; y--) {
+            for (int x = 0; x < widthK; x++) {
+                ItemStack stack = inv[y][x];
+                if (stack != null && !stack.isEmpty()) {
+                    break bottom;
                 }
+            }
+            height--;
+        }
+
+        left:
+        for (int x = 0; x < widthK; x++) {
+            for (int y = 0; y < heightK; y++) {
+                ItemStack stack = inv[y][x];
+                if (stack != null && !stack.isEmpty()) {
+                    break left;
+                }
+            }
+            width--;
+            widthOff++;
+        }
+
+        right:
+        for (int x = widthK - 1; x >= 0; x--) {
+            for (int y = 0; y < heightK; y++) {
+                ItemStack stack = inv[y][x];
+                if (stack != null && !stack.isEmpty()) {
+                    break right;
+                }
+            }
+            width--;
+        }
+
+        return new int[]{height, width, heightOff, widthOff};
+    }
+
+    public char[][] reduceBlank(char[][] inv) {
+        int[] size = getSize(inv);
+        char[][] res = new char[size[0]][size[1]];
+        for (int y = 0; y < size[0]; y++) {
+            for (int x = 0; x < size[1]; x++) {
+                res[y][x] = inv[y + size[2]][x + size[3]];
             }
         }
 
-        full = false;
-        for (int x = 0; x < inv[0].length; x++) {
-            boolean empty = true;
+        return res;
+    }
 
-            for (int y = 0; y < inv.length; y++) {
-                if (inv[y][x] != null && !inv[y][x].isEmpty()) {
-                    empty = false;
-                    full = true;
-                    break;
+    public int[] getSize(char[][] inv) {
+        int widthK = inv[0].length;
+        int heightK = inv.length;
+
+        int width = inv[0].length;
+        int height = inv.length;
+        int widthOff = 0;
+        int heightOff = 0;
+
+        top:
+        for (int y = 0; y < heightK; y++) {
+            for (int x = 0; x < widthK; x++) {
+                char stack = inv[y][x];
+                if (stack != ' ') {
+                    break top;
                 }
             }
+            height--;
+            heightOff++;
+        }
 
-            if (empty) {
-                width--;
-                if (!full) {
-                    widthOff++;
+        bottom:
+        for (int y = heightK - 1; y >= 0; y--) {
+            for (int x = 0; x < widthK; x++) {
+                char stack = inv[y][x];
+                if (stack != ' ') {
+                    break bottom;
                 }
             }
+            height--;
+        }
+
+        left:
+        for (int x = 0; x < widthK; x++) {
+            for (int y = 0; y < heightK; y++) {
+                char stack = inv[y][x];
+                if (stack != ' ') {
+                    break left;
+                }
+            }
+            width--;
+            widthOff++;
+        }
+
+        right:
+        for (int x = widthK - 1; x >= 0; x--) {
+            for (int y = 0; y < heightK; y++) {
+                char stack = inv[y][x];
+                if (stack != ' ') {
+                    break right;
+                }
+            }
+            width--;
         }
 
         return new int[]{height, width, heightOff, widthOff};

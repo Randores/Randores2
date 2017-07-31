@@ -1,0 +1,9 @@
+{
+    "type": "randores:item",
+    "pattern": [
+        "##",
+        "##"
+    ],
+    "component": "bricks",
+    "quantity": 4
+}

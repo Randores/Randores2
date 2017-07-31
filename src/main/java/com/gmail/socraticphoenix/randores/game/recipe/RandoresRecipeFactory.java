@@ -21,24 +21,72 @@
  */
 package com.gmail.socraticphoenix.randores.game.recipe;
 
+import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IRecipeFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class RandoresRecipeFactory implements IRecipeFactory {
+    public static final Map<CraftableType, RandoresItemRecipe> RECIPES = new HashMap<>();
 
     @Override
     public IRecipe parse(JsonContext context, JsonObject json) {
-        String kind = JsonUtils.getString(json, "kind");
-        if(kind.equals("dynamic")) {
-            return new RandoresItemRecipe();
-        } else if (kind.equals("tome")) {
-            return new RandoresTomeRecipe();
-        } else {
-            return null;
+        JsonArray pattern = JsonUtils.getJsonArray(json, "pattern");
+        List<String> strs = new ArrayList<>();
+        for(JsonElement element : pattern) {
+            strs.add(element.getAsString());
         }
+
+        char[][] grid = new char[strs.size()][];
+        for (int i = 0; i < strs.size(); i++) {
+            grid[i] = strs.get(i).toCharArray();
+        }
+        if(grid.length > 3 || (grid.length > 0 && grid[0].length > 3)) {
+            throw new JsonSyntaxException("Pattern may not be larger than 3x3");
+        }
+
+        Map<Character, Ingredient> ingredientMap = new HashMap<>();
+        if(json.has("key")) {
+            JsonObject keys = JsonUtils.getJsonObject(json, "key");
+            keys.entrySet().forEach(entry -> {
+                String key = entry.getKey();
+                if (key.length() != 1) {
+                    throw new JsonSyntaxException("Keys must be 1 character, was: " + key);
+                } else if (key.equals(" ")) {
+                    throw new JsonSyntaxException("' ' is a reserved key");
+                } else if (key.equals("#")) {
+                    throw new JsonSyntaxException("'#' is a reserved key");
+                }
+
+                Ingredient ingredient = CraftingHelper.getIngredient(entry.getValue(), context);
+                ingredientMap.put(key.charAt(0), ingredient);
+            });
+        }
+
+        String component = JsonUtils.getString(json, "component");
+
+        CraftableType type;
+        try {
+            type = CraftableType.valueOf(component.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new JsonSyntaxException("Unknown component " + component);
+        }
+
+        RandoresItemRecipe recipe = new RandoresItemRecipe(ingredientMap, type, grid, JsonUtils.getInt(json, "quantity"));
+        RECIPES.put(type, recipe);
+        return recipe;
     }
 
 }

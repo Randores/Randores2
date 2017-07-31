@@ -19,7 +19,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.randores.game.recipe.forge;
+package com.gmail.socraticphoenix.randores.game.recipe;
 
 import com.gmail.socraticphoenix.randores.game.crafting.CraftingBlocks;
 import com.gmail.socraticphoenix.randores.game.crafting.forge.CraftiniumForge;
