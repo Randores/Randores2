@@ -38,7 +38,6 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
 
 public class RandoresSledgehammer extends Item implements IRandoresItem {
     private ComponentType type;
@@ -53,7 +52,7 @@ public class RandoresSledgehammer extends Item implements IRandoresItem {
 
 
     public String getItemStackDisplayName(ItemStack stack) {
-        if(RandoresItemData.hasData(stack)) {
+        if (RandoresItemData.hasData(stack)) {
             return MaterialDefinitionRegistry.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type().from(m)), () -> super.getItemStackDisplayName(stack));
         }
         return super.getItemStackDisplayName(stack);
@@ -64,12 +63,8 @@ public class RandoresSledgehammer extends Item implements IRandoresItem {
         return (enchantment instanceof EmpoweredEnchantment || enchantment.type.canEnchantItem(Items.DIAMOND_SWORD)) && !(enchantment instanceof EnchantmentSweepingEdge);
     }
 
-    @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
         stack.damageItem(1, attacker);
-        Vec3d vector = target.getPositionVector().subtract(attacker.getPositionVector()).normalize().scale(2);
-        target.addVelocity(vector.x, 0.5, vector.z);
-        RandoresItemHelper.doEmpowered(stack, target, attacker);
         return true;
     }
 
@@ -77,7 +72,7 @@ public class RandoresSledgehammer extends Item implements IRandoresItem {
     public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
         if (RandoresItemData.hasData(stack)) {
             RandoresItemData data = new RandoresItemData(stack);
-            if(MaterialDefinitionRegistry.contains(data)) {
+            if (MaterialDefinitionRegistry.contains(data)) {
                 MaterialDefinition definition = MaterialDefinitionRegistry.get(data);
                 Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(equipmentSlot, stack);
                 if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {

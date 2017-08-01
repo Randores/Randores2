@@ -195,11 +195,6 @@ public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRand
     }
 
     @Override
-    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        return this.delegate(stack, i -> i.hitEntity(stack, target, attacker), () -> super.hitEntity(stack, target, attacker));
-    }
-
-    @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         return this.delegate(stack, i -> i.onBlockDestroyed(stack, worldIn, state, pos, entityLiving), () -> super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving));
     }

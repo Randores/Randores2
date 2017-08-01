@@ -59,16 +59,18 @@ public class RandoresWorldGenerator implements IWorldGenerator {
             if(Randores.getConfigObj().getModules().isYoutubeMode()) {
                 count *= 2;
             }
-            for (int i = 0; i < count; i++) {
-                MaterialDefinition definition = assoc.get(random.nextInt(assoc.size()));
-                if((Randores.getConfigObj().getModules().isDimensionLess() || definition.getOre().getDimension().getId() == world.provider.getDimension())) {
-                    OreComponent component = definition.getOre();
-                    this.generateOre(component.getBlock().getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, component.getHarvestLevel()), definition.getData(), world, random, chunkX * 16, chunkZ * 16, component.getMaxVein(), component.getMinVein(), component.getMaxY(), component.getMinY(), component.getMaxOccurrences(), component.getMinOccurrences(), component.getDimension().getGenerateIn());
+            if(!assoc.isEmpty()) {
+                for (int i = 0; i < count; i++) {
+                    MaterialDefinition definition = assoc.get(random.nextInt(assoc.size()));
+                    if ((Randores.getConfigObj().getModules().isDimensionLess() || definition.getOre().getDimension().getId() == world.provider.getDimension())) {
+                        OreComponent component = definition.getOre();
+                        this.generateOre(component.getBlock().getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, component.getHarvestLevel()), definition.getData(), world, random, chunkX * 16, chunkZ * 16, component.getMaxVein(), component.getMinVein(), component.getMaxY(), component.getMinY(), component.getMaxOccurrences(), component.getMinOccurrences(), component.getDimension().getGenerateIn());
+                    }
                 }
-            }
 
-            if(Randores.getConfigObj().getModules().isDimensionLess() || Dimension.OVERWORLD.getId() == world.provider.getDimension()) {
-                this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, 2, world.getHeight(), 0, 100, 50, Dimension.OVERWORLD.getGenerateIn());
+                if (Randores.getConfigObj().getModules().isDimensionLess() || Dimension.OVERWORLD.getId() == world.provider.getDimension()) {
+                    this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, 2, world.getHeight(), 0, 100, 50, Dimension.OVERWORLD.getGenerateIn());
+                }
             }
         }
     }

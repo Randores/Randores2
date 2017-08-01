@@ -103,7 +103,7 @@ public class RandoresMobEquip {
     }
 
     private static ItemStack applyEnchant(ItemStack stack, Random random) {
-        if (RandoresProbability.percentChance(0.05, random)) {
+        if (RandoresProbability.percentChance(5, random)) {
             stack.addEnchantment(EmpoweredEnchantment.INSTANCE, 1);
         }
 

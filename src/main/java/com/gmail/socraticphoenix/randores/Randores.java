@@ -45,6 +45,7 @@ import com.gmail.socraticphoenix.randores.mod.component.ability.AbilityRegistry;
 import com.gmail.socraticphoenix.randores.mod.component.ability.abilities.PotionEffectAbility;
 import com.gmail.socraticphoenix.randores.mod.component.property.RandoresFuelHandler;
 import com.gmail.socraticphoenix.randores.mod.listener.EmpoweredArmorListener;
+import com.gmail.socraticphoenix.randores.mod.listener.LivingHurtListener;
 import com.gmail.socraticphoenix.randores.mod.listener.RandoresClientListener;
 import com.gmail.socraticphoenix.randores.mod.listener.RandoresPlayerListener;
 import com.gmail.socraticphoenix.randores.mod.listener.RandoresRegistryListener;
@@ -132,6 +133,7 @@ public class Randores {
         MinecraftForge.EVENT_BUS.register(new RandoresPlayerListener());
         MinecraftForge.EVENT_BUS.register(new RandoresWorldListener());
         MinecraftForge.EVENT_BUS.register(new EmpoweredArmorListener());
+        MinecraftForge.EVENT_BUS.register(new LivingHurtListener());
         MinecraftForge.EVENT_BUS.register(new ScheduleListener());
         MinecraftForge.EVENT_BUS.register(new RandoresMobEquip());
         MinecraftForge.EVENT_BUS.register(new RandoresStarterKit());

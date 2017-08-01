@@ -162,7 +162,6 @@ public class RandoresItem extends Item implements IRandoresItem {
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        RandoresItemHelper.doEmpowered(stack, target, attacker);
         return this.delegate(stack, i -> i.hitEntity(stack, target, attacker), () -> super.hitEntity(stack, target, attacker));
     }
 
