@@ -65,15 +65,15 @@ public class RandoresWorldListener {
                 File dir = world.getSaveHandler().getWorldDirectory();
                 File custom = new File(dir, "randores_custom.jlsc");
                 File custom2 = new File(dir, "randores_custom.cjlsc");
-                if (custom.exists()) {
-                    Randores.info("Discovered custom definitions for world " + dir.getName() + ".",
-                            "Loading custom definitions...");
-                    JLSCConfiguration configuration = JLSCConfiguration.fromText(custom);
-                    createCustomFrom(configuration, world.getWorldInfo().getWorldName(), seed);
-                } else if (custom2.exists()) {
+                if (custom2.exists()) {
                     Randores.info("Discovered compressed custom definitions for world " + dir.getName() + ".",
                             "Loading custom definitions...");
                     JLSCConfiguration configuration = JLSCConfiguration.fromCompressed(custom2);
+                    createCustomFrom(configuration, world.getWorldInfo().getWorldName(), seed);
+                } else if (custom.exists()) {
+                    Randores.info("Discovered custom definitions for world " + dir.getName() + ".",
+                            "Loading custom definitions...");
+                    JLSCConfiguration configuration = JLSCConfiguration.fromText(custom);
                     createCustomFrom(configuration, world.getWorldInfo().getWorldName(), seed);
                 } else {
                     Randores.info("Registering definitions for seed " + seed + ".");
@@ -96,6 +96,7 @@ public class RandoresWorldListener {
         }
         Randores.info("Registering loaded definitions...");
         MaterialDefinitionRegistry.registerCustom(name, definitions);
+        definitions.forEach(MaterialDefinitionRegistry::register);
         Randores.info("Loaded custom definitions.");
     }
 
