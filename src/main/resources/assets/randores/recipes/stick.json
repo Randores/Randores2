@@ -4,6 +4,6 @@
         "# ",
         " #"
     ],
-    "component": "stick",
+    "component": "randores.items.stick",
     "quantity": 2
 }

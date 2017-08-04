@@ -15,6 +15,6 @@
             "ore": "string"
         }
     },
-    "component": "bow",
+    "component": "randores.items.bow",
     "quantity": 1
 }

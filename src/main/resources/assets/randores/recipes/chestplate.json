@@ -5,6 +5,6 @@
         "###",
         "###"
     ],
-    "component": "chestplate",
+    "component": "randores.items.chestplate",
     "quantity": 1
 }

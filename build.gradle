@@ -100,5 +100,19 @@ shadowJar {
     classifier = "shadow"
     relocate "com.gmail.socraticphoenix.randores", "com.gmail.socraticphoenix.randores"
     relocate "com.gmail.socraticphoenix", "com.gmail.socraticphoenix.randores.lib"
+    doLast {
+        copy {
+            from "build/libs/Randores-${version}-shadow.jar"
+            into "build/libs/deobf"
+            rename "Randores-${version}-shadow.jar", "Randores-${version}-deobf.jar"
+        }
+    }
 }
+
+reobf {
+    shadowJar {
+        mappingType = "SEARGE"
+    }
+}
+tasks.reobfShadowJar.mustRunAfter shadowJar
 //End Tasks

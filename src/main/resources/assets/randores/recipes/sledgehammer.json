@@ -11,6 +11,6 @@
             "ore": "stickWood"
         }
     },
-    "component": "sledgehammer",
+    "component": "randores.items.sledgehammer",
     "quantity": 1
 }

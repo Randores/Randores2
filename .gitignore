@@ -23,3 +23,6 @@ run-client
 run-server
 
 logs
+
+# ignore this for now - will probably be changed in the future
+docs

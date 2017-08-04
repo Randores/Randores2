@@ -22,14 +22,13 @@
 package com.gmail.socraticphoenix.randores.module.equip;
 
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.mod.component.Component;
-import com.gmail.socraticphoenix.randores.mod.component.ComponentType;
-import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
-import com.gmail.socraticphoenix.randores.mod.component.ability.EmpoweredEnchantment;
-import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
-import com.gmail.socraticphoenix.randores.util.probability.RandoresProbability;
+import com.gmail.socraticphoenix.randores.RandoresKeys;
+import com.gmail.socraticphoenix.randores.component.Component;
+import com.gmail.socraticphoenix.randores.component.ComponentType;
+import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
+import com.gmail.socraticphoenix.randores.component.ability.EmpoweredEnchantment;
+import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
+import com.gmail.socraticphoenix.randores.probability.RandoresProbability;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.AbstractSkeleton;
@@ -46,7 +45,7 @@ import java.util.Random;
 
 public class RandoresMobEquip {
     private static Random random = new Random();
-    private static CraftableType[] armor = {CraftableType.HELMET, CraftableType.CHESTPLATE, CraftableType.LEGGINGS, CraftableType.BOOTS};
+    private static String[] armor = {RandoresKeys.HELMET, RandoresKeys.CHESTPLATE, RandoresKeys.LEGGINGS, RandoresKeys.BOOTS};
 
     @SubscribeEvent
     public void onMobSpawn(EntityJoinWorldEvent ev) {
@@ -57,14 +56,14 @@ public class RandoresMobEquip {
                 entity.getEntityData().setBoolean("randores_applied_equip", true);
                 if (Randores.getConfigObj().getModules().isMobEquip()) {
                     if (RandoresProbability.percentChance(20, random)) {
-                        List<MaterialDefinition> materials = MaterialDefinitionRegistry.getAll(RandoresSeed.getSeed(entity.world));
+                        List<MaterialDefinition> materials = RandoresWorldData.getAll(RandoresWorldData.getId(entity.world));
                         MaterialDefinition material = materials.get(random.nextInt(materials.size()));
                         if (entity instanceof AbstractSkeleton || entity instanceof EntityZombie) {
                             List<Component> applicable = new ArrayList<>();
-                            applicable.add(ComponentType.craftable(CraftableType.SWORD).from(material));
-                            applicable.add(ComponentType.craftable(CraftableType.AXE).from(material));
-                            applicable.add(ComponentType.craftable(CraftableType.BATTLEAXE).from(material));
-                            applicable.add(ComponentType.craftable(CraftableType.SLEDGEHAMMER).from(material));
+                            applicable.add(ComponentType.craftable(RandoresKeys.SWORD).from(material));
+                            applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
+                            applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
+                            applicable.add(ComponentType.craftable(RandoresKeys.SLEDGEHAMMER).from(material));
 
                             while (applicable.contains(null)) {
                                 applicable.remove(null);
@@ -75,8 +74,8 @@ public class RandoresMobEquip {
                                 entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, applyEnchant(applicable.get(random.nextInt(applicable.size())).createStack(material.getData()), entity.getRNG()));
                             }
 
-                            if (ComponentType.craftable(CraftableType.HELMET).has(material)) {
-                                for (CraftableType type : armor) {
+                            if (ComponentType.craftable(RandoresKeys.HELMET).has(material)) {
+                                for (String type : armor) {
                                     Component component = ComponentType.craftable(type).from(material);
                                     entity.setItemStackToSlot(component.slot(), applyEnchant(component.createStack(material.getData()), entity.getRNG()));
                                     entity.setDropChance(component.slot(), 0.25f);
@@ -84,8 +83,8 @@ public class RandoresMobEquip {
                             }
                         } else if (entity instanceof EntityVindicator) {
                             List<Component> applicable = new ArrayList<>();
-                            applicable.add(ComponentType.craftable(CraftableType.BATTLEAXE).from(material));
-                            applicable.add(ComponentType.craftable(CraftableType.AXE).from(material));
+                            applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
+                            applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
 
                             while (applicable.contains(null)) {
                                 applicable.remove(null);

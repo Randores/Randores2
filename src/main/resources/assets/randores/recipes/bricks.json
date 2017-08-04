@@ -4,6 +4,6 @@
         "##",
         "##"
     ],
-    "component": "bricks",
+    "component": "randores.items.bricks",
     "quantity": 4
 }

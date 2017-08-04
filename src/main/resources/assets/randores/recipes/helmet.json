@@ -4,6 +4,6 @@
         "###",
         "# #"
     ],
-    "component": "helmet",
+    "component": "randores.items.helmet",
     "quantity": 1
 }

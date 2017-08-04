@@ -5,6 +5,6 @@
         "# #",
         "# #"
     ],
-    "component": "leggings",
+    "component": "randores.items.leggings",
     "quantity": 1
 }

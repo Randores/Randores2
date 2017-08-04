@@ -22,13 +22,12 @@
 package com.gmail.socraticphoenix.randores.module.kit;
 
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.game.crafting.CraftingItems;
-import com.gmail.socraticphoenix.randores.mod.component.Component;
-import com.gmail.socraticphoenix.randores.mod.component.ComponentType;
-import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
-import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
+import com.gmail.socraticphoenix.randores.RandoresKeys;
+import com.gmail.socraticphoenix.randores.component.Component;
+import com.gmail.socraticphoenix.randores.component.ComponentType;
+import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
+import com.gmail.socraticphoenix.randores.crafting.CraftingItems;
+import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -41,8 +40,8 @@ import java.util.Random;
 
 public class RandoresStarterKit {
     private static Random random = new Random();
-    private static CraftableType[] armor = {CraftableType.HELMET, CraftableType.CHESTPLATE, CraftableType.LEGGINGS, CraftableType.BOOTS};
-    private static CraftableType[] tools = {CraftableType.PICKAXE, CraftableType.AXE, CraftableType.SHOVEL, CraftableType.HOE};
+    private static String[] armor = {RandoresKeys.HELMET, RandoresKeys.CHESTPLATE, RandoresKeys.LEGGINGS, RandoresKeys.BOOTS};
+    private static String[] tools = {RandoresKeys.PICKAXE, RandoresKeys.AXE, RandoresKeys.SHOVEL, RandoresKeys.HOE};
 
     @SubscribeEvent
     public void onMobSpawn(LivingSpawnEvent ev) {
@@ -50,20 +49,20 @@ public class RandoresStarterKit {
             EntityPlayer entity = (EntityPlayer) ev.getEntity();
             if (!entity.world.isRemote && !entity.getEntityData().getBoolean("randores_applied_kit")) {
                 if (Randores.getConfigObj().getModules().isStarterKit()) {
-                    List<MaterialDefinition> definitions = MaterialDefinitionRegistry.getAll(RandoresSeed.getSeed(entity.world));
+                    List<MaterialDefinition> definitions = RandoresWorldData.getAll(RandoresWorldData.getId(entity.world));
                     MaterialDefinition material;
                     int times = 0;
                     do {
                         material = definitions.get(random.nextInt(definitions.size()));
                         times++;
                     }
-                    while ((!ComponentType.craftable(CraftableType.HELMET).has(material) || !ComponentType.craftable(CraftableType.PICKAXE).has(material)) && times < 500);
+                    while ((!ComponentType.craftable(RandoresKeys.HELMET).has(material) || !ComponentType.craftable(RandoresKeys.PICKAXE).has(material)) && times < 500);
 
                     List<Component> applicable = new ArrayList<>();
-                    applicable.add(ComponentType.craftable(CraftableType.SWORD).from(material));
-                    applicable.add(ComponentType.craftable(CraftableType.AXE).from(material));
-                    applicable.add(ComponentType.craftable(CraftableType.BATTLEAXE).from(material));
-                    applicable.add(ComponentType.craftable(CraftableType.SLEDGEHAMMER).from(material));
+                    applicable.add(ComponentType.craftable(RandoresKeys.SWORD).from(material));
+                    applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
+                    applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
+                    applicable.add(ComponentType.craftable(RandoresKeys.SLEDGEHAMMER).from(material));
 
                     while (applicable.contains(null)) {
                         applicable.remove(null);
@@ -72,19 +71,19 @@ public class RandoresStarterKit {
                     if (!applicable.isEmpty()) {
                         Component component = applicable.get(random.nextInt(applicable.size()));
                         entity.inventory.addItemStackToInventory(material.createStack(component));
-                        if (ComponentType.craftable(CraftableType.BOW).is(component)) {
+                        if (ComponentType.craftable(RandoresKeys.BOW).is(component)) {
                             entity.inventory.addItemStackToInventory(new ItemStack(Items.ARROW, 16));
                         }
                     }
 
-                    if (ComponentType.craftable(CraftableType.PICKAXE).has(material)) {
-                        for (CraftableType component : tools) {
+                    if (ComponentType.craftable(RandoresKeys.PICKAXE).has(material)) {
+                        for (String component : tools) {
                             entity.inventory.addItemStackToInventory(ComponentType.craftable(component).from(material).createStack(material.getData()));
                         }
                     }
 
-                    if (ComponentType.craftable(CraftableType.HELMET).has(material)) {
-                        for (CraftableType component : armor) {
+                    if (ComponentType.craftable(RandoresKeys.HELMET).has(material)) {
+                        for (String component : armor) {
                             Component comp = ComponentType.craftable(component).from(material);
                             entity.setItemStackToSlot(comp.slot(), comp.createStack(material.getData()));
                         }

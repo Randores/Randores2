@@ -21,12 +21,11 @@
  */
 package com.gmail.socraticphoenix.randores.module.dungeon;
 
-import com.gmail.socraticphoenix.randores.mod.component.Component;
-import com.gmail.socraticphoenix.randores.mod.component.CraftableComponent;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
-import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
-import com.gmail.socraticphoenix.randores.util.probability.IntRange;
+import com.gmail.socraticphoenix.randores.component.Component;
+import com.gmail.socraticphoenix.randores.component.craftable.CraftableComponent;
+import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
+import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
+import com.gmail.socraticphoenix.randores.probability.IntRange;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.item.ItemStack;
@@ -52,7 +51,7 @@ public class RandoresLootEntry extends LootEntry {
 
     @Override
     public void addLoot(Collection<ItemStack> stacks, Random rand, LootContext context) {
-        List<MaterialDefinition> materials = MaterialDefinitionRegistry.getAll(RandoresSeed.getSeed(context.getWorld()));
+        List<MaterialDefinition> materials = RandoresWorldData.getAll(RandoresWorldData.getId(context.getWorld()));
         MaterialDefinition definition = materials.get(rand.nextInt(materials.size()));
         if (rand.nextBoolean()) {
             IntRange size = new IntRange(definition.getOre().getMinDrops(), definition.getOre().getMaxDrops());

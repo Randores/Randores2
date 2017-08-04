@@ -22,18 +22,16 @@
 package com.gmail.socraticphoenix.randores.module.altar;
 
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.game.block.RandoresBlocks;
-import com.gmail.socraticphoenix.randores.game.block.RandoresTileEntity;
-import com.gmail.socraticphoenix.randores.mod.component.Component;
-import com.gmail.socraticphoenix.randores.mod.component.ComponentType;
-import com.gmail.socraticphoenix.randores.mod.component.CraftableType;
-import com.gmail.socraticphoenix.randores.mod.component.Dimension;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinition;
-import com.gmail.socraticphoenix.randores.mod.component.MaterialDefinitionRegistry;
-import com.gmail.socraticphoenix.randores.mod.data.RandoresItemData;
-import com.gmail.socraticphoenix.randores.mod.data.RandoresSeed;
-import com.gmail.socraticphoenix.randores.util.probability.IntRange;
-import com.gmail.socraticphoenix.randores.util.probability.RandoresProbability;
+import com.gmail.socraticphoenix.randores.RandoresKeys;
+import com.gmail.socraticphoenix.randores.block.RandoresBlocks;
+import com.gmail.socraticphoenix.randores.block.RandoresTileEntity;
+import com.gmail.socraticphoenix.randores.component.Component;
+import com.gmail.socraticphoenix.randores.component.ComponentType;
+import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
+import com.gmail.socraticphoenix.randores.data.RandoresItemData;
+import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
+import com.gmail.socraticphoenix.randores.probability.IntRange;
+import com.gmail.socraticphoenix.randores.probability.RandoresProbability;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -43,6 +41,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -57,79 +56,80 @@ public class RandoresAltarGenerator implements IWorldGenerator {
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-        long seed = RandoresSeed.getSeed(world);
-        if (!world.isRemote && world.provider.getDimension() == Dimension.OVERWORLD.getId()) {
+        if (!world.isRemote && world.provider.getDimension() == DimensionType.OVERWORLD.getId()) {
             if (Randores.getConfigObj().getModules().isAltar() && RandoresProbability.percentChance(Randores.getConfigObj().getModules().isYoutubeMode() ? 10 : 0.5, random)) {
-                List<MaterialDefinition> definitions = MaterialDefinitionRegistry.getAll(seed);
-                MaterialDefinition definition;
-                int tries = 0;
-                do {
-                    definition = definitions.get(random.nextInt(definitions.size()));
-                    tries++;
-                } while (!ComponentType.craftable(CraftableType.BRICKS).has(definition) && tries < 500);
+                List<MaterialDefinition> definitions = RandoresWorldData.getAll(RandoresWorldData.getId(world));
+                if (!definitions.isEmpty()) {
+                    MaterialDefinition definition;
+                    int tries = 0;
+                    do {
+                        definition = definitions.get(random.nextInt(definitions.size()));
+                        tries++;
+                    } while (!ComponentType.craftable(RandoresKeys.BRICKS).has(definition) && tries < 500);
 
 
-                if (ComponentType.craftable(CraftableType.BRICKS).has(definition)) {
-                    int blockX = chunkX * 16 + 8;
-                    int blockZ = chunkZ * 16 + 8;
-                    blockX = random.nextBoolean() ? blockX - random.nextInt(5) : blockX + random.nextInt(5);
-                    blockZ = random.nextBoolean() ? blockZ - random.nextInt(5) : blockZ + random.nextInt(5);
-                    int blockY = world.getHeight();
+                    if (ComponentType.craftable(RandoresKeys.BRICKS).has(definition)) {
+                        int blockX = chunkX * 16 + 8;
+                        int blockZ = chunkZ * 16 + 8;
+                        blockX = random.nextBoolean() ? blockX - random.nextInt(5) : blockX + random.nextInt(5);
+                        blockZ = random.nextBoolean() ? blockZ - random.nextInt(5) : blockZ + random.nextInt(5);
+                        int blockY = world.getHeight();
 
-                    boolean valid = false;
-                    for (int i = blockY; i >= 0; i--) {
-                        BlockPos pos = new BlockPos(blockX, i, blockZ);
-                        if (world.getBlockState(pos).getBlock() != Blocks.AIR && !world.getBlockState(pos).getBlock().isReplaceable(world, pos)) {
-                            blockY = i + 1;
-                            if (world.getHeight() - 10 > blockY && world.getBlockState(pos).isOpaqueCube() && !(world.getBlockState(pos).getMaterial() instanceof MaterialLiquid) && !world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos)) {
-                                int numBelow = 0;
-                                BlockPos down = pos;
-                                while (this.hasAir(world, down, 2, 2)) {
-                                    numBelow++;
-                                    down = down.add(0, -1, 0);
+                        boolean valid = false;
+                        for (int i = blockY; i >= 0; i--) {
+                            BlockPos pos = new BlockPos(blockX, i, blockZ);
+                            if (world.getBlockState(pos).getBlock() != Blocks.AIR && !world.getBlockState(pos).getBlock().isReplaceable(world, pos)) {
+                                blockY = i + 1;
+                                if (world.getHeight() - 10 > blockY && world.getBlockState(pos).isOpaqueCube() && !(world.getBlockState(pos).getMaterial() instanceof MaterialLiquid) && !world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos)) {
+                                    int numBelow = 0;
+                                    BlockPos down = pos;
+                                    while (this.hasAir(world, down, 2, 2)) {
+                                        numBelow++;
+                                        down = down.add(0, -1, 0);
+                                    }
+                                    valid = numBelow < 10;
                                 }
-                                valid = numBelow < 10;
-                            }
-                            break;
-                        }
-                    }
-
-                    if (valid) {
-                        RandoresItemData data = definition.getData();
-
-                        BlockPos center = new BlockPos(blockX, blockY, blockZ);
-                        IBlockState state = RandoresBlocks.brick.getDefaultState();
-                        this.clear(world, center, 2, 2, random, true);
-                        this.fill(world, center, state, data, 2, 2, random, false);
-                        this.setBrick(world, center, state, data);
-                        for (int i = 1; i <= 4; i++) {
-                            this.clear(world, center.add(0, i, 0), 2, 2, random, false);
-                            this.fillPerimeter(world, center.add(0, i, 0), state, data, 2, 2, random);
-                        }
-
-                        BlockPos down = center.add(0, -1, 0);
-                        while (this.hasAir(world, down, 2, 2)) {
-                            this.fill(world, down, state, data, 2, 2, random, true);
-                            down = down.add(0, -1, 0);
-                        }
-
-                        BlockPos valuables = center.add(0, 1, 0);
-                        world.setBlockState(valuables, Blocks.CHEST.getDefaultState());
-                        TileEntityChest chest = new TileEntityChest(BlockChest.Type.BASIC);
-                        for (int i = 0; i < chest.getSizeInventory(); i++) {
-                            if (RandoresProbability.percentChance(30, random)) {
-                                List<Component> components = definition.getComponents().stream().filter(c -> !ComponentType.ore().is(c)).collect(Collectors.toList());
-                                Component component = components.get(random.nextInt(components.size()));
-                                int size = component.quantity() == 1 ? 1 : random.nextInt(4) + component.quantity();
-                                ItemStack stack = component.createStack(definition.getData());
-                                stack.setCount(size);
-                                if (RandoresProbability.percentChance(10, random)) {
-                                    stack = EnchantmentHelper.addRandomEnchantment(random, stack, levels.randomElement(random), true);
-                                }
-                                chest.setInventorySlotContents(i, stack);
+                                break;
                             }
                         }
-                        world.setTileEntity(valuables, chest);
+
+                        if (valid) {
+                            RandoresItemData data = definition.getData();
+
+                            BlockPos center = new BlockPos(blockX, blockY, blockZ);
+                            IBlockState state = RandoresBlocks.brick.getDefaultState();
+                            this.clear(world, center, 2, 2, random, true);
+                            this.fill(world, center, state, data, 2, 2, random, false);
+                            this.setBrick(world, center, state, data);
+                            for (int i = 1; i <= 4; i++) {
+                                this.clear(world, center.add(0, i, 0), 2, 2, random, false);
+                                this.fillPerimeter(world, center.add(0, i, 0), state, data, 2, 2, random);
+                            }
+
+                            BlockPos down = center.add(0, -1, 0);
+                            while (this.hasAir(world, down, 2, 2)) {
+                                this.fill(world, down, state, data, 2, 2, random, true);
+                                down = down.add(0, -1, 0);
+                            }
+
+                            BlockPos valuables = center.add(0, 1, 0);
+                            world.setBlockState(valuables, Blocks.CHEST.getDefaultState());
+                            TileEntityChest chest = new TileEntityChest(BlockChest.Type.BASIC);
+                            for (int i = 0; i < chest.getSizeInventory(); i++) {
+                                if (RandoresProbability.percentChance(30, random)) {
+                                    List<Component> components = definition.getComponents().stream().filter(c -> !ComponentType.ore().is(c)).collect(Collectors.toList());
+                                    Component component = components.get(random.nextInt(components.size()));
+                                    int size = component.quantity() == 1 ? 1 : random.nextInt(4) + component.quantity();
+                                    ItemStack stack = component.createStack(definition.getData());
+                                    stack.setCount(size);
+                                    if (RandoresProbability.percentChance(10, random)) {
+                                        stack = EnchantmentHelper.addRandomEnchantment(random, stack, levels.randomElement(random), true);
+                                    }
+                                    chest.setInventorySlotContents(i, stack);
+                                }
+                            }
+                            world.setTileEntity(valuables, chest);
+                        }
                     }
                 }
             }

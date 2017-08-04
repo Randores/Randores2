@@ -11,6 +11,6 @@
             "ore": "torch"
         }
     },
-    "component": "torch",
+    "component": "randores.items.torch",
     "quantity": 4
 }

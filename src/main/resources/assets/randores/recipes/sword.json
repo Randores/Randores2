@@ -11,6 +11,6 @@
             "ore": "stickWood"
         }
     },
-    "component": "sword",
+    "component": "randores.items.sword",
     "quantity": 1
 }

@@ -11,6 +11,6 @@
             "ore": "stickWood"
         }
     },
-    "component": "shovel",
+    "component": "randores.items.shovel",
     "quantity": 1
 }

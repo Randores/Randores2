@@ -1,7 +1,7 @@
 {
     "recipes": {
-        "item": "com.gmail.socraticphoenix.randores.game.recipe.RandoresRecipeFactory",
-        "tome": "com.gmail.socraticphoenix.randores.game.recipe.RandoresTomeRecipeFactory",
-        "forge_upgrade": "com.gmail.socraticphoenix.randores.game.recipe.RandoresForgeUpgradeRecipeFactory"
+        "item": "com.gmail.socraticphoenix.randores.crafting.recipe.RandoresRecipeFactory",
+        "tome": "com.gmail.socraticphoenix.randores.crafting.recipe.RandoresTomeRecipeFactory",
+        "forge_upgrade": "com.gmail.socraticphoenix.randores.crafting.recipe.RandoresForgeUpgradeRecipeFactory"
     }
 }
