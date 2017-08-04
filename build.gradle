@@ -10,31 +10,24 @@ buildscript {
 plugins {
     id "net.ltgt.apt" version "0.10"
     id "com.github.johnrengelman.shadow" version "2.0.1"
+    id 'com.jfrog.bintray' version '1.3.1'
 }
+
+apply plugin: 'maven-publish'
 apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-
-version = "2.0.0"
-group = "com.gmail.socraticphoenix.randores" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "2a1"
+group = "com.gmail.socraticphoenix.randores"
 archivesBaseName = "Randores"
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
 minecraft {
     version = "1.12-14.21.1.2387"
-    runDir = "run"
-
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20170624"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 configurations {
@@ -68,19 +61,14 @@ dependencies {
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-
-        // replace version and mcversion
         expand 'version': project.version, 'mcversion': project.minecraft.version
     }
 
-    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
@@ -92,21 +80,22 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+jar {
+    finalizedBy reobfJar
+}
+
 javadoc {
     destinationDir = file("docs")
 }
 
-shadowJar {
-    classifier = "shadow"
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+task devJar(type: ShadowJar) {
+    classifier = "dev"
+    from sourceSets.main.output
+    configurations = [project.configurations.library]
     relocate "com.gmail.socraticphoenix.randores", "com.gmail.socraticphoenix.randores"
     relocate "com.gmail.socraticphoenix", "com.gmail.socraticphoenix.randores.lib"
-    doLast {
-        copy {
-            from "build/libs/Randores-${version}-shadow.jar"
-            into "build/libs/deobf"
-            rename "Randores-${version}-shadow.jar", "Randores-${version}-deobf.jar"
-        }
-    }
 }
 
 reobf {
@@ -114,5 +103,58 @@ reobf {
         mappingType = "SEARGE"
     }
 }
-tasks.reobfShadowJar.mustRunAfter shadowJar
+
+shadowJar {
+    classifier = "shadow"
+    relocate "com.gmail.socraticphoenix.randores", "com.gmail.socraticphoenix.randores"
+    relocate "com.gmail.socraticphoenix", "com.gmail.socraticphoenix.randores.lib"
+    finalizedBy reobfShadowJar
+}
 //End Tasks
+
+//Publishing
+publishing {
+    publications {
+        maven (MavenPublication) {
+            artifact jar
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+
+            artifact shadowJar {
+                classifier "shadow"
+            }
+
+            artifact devJar {
+                classifier "dev"
+            }
+
+            groupId "com.gmail.socraticphoenix"
+            artifactId "Randores"
+            version "$version"
+        }
+    }
+
+}
+
+bintray {
+    user = "meguy26"
+    key = "$bintrayKey"
+    publications = ["maven"]
+    publish = true
+    pkg {
+        repo = "maven"
+        name = "randores"
+        licenses = ["MIT"]
+        vcsUrl = "https://github.com/Randores/Randores2.git"
+
+        version {
+            name = "$version"
+        }
+    }
+}
