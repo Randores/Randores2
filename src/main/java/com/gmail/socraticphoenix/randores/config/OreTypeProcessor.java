@@ -31,7 +31,7 @@ import com.gmail.socraticphoenix.randores.component.enumerable.OreTypeRegistry;
 public class OreTypeProcessor extends JLSCNamedProcessor<OreType> {
 
     public OreTypeProcessor() {
-        super(OreType.class, "ore_type", false);
+        super(OreType.class, "oreType", false);
     }
 
     @Override

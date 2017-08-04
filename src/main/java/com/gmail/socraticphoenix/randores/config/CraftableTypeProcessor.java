@@ -32,7 +32,7 @@ import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegi
 public class CraftableTypeProcessor extends JLSCNamedProcessor<CraftableType> {
 
     public CraftableTypeProcessor() {
-        super(CraftableType.class, "craftable_type", false);
+        super(CraftableType.class, "craftableType", false);
     }
 
     @Override

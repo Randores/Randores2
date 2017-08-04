@@ -250,14 +250,14 @@ public class Randores extends AbstractRandoresPlugin {
         ASMDataTable table = ev.getAsmData();
         String name = RandoresAddon.class.getCanonicalName();
         Set<ASMData> data = table.getAll(name);
-        for(ASMData plugin : data) {
+        for (ASMData plugin : data) {
             Randores.info("Attempting to register plugins from: " + plugin.getClassName());
             Optional<Class> clazz = Reflections.resolveClass(plugin.getClassName());
-            if(clazz.isPresent()) {
+            if (clazz.isPresent()) {
                 Class target = clazz.get();
-                for(Method method : target.getDeclaredMethods()) {
-                    if(method.getAnnotation(RandoresAddonProvider.class) != null) {
-                        if(method.getParameterCount() == 0) {
+                for (Method method : target.getDeclaredMethods()) {
+                    if (method.getAnnotation(RandoresAddonProvider.class) != null) {
+                        if (method.getParameterCount() == 0) {
                             if (Modifier.isStatic(method.getModifiers())) {
                                 if (Modifier.isPublic(method.getModifiers())) {
                                     if (RandoresPlugin.class.isAssignableFrom(method.getReturnType())) {
@@ -293,7 +293,7 @@ public class Randores extends AbstractRandoresPlugin {
         }
 
         info("Loaded plugins", "Initializing all plugins...");
-        for(RandoresPlugin plugin : RandoresPluginRegistry.getPlugins()) {
+        for (RandoresPlugin plugin : RandoresPluginRegistry.getPlugins()) {
             plugin.registerOreTypes(OreTypeRegistry.instance());
             plugin.registerMaterialTypes(MaterialTypeRegistry.instance());
             plugin.registerCraftableTypes(CraftableTypeRegistry.instance());
@@ -362,6 +362,20 @@ public class Randores extends AbstractRandoresPlugin {
         info("Calling proxy PostInitialization...");
         Randores.PROXY.postInitSided(ev);
         info("Finished PostInitialization.");
+
+        String k = "\n";
+        for (MaterialType type : MaterialTypeRegistry.instance().values()) {
+            k += "list.add(\"" + type.getName() + "\"" + ");\n";
+        }
+        k += "\n";
+        for (OreType type : OreTypeRegistry.instance().values()) {
+            k += "list.add(\"" + type.getName() + "\"" + ");\n";
+        }
+        k += "\n";
+        for(CraftableType type : CraftableTypeRegistry.instance().values()) {
+            k += "list.add(\"" + type.getName() + "\"" + ");\n";
+        }
+        System.out.println(k);
     }
 
     public static int getCount() {

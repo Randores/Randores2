@@ -32,7 +32,7 @@ import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegis
 public class MaterialTypeProcessor extends JLSCNamedProcessor<MaterialType> {
 
     public MaterialTypeProcessor() {
-        super(MaterialType.class, "material_type", false);
+        super(MaterialType.class, "materialType", false);
     }
 
     @Override
