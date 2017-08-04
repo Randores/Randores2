@@ -67,7 +67,7 @@ public class RandoresItem extends Item implements IRandoresItem {
     private ComponentType type;
 
     public RandoresItem(String craftKey) {
-        this(CraftableTypeRegistry.get(craftKey));
+        this(CraftableTypeRegistry.instance().get(craftKey));
     }
 
     public RandoresItem(ComponentType type) {

@@ -43,10 +43,10 @@ public class MaterialTypeProcessor extends JLSCNamedProcessor<MaterialType> {
     @Override
     protected MaterialType read(JLSCArray jlscArray) throws JLSCException {
         String name = jlscArray.getString(0).get();
-        MaterialType res = MaterialTypeRegistry.get(name);
+        MaterialType res = MaterialTypeRegistry.instance().get(name);
         if(res == null) {
             Randores.warn("UNKNOWN MATERIAL TYPE " + name + ", LOADING AS INGOT, THIS MAY CAUSE PROBLEMS!");
-            res = MaterialTypeRegistry.get(RandoresKeys.INGOT);
+            res = MaterialTypeRegistry.instance().get(RandoresKeys.INGOT);
         }
 
         return res;

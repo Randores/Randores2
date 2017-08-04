@@ -78,7 +78,7 @@ public class RandoresRecipeFactory implements IRecipeFactory {
 
         String component = JsonUtils.getString(json, "component");
 
-        CraftableType type = CraftableTypeRegistry.get(component);
+        CraftableType type = CraftableTypeRegistry.instance().get(component);
         if (type == null) {
             throw new JsonSyntaxException("Unknown component " + component);
         }

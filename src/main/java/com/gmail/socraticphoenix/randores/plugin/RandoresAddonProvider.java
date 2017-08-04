@@ -19,22 +19,15 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.randores;
+package com.gmail.socraticphoenix.randores.plugin;
 
-import com.gmail.socraticphoenix.randores.plugin.RandoresPlugin;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class RandoresPluginRegistry {
-    private static List<RandoresPlugin> plugins = new ArrayList<>();
-
-    public static void register(RandoresPlugin plugin) {
-        plugins.add(plugin);
-    }
-
-    public static List<RandoresPlugin> getPlugins() {
-        return plugins;
-    }
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RandoresAddonProvider {
 
 }

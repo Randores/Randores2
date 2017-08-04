@@ -28,16 +28,22 @@ import java.util.Map;
 import java.util.Random;
 
 public class MaterialTypeRegistry {
-    private static Map<String, MaterialType> materialTypes = new HashMap<>();
-    private static List<MaterialType> materialsAsList = new ArrayList<>();
+    private static final MaterialTypeRegistry instance = new MaterialTypeRegistry();
 
-    public static void register(MaterialType... MaterialTypes) {
+    private Map<String, MaterialType> materialTypes = new HashMap<>();
+    private List<MaterialType> materialsAsList = new ArrayList<>();
+
+    public static MaterialTypeRegistry instance() {
+        return instance;
+    }
+
+    public void register(MaterialType... MaterialTypes) {
         for(MaterialType MaterialType : MaterialTypes) {
             register(MaterialType);
         }
     }
 
-    public static void register(MaterialType MaterialType) {
+    public void register(MaterialType MaterialType) {
         if(materialTypes.containsKey(MaterialType.getName())) {
             throw new IllegalArgumentException("Attempted to register duplicate MaterialType: " + MaterialType.getName());
         }
@@ -46,31 +52,31 @@ public class MaterialTypeRegistry {
         materialsAsList.add(MaterialType);
     }
 
-    public static MaterialType get(String MaterialType) {
+    public MaterialType get(String MaterialType) {
         return materialTypes.get(MaterialType);
     }
 
-    public static Map<String, MaterialType> getMaterialTypes() {
+    public Map<String, MaterialType> getMaterialTypes() {
         return materialTypes;
     }
 
-    public static List<MaterialType> values() {
+    public List<MaterialType> values() {
         return materialsAsList;
     }
 
-    private static List<MaterialTypeGenerator> generators = new ArrayList<>();
+    private List<MaterialTypeGenerator> generators = new ArrayList<>();
 
-    public static void register(MaterialTypeGenerator generator) {
+    public void register(MaterialTypeGenerator generator) {
         generators.add(generator);
     }
 
-    public static void register(MaterialTypeGenerator... generators) {
+    public void register(MaterialTypeGenerator... generators) {
         for(MaterialTypeGenerator generator : generators) {
             register(generator);
         }
     }
 
-    public static List<MaterialType> buildTypes() {
+    public List<MaterialType> buildTypes() {
         List<MaterialType> types = new ArrayList<>();
         for(MaterialTypeGenerator generator : generators) {
             Random random = generator.parent().getRandomContainer().getRandom();

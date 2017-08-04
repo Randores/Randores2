@@ -58,6 +58,18 @@ public interface RandoresColors {
         return -1;
     };
 
+    static void registerFor(Object... blocksAndItems) {
+        for(Object object : blocksAndItems) {
+            if(object instanceof Item) {
+                Minecraft.getMinecraft().getItemColors().registerItemColorHandler(ITEM_COLOR, (Item) object);
+            } else if (object instanceof Block) {
+                Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(BLOCK_COLOR, (Block) object);
+            } else {
+                throw new IllegalArgumentException((object == null ? "null" : object.getClass()) + " is not a block or item!");
+            }
+        }
+    }
+
     static void registerItems() {
         List<Item> colors = new ArrayList<>();
         colors.addAll(RandoresItems.items);

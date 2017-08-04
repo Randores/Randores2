@@ -281,9 +281,8 @@ public class MaterialDefinition {
         return new RandoresItemData(this.getIndex(), this.getId());
     }
 
-    @SideOnly(Side.CLIENT)
     public List<TomeGui.Element> buildPages() {
-        return TomeHookRegistry.buildPages(this);
+        return TomeHookRegistry.instance().buildPages(this);
     }
 
     public boolean hasTool() {

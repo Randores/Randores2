@@ -19,39 +19,15 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.randores.component.craftable;
+package com.gmail.socraticphoenix.randores.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class CraftableRegistry {
-    private static final CraftableRegistry instance = new CraftableRegistry();
-    
-    private List<CraftableGenerator> registry = new ArrayList<>();
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RandoresAddon {
 
-    public static CraftableRegistry instance() {
-        return instance;
-    }
-    
-    public void register(CraftableGenerator... factories) {
-        for(CraftableGenerator factory : factories) {
-            register(factory);
-        }
-    }
-
-    public void register(CraftableGenerator factory) {
-        registry.add(factory);
-    }
-
-    public List<CraftableComponent> buildCraftables() {
-        List<CraftableComponent> properties = new ArrayList<>();
-        for(CraftableGenerator factory : registry) {
-            Random random = factory.parent().getRandomContainer().getRandom();
-            if(factory.test(random)) {
-                properties.addAll(factory.generate(random));
-            }
-        }
-        return properties;
-    }
 }

@@ -38,10 +38,10 @@ public class ToolGenerator implements CraftableGenerator {
     @Override
     public List<CraftableComponent> generate(Random random) {
         return Items.buildList(
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.PICKAXE), 1),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.AXE), 1),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.HOE), 1),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.SHOVEL), 1)
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.PICKAXE), 1),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.AXE), 1),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.HOE), 1),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.SHOVEL), 1)
         );
     }
 

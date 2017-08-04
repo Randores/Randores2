@@ -37,7 +37,7 @@ public class SwordGenerator implements CraftableGenerator {
 
     @Override
     public List<CraftableComponent> generate(Random random) {
-        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.SWORD), 1));
+        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.SWORD), 1));
     }
 
     @Override

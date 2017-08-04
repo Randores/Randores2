@@ -23,21 +23,24 @@ package com.gmail.socraticphoenix.randores.component.tome;
 
 import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.item.TomeGui;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TomeHookRegistry {
-    private static List<TomeHook> hooks = new ArrayList<>();
+    private static final TomeHookRegistry instance = new TomeHookRegistry();
 
-    public static void register(TomeHook hook) {
+    private List<TomeHook> hooks = new ArrayList<>();
+
+    public static TomeHookRegistry instance() {
+        return instance;
+    }
+
+    public void register(TomeHook hook) {
         hooks.add(hook);
     }
 
-    @SideOnly(Side.CLIENT)
-    public static List<TomeGui.Element> buildPages(MaterialDefinition definition) {
+    public List<TomeGui.Element> buildPages(MaterialDefinition definition) {
         List<TomeGui.Element> pages = new ArrayList<>();
         for(TomeHook hook : hooks) {
             pages.addAll(hook.pages(definition));

@@ -37,7 +37,7 @@ public class StickGenerator implements CraftableGenerator {
 
     @Override
     public List<CraftableComponent> generate(Random random) {
-        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.STICK), 2));
+        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.STICK), 2));
     }
 
     @Override

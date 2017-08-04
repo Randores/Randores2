@@ -29,7 +29,7 @@ import com.gmail.socraticphoenix.jlsc.JLSCFormat;
 import com.gmail.socraticphoenix.jlsc.io.JLSCStyle;
 import com.gmail.socraticphoenix.jlsc.io.JLSCSyntax;
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.RandoresPluginRegistry;
+import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.component.MaterialDefinitionGenerator;
 import com.gmail.socraticphoenix.randores.component.enumerable.OreType;

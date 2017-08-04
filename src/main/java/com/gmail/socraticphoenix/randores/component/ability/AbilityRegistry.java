@@ -30,51 +30,57 @@ import java.util.Map;
 import java.util.Random;
 
 public class AbilityRegistry {
-    private static Map<AbilityType, Map<AbilityStage, List<AbilityGenerator>>> abilities = new HashMap<>();
+    private static final AbilityRegistry instance = new AbilityRegistry();
 
-    public static void register(AbilityGenerator... factories) {
+    private Map<AbilityType, Map<AbilityStage, List<AbilityGenerator>>> abilities = new HashMap<>();
+
+    public static AbilityRegistry instance() {
+        return instance;
+    }
+
+    public void register(AbilityGenerator... factories) {
         for (AbilityGenerator factory : factories) {
             register(factory);
         }
     }
 
-    public static void register(AbilityGenerator factory) {
+    public void register(AbilityGenerator factory) {
         for (AbilityType type : AbilityType.values()) {
             for (AbilityStage stage : AbilityStage.values()) {
                 if (factory.applicableStage(stage) && factory.applicableContext(type)) {
-                    AbilityRegistry.put(type, stage, factory);
+                    this.put(type, stage, factory);
                 }
             }
         }
     }
 
-    public static void put(AbilityType type, AbilityStage stage, AbilityGenerator factory) {
+    public void put(AbilityType type, AbilityStage stage, AbilityGenerator factory) {
         abilities.computeIfAbsent(type, k -> new HashMap<>()).computeIfAbsent(stage, k -> new ArrayList<>()).add(factory);
     }
 
-    public static int size(AbilityType type, AbilityStage stage) {
+    public int size(AbilityType type, AbilityStage stage) {
         return abilities.containsKey(type) ? abilities.get(type).containsKey(stage) ? abilities.get(type).get(stage).size() : 0 : 0;
     }
 
-    public static AbilityGenerator get(AbilityType type, AbilityStage stage, int index) {
+    public AbilityGenerator get(AbilityType type, AbilityStage stage, int index) {
         return abilities.containsKey(type) ? abilities.get(type).containsKey(stage) ? abilities.get(type).get(stage).get(index) : null : null;
 
     }
 
-    public static boolean contains(AbilityType type, AbilityStage stage) {
+    public boolean contains(AbilityType type, AbilityStage stage) {
         return size(type, stage) > 0;
     }
 
-    private static IntRange count = new IntRange(1, 4);
+    private IntRange count = new IntRange(1, 4);
 
-    public static AbilitySeries buildSeries(Random countRand) {
+    public AbilitySeries buildSeries(Random countRand) {
         List<Ability>[] series = new List[]{new ArrayList(), new ArrayList(), new ArrayList(), new ArrayList()};
         AbilityType[] types = {AbilityType.ARMOR_PASSIVE, AbilityType.ARMOR_ACTIVE, AbilityType.MELEE, AbilityType.PROJECTILE};
         for (int i = 0; i < types.length; i++) {
             List<Ability> list = series[i];
             AbilityType type = types[i];
             addAbilities(list, type, AbilityStage.FIRST);
-            int count = AbilityRegistry.count.randomElement(countRand);
+            int count = this.count.randomElement(countRand);
             for (int j = 0; j < count; j++) {
                 addAbilities(list, type, AbilityStage.MIDDLE);
             }
@@ -83,7 +89,7 @@ public class AbilityRegistry {
         return new AbilitySeries(series[0], series[1], series[2], series[3]);
     }
 
-    private static void addAbilities(List<Ability> list, AbilityType type, AbilityStage stage) {
+    private void addAbilities(List<Ability> list, AbilityType type, AbilityStage stage) {
         if(contains(type, stage)) {
             List<AbilityGenerator> generators = abilities.get(type).get(stage);
             for(AbilityGenerator generator : generators) {

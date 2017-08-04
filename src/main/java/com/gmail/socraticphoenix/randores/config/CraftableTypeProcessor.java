@@ -43,10 +43,10 @@ public class CraftableTypeProcessor extends JLSCNamedProcessor<CraftableType> {
     @Override
     protected CraftableType read(JLSCArray jlscArray) throws JLSCException {
         String name = jlscArray.getString(0).get();
-        CraftableType res = CraftableTypeRegistry.get(name);
+        CraftableType res = CraftableTypeRegistry.instance().get(name);
         if(res == null) {
             Randores.warn("UNKNOWN CRAFTABLE TYPE " + name + ", LOADING AS TORCH, THIS MAY CAUSE PROBLEMS!");
-            res = CraftableTypeRegistry.get(RandoresKeys.TORCH);
+            res = CraftableTypeRegistry.instance().get(RandoresKeys.TORCH);
         }
 
         return res;

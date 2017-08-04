@@ -28,20 +28,26 @@ import java.util.Map;
 import java.util.Random;
 
 public class OreTypeRegistry {
+    private static final OreTypeRegistry instance = new OreTypeRegistry();
+
     public static final String OVERWORLD = "overworld";
     public static final String END = "end";
     public static final String NETHER = "nether";
 
-    private static Map<String, OreType> oreTypes = new HashMap<>();
-    private static List<OreType> oreTypesAsList = new ArrayList<>();
+    private Map<String, OreType> oreTypes = new HashMap<>();
+    private List<OreType> oreTypesAsList = new ArrayList<>();
 
-    public static void register(OreType... oreTypes) {
+    public static OreTypeRegistry instance() {
+        return instance;
+    }
+
+    public void register(OreType... oreTypes) {
         for(OreType oreType : oreTypes) {
             register(oreType);
         }
     }
 
-    public static void register(OreType oreType) {
+    public void register(OreType oreType) {
         if(oreTypes.containsKey(oreType.getName())) {
             throw new IllegalArgumentException("Attempted to register duplicate oreType: " + oreType.getName());
         }
@@ -50,31 +56,31 @@ public class OreTypeRegistry {
         oreTypesAsList.add(oreType);
     }
 
-    public static OreType get(String oreType) {
+    public OreType get(String oreType) {
         return oreTypes.get(oreType);
     }
 
-    public static Map<String, OreType> getoreTypes() {
+    public Map<String, OreType> getoreTypes() {
         return oreTypes;
     }
 
-    public static List<OreType> values() {
+    public List<OreType> values() {
         return oreTypesAsList;
     }
 
-    private static List<OreTypeGenerator> generators = new ArrayList<>();
+    private List<OreTypeGenerator> generators = new ArrayList<>();
 
-    public static void register(OreTypeGenerator generator) {
+    public void register(OreTypeGenerator generator) {
         generators.add(generator);
     }
 
-    public static void register(OreTypeGenerator... generators) {
+    public void register(OreTypeGenerator... generators) {
         for(OreTypeGenerator generator : generators) {
             register(generator);
         }
     }
 
-    public static List<OreType> buildOreTypes() {
+    public List<OreType> buildOreTypes() {
         List<OreType> oreTypes = new ArrayList<>();
         for(OreTypeGenerator generator : generators) {
             Random random = generator.parent().getRandomContainer().getRandom();

@@ -43,7 +43,7 @@ public class DefaultMaterialTypeGenerator implements MaterialTypeGenerator {
 
     @Override
     public List<MaterialType> generate(Random random) {
-        return Items.buildList(MaterialTypeRegistry.get(this.name));
+        return Items.buildList(MaterialTypeRegistry.instance().get(this.name));
     }
 
     @Override

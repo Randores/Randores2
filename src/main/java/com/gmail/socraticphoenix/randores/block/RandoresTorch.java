@@ -191,7 +191,7 @@ public class RandoresTorch extends BlockTorch implements IRandoresItem {
 
     @Override
     public ComponentType type() {
-        return ComponentType.craftable(CraftableTypeRegistry.get(RandoresKeys.TORCH));
+        return ComponentType.craftable(CraftableTypeRegistry.instance().get(RandoresKeys.TORCH));
     }
 
     @Override

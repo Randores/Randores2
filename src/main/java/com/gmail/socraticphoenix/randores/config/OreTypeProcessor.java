@@ -42,10 +42,10 @@ public class OreTypeProcessor extends JLSCNamedProcessor<OreType> {
     @Override
     protected OreType read(JLSCArray jlscArray) throws JLSCException {
         String name = jlscArray.getString(0).get();
-        OreType res = OreTypeRegistry.get(name);
+        OreType res = OreTypeRegistry.instance().get(name);
         if(res == null) {
             Randores.warn("UNKNOWN ORETYPE " + name + ", LOADING AS OVERWORLD, THIS MAY CAUSE PROBLEMS!");
-            res = OreTypeRegistry.get(OreTypeRegistry.OVERWORLD);
+            res = OreTypeRegistry.instance().get(OreTypeRegistry.OVERWORLD);
         }
 
         return res;

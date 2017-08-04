@@ -37,7 +37,7 @@ public class SledgehammerGenerator implements CraftableGenerator {
 
     @Override
     public List<CraftableComponent> generate(Random random) {
-        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.SLEDGEHAMMER), 1));
+        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.SLEDGEHAMMER), 1));
     }
 
     @Override

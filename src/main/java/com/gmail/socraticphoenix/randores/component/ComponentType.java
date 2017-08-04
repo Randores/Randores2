@@ -35,7 +35,7 @@ public class ComponentType {
 
     static {
         components = new HashMap<>();
-        for (CraftableType type : CraftableTypeRegistry.values()) {
+        for (CraftableType type : CraftableTypeRegistry.instance().values()) {
             components.put(type, new ComponentType(type, false));
         }
     }
@@ -53,7 +53,7 @@ public class ComponentType {
     }
 
     public static ComponentType craftable(String key) {
-        return craftable(CraftableTypeRegistry.get(key));
+        return craftable(CraftableTypeRegistry.instance().get(key));
     }
 
     public static ComponentType ore() {

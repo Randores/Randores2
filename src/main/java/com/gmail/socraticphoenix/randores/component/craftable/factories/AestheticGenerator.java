@@ -36,8 +36,8 @@ public class AestheticGenerator implements CraftableGenerator {
 
     @Override
     public List<CraftableComponent> generate(Random random) {
-        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.BRICKS), 4),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.TORCH), 4));
+        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.BRICKS), 4),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.TORCH), 4));
     }
 
     @Override

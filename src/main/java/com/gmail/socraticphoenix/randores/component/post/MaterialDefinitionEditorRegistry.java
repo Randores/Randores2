@@ -27,19 +27,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MaterialDefinitionEditorRegistry {
-    private static List<MaterialDefinitionEditor> editors = new ArrayList<>();
+    private static final MaterialDefinitionEditorRegistry instance = new MaterialDefinitionEditorRegistry();
 
-    public static void register(MaterialDefinitionEditor... editors) {
+    private List<MaterialDefinitionEditor> editors = new ArrayList<>();
+
+    public static MaterialDefinitionEditorRegistry instance() {
+        return instance;
+    }
+
+    public void register(MaterialDefinitionEditor... editors) {
         for(MaterialDefinitionEditor editor : editors) {
             register(editor);
         }
     }
 
-    public static void register(MaterialDefinitionEditor editor) {
+    public void register(MaterialDefinitionEditor editor) {
         editors.add(editor);
     }
 
-    public static void edit(MaterialDefinition definition) {
+    public void edit(MaterialDefinition definition) {
         for(MaterialDefinitionEditor editor : editors) {
             editor.edit(definition, editor.parent().getRandomContainer().getRandom());
         }

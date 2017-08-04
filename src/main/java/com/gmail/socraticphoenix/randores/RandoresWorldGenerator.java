@@ -65,7 +65,7 @@ public class RandoresWorldGenerator implements IWorldGenerator {
 
             if (RandoresWorldData.hasData(world)) {
                 RandoresWorldData data = RandoresWorldData.getSimply(world);
-                for (OreType oreType : OreTypeRegistry.values()) {
+                for (OreType oreType : OreTypeRegistry.instance().values()) {
                     if (flag || oreType.getIsDimension().apply(world)) {
                         List<MaterialDefinition> target = data.getAndShuffleDimensionCache(oreType, random);
                         if (!target.isEmpty()) {

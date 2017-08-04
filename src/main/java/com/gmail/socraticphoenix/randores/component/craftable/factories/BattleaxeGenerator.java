@@ -37,7 +37,7 @@ public class BattleaxeGenerator implements CraftableGenerator {
 
     @Override
     public List<CraftableComponent> generate(Random random) {
-        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.BATTLEAXE), 1));
+        return Items.buildList(new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.BATTLEAXE), 1));
     }
 
     @Override

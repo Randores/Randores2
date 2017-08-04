@@ -26,19 +26,25 @@ import java.util.List;
 import java.util.Random;
 
 public class PropertyRegistry {
-    private static List<PropertyGenerator> registry = new ArrayList<>();
+    private static final PropertyRegistry instance = new PropertyRegistry();
 
-    public static void register(PropertyGenerator... factories) {
+    private List<PropertyGenerator> registry = new ArrayList<>();
+
+    public static PropertyRegistry instance() {
+        return instance;
+    }
+
+    public void register(PropertyGenerator... factories) {
         for(PropertyGenerator factory : factories) {
             register(factory);
         }
     }
 
-    public static void register(PropertyGenerator factory) {
+    public void register(PropertyGenerator factory) {
         registry.add(factory);
     }
 
-    public static List<MaterialProperty> buildProperties() {
+    public List<MaterialProperty> buildProperties() {
         List<MaterialProperty> properties = new ArrayList<>();
         for(PropertyGenerator generator : registry) {
             Random random = generator.parent().getRandomContainer().getRandom();

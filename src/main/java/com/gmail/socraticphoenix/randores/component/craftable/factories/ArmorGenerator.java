@@ -38,10 +38,10 @@ public class ArmorGenerator implements CraftableGenerator {
     @Override
     public List<CraftableComponent> generate(Random random) {
         return Items.buildList(
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.HELMET), 1),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.CHESTPLATE), 1),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.LEGGINGS), 1),
-                new CraftableComponent(CraftableTypeRegistry.get(RandoresKeys.BOOTS), 1)
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.HELMET), 1),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.CHESTPLATE), 1),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.LEGGINGS), 1),
+                new CraftableComponent(CraftableTypeRegistry.instance().get(RandoresKeys.BOOTS), 1)
         );
     }
 

@@ -23,29 +23,36 @@ package com.gmail.socraticphoenix.randores.listener;
 
 import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.block.RandoresBlocks;
+import com.gmail.socraticphoenix.randores.component.ability.EmpoweredEnchantment;
 import com.gmail.socraticphoenix.randores.crafting.CraftingBlocks;
 import com.gmail.socraticphoenix.randores.crafting.CraftingItems;
 import com.gmail.socraticphoenix.randores.item.RandoresItems;
-import com.gmail.socraticphoenix.randores.component.ability.EmpoweredEnchantment;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class RandoresRegistryListener {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onBlockRegister(RegistryEvent.Register<Block> ev) {
         Randores.info("Registering blocks...");
+        RandoresBlocks.init();
+        CraftingBlocks.init();
+
         CraftingBlocks.registerBlocks(ev.getRegistry());
         RandoresBlocks.registerBlocks(ev.getRegistry());
         Randores.info("Registered blocks.");
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onItemRegister(RegistryEvent.Register<Item> ev) {
         Randores.info("Registering items...");
+        RandoresItems.init();
+        CraftingItems.init();
+
         CraftingBlocks.registerItems(ev.getRegistry());
         CraftingItems.register(ev.getRegistry());
 

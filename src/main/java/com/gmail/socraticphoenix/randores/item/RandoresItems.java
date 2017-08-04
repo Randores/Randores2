@@ -27,7 +27,6 @@ import com.gmail.socraticphoenix.randores.RandoresKeys;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
 import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
-import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegistry;
 import com.gmail.socraticphoenix.randores.tab.RandoresTab;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -58,19 +57,10 @@ public class RandoresItems {
     public static List<Item> items;
 
     public static void init() {
-        MaterialType[] materials = {
-                MaterialTypeRegistry.get(RandoresKeys.INGOT),
-                MaterialTypeRegistry.get(RandoresKeys.GEM),
-                MaterialTypeRegistry.get(RandoresKeys.EMERALD),
-                MaterialTypeRegistry.get(RandoresKeys.CIRCLE_GEM),
-                MaterialTypeRegistry.get(RandoresKeys.SHARD),
-                MaterialTypeRegistry.get(RandoresKeys.DUST)
-        };
-
         items = new ArrayList<>();
 
         RandoresTab materialsTab = null;
-        for(MaterialType type : materials) {
+        for(MaterialType type : Randores.getDefaultMaterials()) {
             RandoresMaterial material = new RandoresMaterial(type);
             material.setUnlocalizedName(type.getName()).setCreativeTab(materialsTab == null ? (materialsTab = new RandoresTab("randores_materials", material)) : materialsTab);
             items.add(material);
@@ -113,19 +103,19 @@ public class RandoresItems {
         sledgehammer.setUnlocalizedName(RandoresKeys.SLEDGEHAMMER).setCreativeTab(new RandoresTab("randores_sledgehammers", sledgehammer));
         items.add(sledgehammer);
 
-        helmet = new RandoresItemArmor(CraftableTypeRegistry.get(RandoresKeys.HELMET));
+        helmet = new RandoresItemArmor(CraftableTypeRegistry.instance().get(RandoresKeys.HELMET));
         helmet.setUnlocalizedName(RandoresKeys.HELMET).setCreativeTab(Randores.TAB_ARMOR);
         items.add(helmet);
 
-        chestplate = new RandoresItemArmor(CraftableTypeRegistry.get(RandoresKeys.CHESTPLATE));
+        chestplate = new RandoresItemArmor(CraftableTypeRegistry.instance().get(RandoresKeys.CHESTPLATE));
         chestplate.setUnlocalizedName(RandoresKeys.CHESTPLATE).setCreativeTab(Randores.TAB_ARMOR);
         items.add(chestplate);
 
-        leggings = new RandoresItemArmor(CraftableTypeRegistry.get(RandoresKeys.LEGGINGS));
+        leggings = new RandoresItemArmor(CraftableTypeRegistry.instance().get(RandoresKeys.LEGGINGS));
         leggings.setUnlocalizedName(RandoresKeys.LEGGINGS).setCreativeTab(Randores.TAB_ARMOR);
         items.add(leggings);
 
-        boots = new RandoresItemArmor(CraftableTypeRegistry.get(RandoresKeys.BOOTS));
+        boots = new RandoresItemArmor(CraftableTypeRegistry.instance().get(RandoresKeys.BOOTS));
         boots.setUnlocalizedName(RandoresKeys.BOOTS).setCreativeTab(Randores.TAB_ARMOR);
         items.add(boots);
 

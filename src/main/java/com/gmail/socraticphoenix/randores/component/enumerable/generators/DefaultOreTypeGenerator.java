@@ -36,9 +36,9 @@ public class DefaultOreTypeGenerator implements OreTypeGenerator {
     @Override
     public List<OreType> generate(Random random) {
         return Items.buildList(
-                OreTypeRegistry.get(OreTypeRegistry.OVERWORLD),
-                OreTypeRegistry.get(OreTypeRegistry.NETHER),
-                OreTypeRegistry.get(OreTypeRegistry.END)
+                OreTypeRegistry.instance().get(OreTypeRegistry.OVERWORLD),
+                OreTypeRegistry.instance().get(OreTypeRegistry.NETHER),
+                OreTypeRegistry.instance().get(OreTypeRegistry.END)
         );
     }
 

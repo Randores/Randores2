@@ -21,23 +21,65 @@
  */
 package com.gmail.socraticphoenix.randores.plugin;
 
+import com.gmail.socraticphoenix.randores.component.ability.AbilityRegistry;
+import com.gmail.socraticphoenix.randores.component.craftable.CraftableRegistry;
+import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
+import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegistry;
+import com.gmail.socraticphoenix.randores.component.enumerable.OreTypeRegistry;
+import com.gmail.socraticphoenix.randores.component.post.MaterialDefinitionEditorRegistry;
+import com.gmail.socraticphoenix.randores.component.property.PropertyRegistry;
+import com.gmail.socraticphoenix.randores.component.tome.TomeHookRegistry;
+
 public abstract class AbstractRandoresPlugin implements RandoresPlugin {
-    private int index;
     private RandomContainer container;
 
-    public AbstractRandoresPlugin(int index) {
-        this.index = index;
+    public AbstractRandoresPlugin() {
         this.container = new RandomContainer();
-    }
-
-    @Override
-    public int index() {
-        return this.index;
     }
 
     @Override
     public RandomContainer getRandomContainer() {
         return this.container;
+    }
+
+    @Override
+    public void registerOreTypes(OreTypeRegistry registry) {
+
+    }
+
+    @Override
+    public void registerMaterialTypes(MaterialTypeRegistry registry) {
+
+    }
+
+    @Override
+    public void registerCraftableTypes(CraftableTypeRegistry registry) {
+
+    }
+
+    @Override
+    public void registerProperties(PropertyRegistry registry) {
+
+    }
+
+    @Override
+    public void registerAbilities(AbilityRegistry registry) {
+
+    }
+
+    @Override
+    public void registerCraftables(CraftableRegistry registry) {
+
+    }
+
+    @Override
+    public void registerTomeHooks(TomeHookRegistry registry) {
+
+    }
+
+    @Override
+    public void registerEditors(MaterialDefinitionEditorRegistry registry) {
+
     }
 
 }

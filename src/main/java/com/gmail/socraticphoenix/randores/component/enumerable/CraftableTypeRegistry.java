@@ -27,16 +27,22 @@ import java.util.List;
 import java.util.Map;
 
 public class CraftableTypeRegistry {
-    private static Map<String, CraftableType> craftableTypes = new HashMap<>();
-    private static List<CraftableType> craftablesAsList = new ArrayList<>();
+    private static final CraftableTypeRegistry instance = new CraftableTypeRegistry();
 
-    public static void register(CraftableType... CraftableTypes) {
+    private Map<String, CraftableType> craftableTypes = new HashMap<>();
+    private List<CraftableType> craftablesAsList = new ArrayList<>();
+
+    public  static CraftableTypeRegistry instance() {
+        return instance;
+    }
+
+    public void register(CraftableType... CraftableTypes) {
         for(CraftableType CraftableType : CraftableTypes) {
             register(CraftableType);
         }
     }
 
-    public static void register(CraftableType CraftableType) {
+    public void register(CraftableType CraftableType) {
         if(craftableTypes.containsKey(CraftableType.getName())) {
             throw new IllegalArgumentException("Attempted to register duplicate CraftableType: " + CraftableType.getName());
         }
@@ -45,15 +51,15 @@ public class CraftableTypeRegistry {
         craftablesAsList.add(CraftableType);
     }
 
-    public static CraftableType get(String CraftableType) {
+    public CraftableType get(String CraftableType) {
         return craftableTypes.get(CraftableType);
     }
 
-    public static Map<String, CraftableType> getCraftableTypes() {
+    public Map<String, CraftableType> getCraftableTypes() {
         return craftableTypes;
     }
 
-    public static List<CraftableType> values() {
+    public List<CraftableType> values() {
         return craftablesAsList;
     }
 

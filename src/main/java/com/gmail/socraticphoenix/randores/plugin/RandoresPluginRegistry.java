@@ -19,39 +19,26 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.gmail.socraticphoenix.randores.component.craftable;
+package com.gmail.socraticphoenix.randores.plugin;
+
+import com.gmail.socraticphoenix.randores.Randores;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class CraftableRegistry {
-    private static final CraftableRegistry instance = new CraftableRegistry();
-    
-    private List<CraftableGenerator> registry = new ArrayList<>();
+public class RandoresPluginRegistry {
+    private static List<RandoresPlugin> plugins = new ArrayList<>();
 
-    public static CraftableRegistry instance() {
-        return instance;
-    }
-    
-    public void register(CraftableGenerator... factories) {
-        for(CraftableGenerator factory : factories) {
-            register(factory);
+    public static void register(RandoresPlugin plugin) {
+        if(plugin instanceof Randores) {
+            plugins.add(0, plugin); //Make sure the root plugin is always first
+        } else {
+            plugins.add(plugin);
         }
     }
 
-    public void register(CraftableGenerator factory) {
-        registry.add(factory);
+    public static List<RandoresPlugin> getPlugins() {
+        return plugins;
     }
 
-    public List<CraftableComponent> buildCraftables() {
-        List<CraftableComponent> properties = new ArrayList<>();
-        for(CraftableGenerator factory : registry) {
-            Random random = factory.parent().getRandomContainer().getRandom();
-            if(factory.test(random)) {
-                properties.addAll(factory.generate(random));
-            }
-        }
-        return properties;
-    }
 }

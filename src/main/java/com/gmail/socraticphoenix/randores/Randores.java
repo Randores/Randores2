@@ -29,6 +29,7 @@ import com.gmail.socraticphoenix.mirror.Reflections;
 import com.gmail.socraticphoenix.randores.block.RandoresBlocks;
 import com.gmail.socraticphoenix.randores.block.RandoresTileEntity;
 import com.gmail.socraticphoenix.randores.component.ability.AbilityRegistry;
+import com.gmail.socraticphoenix.randores.component.ability.abilities.PotionEffectAbility;
 import com.gmail.socraticphoenix.randores.component.craftable.CraftableRegistry;
 import com.gmail.socraticphoenix.randores.component.craftable.factories.AestheticGenerator;
 import com.gmail.socraticphoenix.randores.component.craftable.factories.ArmorGenerator;
@@ -40,12 +41,13 @@ import com.gmail.socraticphoenix.randores.component.craftable.factories.SwordGen
 import com.gmail.socraticphoenix.randores.component.craftable.factories.ToolGenerator;
 import com.gmail.socraticphoenix.randores.component.enumerable.CraftableType;
 import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
-import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
-import com.gmail.socraticphoenix.randores.component.enumerable.OreTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegistry;
-import com.gmail.socraticphoenix.randores.component.enumerable.generators.DefaultOreTypeGenerator;
+import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
+import com.gmail.socraticphoenix.randores.component.enumerable.OreTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.generators.DefaultMaterialTypeGenerator;
+import com.gmail.socraticphoenix.randores.component.enumerable.generators.DefaultOreTypeGenerator;
+import com.gmail.socraticphoenix.randores.component.post.MaterialDefinitionEditorRegistry;
 import com.gmail.socraticphoenix.randores.component.property.PropertyRegistry;
 import com.gmail.socraticphoenix.randores.component.property.RandoresFuelHandler;
 import com.gmail.socraticphoenix.randores.component.property.properties.FlammableProperty.Generator;
@@ -55,7 +57,6 @@ import com.gmail.socraticphoenix.randores.config.RandoresConfig;
 import com.gmail.socraticphoenix.randores.config.RandoresJLSC;
 import com.gmail.socraticphoenix.randores.config.RandoresModules;
 import com.gmail.socraticphoenix.randores.crafting.CraftingBlocks;
-import com.gmail.socraticphoenix.randores.crafting.CraftingItems;
 import com.gmail.socraticphoenix.randores.crafting.convert.CraftiniumConvertRegistry;
 import com.gmail.socraticphoenix.randores.crafting.forge.CraftiniumForgeTileEntity;
 import com.gmail.socraticphoenix.randores.crafting.forge.CraftiniumSmeltRegistry;
@@ -81,7 +82,10 @@ import com.gmail.socraticphoenix.randores.module.equip.RandoresMobEquip;
 import com.gmail.socraticphoenix.randores.module.kit.RandoresStarterKit;
 import com.gmail.socraticphoenix.randores.network.RandoresNetworking;
 import com.gmail.socraticphoenix.randores.plugin.AbstractRandoresPlugin;
+import com.gmail.socraticphoenix.randores.plugin.RandoresAddon;
+import com.gmail.socraticphoenix.randores.plugin.RandoresAddonProvider;
 import com.gmail.socraticphoenix.randores.plugin.RandoresPlugin;
+import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import com.gmail.socraticphoenix.randores.proxy.RandoresProxy;
 import com.gmail.socraticphoenix.randores.resource.RandoresResourceManager;
 import com.gmail.socraticphoenix.randores.tab.RandoresArmorTab;
@@ -96,9 +100,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -115,8 +120,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Mod(modid = "randores")
+@RandoresAddon
 public class Randores extends AbstractRandoresPlugin {
     public static CreativeTabs TAB_ARMOR;
     public static CreativeTabs TAB_CRAFTING;
@@ -131,79 +138,14 @@ public class Randores extends AbstractRandoresPlugin {
     private File confDir;
     private JLSCConfiguration configuration;
 
-    private boolean acceptingRegisters;
-
     public Randores() {
-        super(0);
-        this.acceptingRegisters = true;
-        RandoresPluginRegistry.register(this);
         Randores.INSTANCE = this;
         this.logger = LogManager.getLogger("Randores");
 
-        info("Constructing Randores mod...",
-                "Registering material definition factories & enumerables...");
-        OreTypeRegistry.register(
-                new OreType(w -> w.provider.getDimension() == 0, OreTypeRegistry.OVERWORLD, b -> b.getBlock() == Blocks.STONE),
-                new OreType(w -> w.provider.getDimension() == 1, OreTypeRegistry.END, b -> b.getBlock() == Blocks.END_STONE),
-                new OreType(w -> w.provider.getDimension() == -1, OreTypeRegistry.NETHER, b -> b.getBlock() == Blocks.NETHERRACK)
-        );
-        OreTypeRegistry.register(new DefaultOreTypeGenerator());
-        MaterialTypeRegistry.register(
-                new MaterialType(RandoresKeys.INGOT, "ore", "ingot", true),
-                new MaterialType(RandoresKeys.GEM, "gem_ore", "gem", false),
-                new MaterialType(RandoresKeys.EMERALD, "emerald_ore", "gem", false),
-                new MaterialType(RandoresKeys.CIRCLE_GEM, "circle_ore", "gem", false),
-                new MaterialType(RandoresKeys.SHARD, "shard_ore", "shard", false),
-                new MaterialType(RandoresKeys.DUST, "dust_ore", "dust", false)
-        );
-        MaterialTypeRegistry.register(
-                new DefaultMaterialTypeGenerator(RandoresKeys.INGOT, 100),
-                new DefaultMaterialTypeGenerator(RandoresKeys.GEM, 60),
-                new DefaultMaterialTypeGenerator(RandoresKeys.EMERALD, 50),
-                new DefaultMaterialTypeGenerator(RandoresKeys.CIRCLE_GEM, 40),
-                new DefaultMaterialTypeGenerator(RandoresKeys.SHARD, 30),
-                new DefaultMaterialTypeGenerator(RandoresKeys.DUST, 20)
-        );
-        CraftableTypeRegistry.register(
-                new CraftableType(RandoresKeys.AXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.axe),
-                new CraftableType(RandoresKeys.HOE, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.hoe),
-                new CraftableType(RandoresKeys.PICKAXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.pickaxe),
-                new CraftableType(RandoresKeys.SHOVEL, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.shovel),
-                new CraftableType(RandoresKeys.HELMET, false, true, true, true, false, false, EntityEquipmentSlot.HEAD, () -> RandoresItems.helmet),
-                new CraftableType(RandoresKeys.CHESTPLATE, false, true, true, true, false, false, EntityEquipmentSlot.CHEST, () -> RandoresItems.chestplate),
-                new CraftableType(RandoresKeys.LEGGINGS, false, true, true, true, false, false, EntityEquipmentSlot.LEGS, () -> RandoresItems.leggings),
-                new CraftableType(RandoresKeys.BOOTS, false, true, true, true, false, false, EntityEquipmentSlot.FEET, () -> RandoresItems.boots),
-                new CraftableType(RandoresKeys.SWORD, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.sword),
-                new CraftableType(RandoresKeys.BATTLEAXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.battleaxe),
-                new CraftableType(RandoresKeys.SLEDGEHAMMER, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.sledgehammer),
-                new CraftableType(RandoresKeys.BOW, false, true, true, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.bow),
-                new CraftableType(RandoresKeys.STICK, false, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.stick),
-                new CraftableType(RandoresKeys.BRICKS, true, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresBlocks.brickItem),
-                new CraftableType(RandoresKeys.TORCH, true, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresBlocks.torchItem)
-        );
-        TomeHookRegistry.register(new DefaultTomeHook());
-        AbilityRegistry.register(new com.gmail.socraticphoenix.randores.component.ability.abilities.PotionEffectAbility.Generator());
-        PropertyRegistry.register(new Generator());
-        CraftableRegistry.register(new AestheticGenerator(),
-                new ArmorGenerator(),
-                new BattleaxeGenerator(),
-                new BowGenerator(),
-                new SledgehammerGenerator(),
-                new StickGenerator(),
-                new SwordGenerator(),
-                new ToolGenerator());
-        info("Registered factories & enumerables.");
-
-        info("Building item, block, and tab objects...");
+        info("Constructing Randores mod...");
 
         Randores.TAB_CRAFTING = new SimpleTab("randores_crafting", () -> new ItemStack(CraftingBlocks.tableItem));
         Randores.TAB_ARMOR = new RandoresArmorTab();
-
-        RandoresItems.init();
-        RandoresBlocks.init();
-
-        CraftingItems.init();
-        CraftingBlocks.init();
 
         RandoresJLSC.registerDefaults();
 
@@ -231,6 +173,29 @@ public class Randores extends AbstractRandoresPlugin {
         }
 
         info("Registered listeners.");
+    }
+
+    public static MaterialType[] getDefaultMaterials() {
+        return new MaterialType[]{
+                MaterialTypeRegistry.instance().get(RandoresKeys.INGOT),
+                MaterialTypeRegistry.instance().get(RandoresKeys.GEM),
+                MaterialTypeRegistry.instance().get(RandoresKeys.EMERALD),
+                MaterialTypeRegistry.instance().get(RandoresKeys.CIRCLE_GEM),
+                MaterialTypeRegistry.instance().get(RandoresKeys.SHARD),
+                MaterialTypeRegistry.instance().get(RandoresKeys.DUST)
+        };
+    }
+
+    public static OreType[] getDefaultOres() {
+        return new OreType[]{
+                OreTypeRegistry.instance().get(OreTypeRegistry.OVERWORLD),
+                OreTypeRegistry.instance().get(OreTypeRegistry.END),
+                OreTypeRegistry.instance().get(OreTypeRegistry.NETHER)
+        };
+    }
+
+    public static void registerPlugin(RandoresPlugin plugin) {
+        RandoresPluginRegistry.register(plugin);
     }
 
     public static RandoresConfig getConfigObj() {
@@ -273,66 +238,75 @@ public class Randores extends AbstractRandoresPlugin {
         }
     }
 
-    @Mod.EventHandler
-    public void onPluginMessage(FMLInterModComms.IMCEvent ev) {
-        for (IMCMessage message : ev.getMessages()) {
-            if (message.key.equals("register")) {
-                String method = message.getStringValue();
-                info("Received register message from plugin: " + message.getSender());
-                if (acceptingRegisters) {
-                    String[] pieces = method.split("::");
-                    if (pieces.length != 2) {
-                        warn("Expecting method using reference notation (class::method), got \"" + method + "\" instead",
-                                "Plugin " + message.getSender() + " will not be registered");
-                    } else {
-                        Optional<Class> classOptional = Reflections.resolveClass(pieces[0]);
-                        if (classOptional.isPresent()) {
-                            try {
-                                Method targetMethod = classOptional.get().getMethod(pieces[1]);
-                                if (Modifier.isStatic(targetMethod.getModifiers())) {
-                                    boolean accessible = targetMethod.isAccessible();
-                                    targetMethod.setAccessible(true);
-                                    Class type = targetMethod.getReturnType();
-                                    if (RandoresPlugin.class.isAssignableFrom(type)) {
-                                        try {
-                                            RandoresPlugin plugin = (RandoresPlugin) targetMethod.invoke(null);
-                                            RandoresPluginRegistry.register(plugin);
-                                            info("Successfully register plugin: " + message.getSender());
-                                        } catch (IllegalAccessException | InvocationTargetException e) {
-                                            warn("Error while invoking method \"" + pieces[1] + "\" in class \"" + pieces[0] + "\"");
-                                            warn("Plugin " + message.getSender() + " will not be registered", e);
-                                        }
-                                    } else {
-                                        warn("Method \"" + pieces[1] + "\" in class \"" + pieces[0] + "\" does not return an instance of RandoresPlugin",
-                                                "Plugin " + message.getSender() + " will not be registered");
-                                    }
-
-                                    targetMethod.setAccessible(accessible);
-                                } else {
-                                    warn("Method \"" + pieces[1] + "\" in class \"" + pieces[0] + "\" is not static",
-                                            "Plugin " + message.getSender() + " will not be registered");
-                                }
-                            } catch (NoSuchMethodException e) {
-                                warn("Unable to locate no-arg method \"" + pieces[1] + "\" in class \"" + pieces[0] + "\"",
-                                        "Plugin " + message.getSender() + " will not be registered");
-                            }
-                        } else {
-                            warn("Unable to lookup class \"" + pieces[0] + "\"",
-                                    "Plugin " + message.getSender() + " will not be registered");
-                        }
-                    }
-                } else {
-                    warn("Plugin " + message.getSender() + " is attempting registering after preInit! This is not allowed!",
-                            "Plugin " + message.getSender() + " will not be registered");
-                }
-            }
-        }
+    private static String methodNotation(Class owner, Method method) {
+        return owner.getName() + "::" + method.getName();
     }
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent ev) throws IOException {
         info("Randores is PreInitializing...",
-                "Loading curse word dictionary...");
+                "Loading all plugins...");
+
+        ASMDataTable table = ev.getAsmData();
+        String name = RandoresAddon.class.getCanonicalName();
+        Set<ASMData> data = table.getAll(name);
+        for(ASMData plugin : data) {
+            Randores.info("Attempting to register plugins from: " + plugin.getClassName());
+            Optional<Class> clazz = Reflections.resolveClass(plugin.getClassName());
+            if(clazz.isPresent()) {
+                Class target = clazz.get();
+                for(Method method : target.getDeclaredMethods()) {
+                    if(method.getAnnotation(RandoresAddonProvider.class) != null) {
+                        if(method.getParameterCount() == 0) {
+                            if (Modifier.isStatic(method.getModifiers())) {
+                                if (Modifier.isPublic(method.getModifiers())) {
+                                    if (RandoresPlugin.class.isAssignableFrom(method.getReturnType())) {
+                                        try {
+                                            RandoresPlugin pluginInst = (RandoresPlugin) method.invoke(null);
+                                            if (pluginInst != null) {
+                                                Randores.registerPlugin(pluginInst);
+                                                Randores.info("Successfully registered plugin from provider " + methodNotation(target, method));
+                                            } else {
+                                                Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", it returned a null value");
+                                            }
+                                        } catch (IllegalAccessException | InvocationTargetException | ClassCastException e) {
+                                            Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", invocation failed", e);
+                                        }
+                                    } else {
+                                        Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", it doesn't return a RandoresPlugin");
+                                    }
+                                } else {
+                                    Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", it wasn't public");
+
+                                }
+                            } else {
+                                Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", it wasn't static");
+                            }
+                        } else {
+                            Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", it has more than 0 arguments");
+                        }
+                    }
+                }
+            } else {
+                Randores.warn("Failed to load plugins from " + plugin.getClassName() + ", the class doesn't exist");
+            }
+        }
+
+        info("Loaded plugins", "Initializing all plugins...");
+        for(RandoresPlugin plugin : RandoresPluginRegistry.getPlugins()) {
+            plugin.registerOreTypes(OreTypeRegistry.instance());
+            plugin.registerMaterialTypes(MaterialTypeRegistry.instance());
+            plugin.registerCraftableTypes(CraftableTypeRegistry.instance());
+            plugin.registerProperties(PropertyRegistry.instance());
+            plugin.registerAbilities(AbilityRegistry.instance());
+            plugin.registerCraftables(CraftableRegistry.instance());
+            plugin.registerTomeHooks(TomeHookRegistry.instance());
+            plugin.registerEditors(MaterialDefinitionEditorRegistry.instance());
+            info("Initialized plugin: " + plugin.id());
+        }
+        info("Initialized plugins.");
+
+        info("Loading curse word dictionary...");
         Randores.offensiveWords.addAll(RandoresResourceManager.getResourceLines("offensive_words.txt"));
         info("Curse words loaded.",
                 "Registering entities and recipes...");
@@ -364,8 +338,6 @@ public class Randores extends AbstractRandoresPlugin {
 
     @Mod.EventHandler
     public void onInit(FMLInitializationEvent ev) {
-        this.acceptingRegisters = false;
-
         info("Randores is Initializing...",
                 "Sending handler message to WAILA.");
         FMLInterModComms.sendMessage("waila", "register", "com.gmail.socraticphoenix.randores.waila.RandoresWailaHandler.callbackRegister");
@@ -379,12 +351,7 @@ public class Randores extends AbstractRandoresPlugin {
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new RandoresGuiHandler());
         GameRegistry.registerWorldGenerator(new RandoresWorldGenerator(), 10);
         GameRegistry.registerWorldGenerator(new RandoresAltarGenerator(), -100);
-        info("Registered GUI hander and world generators.");
-        info("Initializing all plugins...");
-        for(RandoresPlugin plugin : RandoresPluginRegistry.getPlugins()) {
-            plugin.init();
-        }
-        info("Initialized plugins", "Calling proxy Initialization...");
+        info("Registered GUI hander and world generators.", "Calling proxy Initialization...");
         Randores.PROXY.initSided(ev);
         info("Finished Initialization.");
     }
@@ -392,7 +359,6 @@ public class Randores extends AbstractRandoresPlugin {
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent ev) {
         info("Randores is PostInitializing...");
-        ;
         info("Calling proxy PostInitialization...");
         Randores.PROXY.postInitSided(ev);
         info("Finished PostInitialization.");
@@ -437,11 +403,11 @@ public class Randores extends AbstractRandoresPlugin {
     }
 
     public static void warn(String info) {
-        Randores.getLogger().warn(INSTANCE.prefix + info);
+        Randores.getLogger().info(INSTANCE.prefix + "[Warn] " + info);
     }
 
     public static void warn(String info, Throwable exception) {
-        Randores.getLogger().warn(INSTANCE.prefix + info, exception);
+        Randores.getLogger().info(INSTANCE.prefix + "[Warn] " + info, exception);
     }
 
     public static Logger getLogger() {
@@ -462,10 +428,94 @@ public class Randores extends AbstractRandoresPlugin {
         return false;
     }
 
+    //Begin plugin
+
+    @RandoresAddonProvider
+    public static Randores instance() {
+        return INSTANCE;
+    }
+
     @Override
-    public void init() {
-        info("Randores root plugin received initialization request.");
-        //We don't init because we're the root plugin!
+    public void registerOreTypes(OreTypeRegistry registry) {
+        registry.register(
+                new OreType(w -> w.provider.getDimension() == 0, OreTypeRegistry.OVERWORLD, b -> b.getBlock() == Blocks.STONE),
+                new OreType(w -> w.provider.getDimension() == 1, OreTypeRegistry.END, b -> b.getBlock() == Blocks.END_STONE),
+                new OreType(w -> w.provider.getDimension() == -1, OreTypeRegistry.NETHER, b -> b.getBlock() == Blocks.NETHERRACK)
+        );
+        registry.register(new DefaultOreTypeGenerator());
+    }
+
+    @Override
+    public void registerMaterialTypes(MaterialTypeRegistry registry) {
+        registry.register(
+                new MaterialType(RandoresKeys.INGOT, "ore", "ingot", true),
+                new MaterialType(RandoresKeys.GEM, "gem_ore", "gem", false),
+                new MaterialType(RandoresKeys.EMERALD, "emerald_ore", "gem", false),
+                new MaterialType(RandoresKeys.CIRCLE_GEM, "circle_ore", "gem", false),
+                new MaterialType(RandoresKeys.SHARD, "shard_ore", "shard", false),
+                new MaterialType(RandoresKeys.DUST, "dust_ore", "dust", false)
+        );
+        registry.register(
+                new DefaultMaterialTypeGenerator(RandoresKeys.INGOT, 100),
+                new DefaultMaterialTypeGenerator(RandoresKeys.GEM, 60),
+                new DefaultMaterialTypeGenerator(RandoresKeys.EMERALD, 50),
+                new DefaultMaterialTypeGenerator(RandoresKeys.CIRCLE_GEM, 40),
+                new DefaultMaterialTypeGenerator(RandoresKeys.SHARD, 30),
+                new DefaultMaterialTypeGenerator(RandoresKeys.DUST, 20)
+        );
+    }
+
+    @Override
+    public void registerCraftableTypes(CraftableTypeRegistry registry) {
+        registry.register(
+                new CraftableType(RandoresKeys.AXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.axe),
+                new CraftableType(RandoresKeys.HOE, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.hoe),
+                new CraftableType(RandoresKeys.PICKAXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.pickaxe),
+                new CraftableType(RandoresKeys.SHOVEL, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.shovel),
+                new CraftableType(RandoresKeys.HELMET, false, true, true, true, false, false, EntityEquipmentSlot.HEAD, () -> RandoresItems.helmet),
+                new CraftableType(RandoresKeys.CHESTPLATE, false, true, true, true, false, false, EntityEquipmentSlot.CHEST, () -> RandoresItems.chestplate),
+                new CraftableType(RandoresKeys.LEGGINGS, false, true, true, true, false, false, EntityEquipmentSlot.LEGS, () -> RandoresItems.leggings),
+                new CraftableType(RandoresKeys.BOOTS, false, true, true, true, false, false, EntityEquipmentSlot.FEET, () -> RandoresItems.boots),
+                new CraftableType(RandoresKeys.SWORD, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.sword),
+                new CraftableType(RandoresKeys.BATTLEAXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.battleaxe),
+                new CraftableType(RandoresKeys.SLEDGEHAMMER, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.sledgehammer),
+                new CraftableType(RandoresKeys.BOW, false, true, true, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.bow),
+                new CraftableType(RandoresKeys.STICK, false, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.stick),
+                new CraftableType(RandoresKeys.BRICKS, true, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresBlocks.brickItem),
+                new CraftableType(RandoresKeys.TORCH, true, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresBlocks.torchItem)
+        );
+    }
+
+    @Override
+    public void registerProperties(PropertyRegistry registry) {
+        registry.register(new Generator());
+    }
+
+    @Override
+    public void registerAbilities(AbilityRegistry registry) {
+        registry.register(new PotionEffectAbility.Generator());
+    }
+
+    @Override
+    public void registerCraftables(CraftableRegistry registry) {
+        registry.register(new AestheticGenerator(),
+                new ArmorGenerator(),
+                new BattleaxeGenerator(),
+                new BowGenerator(),
+                new SledgehammerGenerator(),
+                new StickGenerator(),
+                new SwordGenerator(),
+                new ToolGenerator());
+    }
+
+    @Override
+    public void registerTomeHooks(TomeHookRegistry registry) {
+        registry.register(new DefaultTomeHook());
+    }
+
+    @Override
+    public void registerEditors(MaterialDefinitionEditorRegistry registry) {
+
     }
 
 }

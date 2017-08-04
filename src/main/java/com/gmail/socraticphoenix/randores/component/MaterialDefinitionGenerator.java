@@ -22,7 +22,7 @@
 package com.gmail.socraticphoenix.randores.component;
 
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.RandoresPluginRegistry;
+import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import com.gmail.socraticphoenix.randores.component.ability.AbilityRegistry;
 import com.gmail.socraticphoenix.randores.component.craftable.CraftableRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
@@ -59,11 +59,11 @@ public class MaterialDefinitionGenerator {
 
     public static void logStatistics(List<MaterialDefinition> definitions) {
         Map<OreType, Integer> dimCount = new LinkedHashMap<>();
-        for (OreType oreType : OreTypeRegistry.values()) {
+        for (OreType oreType : OreTypeRegistry.instance().values()) {
             dimCount.put(oreType, 0);
         }
         Map<MaterialType, Integer> mCount = new LinkedHashMap<>();
-        for (MaterialType type : MaterialTypeRegistry.values()) {
+        for (MaterialType type : MaterialTypeRegistry.instance().values()) {
             mCount.put(type, 0);
         }
 
@@ -74,7 +74,7 @@ public class MaterialDefinitionGenerator {
             mCount.put(mat, mCount.get(mat) + 1);
         }
         Randores.info("Definition Count: " + definitions.size());
-        Randores.info("Ores per OreType: ");
+        Randores.info("Ore Types: ");
         for (Map.Entry<OreType, Integer> entry : dimCount.entrySet()) {
             Randores.info("    " + entry.getKey().getName() + ": " + entry.getValue() + " ore(s)");
         }
@@ -170,10 +170,10 @@ public class MaterialDefinitionGenerator {
 
             Random selector = new Random(b.getLong("selectorSeed"));
 
-            List<MaterialType> candidates = MaterialTypeRegistry.buildTypes();
+            List<MaterialType> candidates = MaterialTypeRegistry.instance().buildTypes();
             MaterialType type = RandoresProbability.randomElement(candidates, selector);
 
-            List<OreType> oreCandidates = OreTypeRegistry.buildOreTypes();
+            List<OreType> oreCandidates = OreTypeRegistry.instance().buildOreTypes();
             OreType oreType = RandoresProbability.randomElement(oreCandidates, selector);
 
 
@@ -210,12 +210,12 @@ public class MaterialDefinitionGenerator {
                     b.getInt("oreHarvest"));
 
             MaterialDefinition definition = new MaterialDefinition(color, RandoresNameAlgorithm.name(color), ore,
-                    CraftableRegistry.buildCraftables(),
-                    PropertyRegistry.buildProperties(),
-                    AbilityRegistry.buildSeries(selector));
+                    CraftableRegistry.instance().buildCraftables(),
+                    PropertyRegistry.instance().buildProperties(),
+                    AbilityRegistry.instance().buildSeries(selector));
             definition.provideData(data.getId(), index);
 
-            MaterialDefinitionEditorRegistry.edit(definition);
+            MaterialDefinitionEditorRegistry.instance().edit(definition);
 
             definitions.add(definition);
             index++;

@@ -25,11 +25,9 @@ import com.gmail.socraticphoenix.randores.Randores;
 import com.gmail.socraticphoenix.randores.RandoresItemRegistry;
 import com.gmail.socraticphoenix.randores.RandoresKeys;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
-import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
 import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
+import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
 import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
-import com.gmail.socraticphoenix.randores.component.enumerable.OreTypeRegistry;
-import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegistry;
 import com.gmail.socraticphoenix.randores.item.RandoresItemBlock;
 import com.gmail.socraticphoenix.randores.tab.RandoresTab;
 import net.minecraft.block.Block;
@@ -58,27 +56,12 @@ public class RandoresBlocks {
     public static List<RandoresItemBlock> blockItems;
 
     public static void init() {
-        OreType[] oreTypes = {
-                OreTypeRegistry.get(OreTypeRegistry.OVERWORLD),
-                OreTypeRegistry.get(OreTypeRegistry.END),
-                OreTypeRegistry.get(OreTypeRegistry.NETHER)
-        };
-
-        MaterialType[] materials = {
-                MaterialTypeRegistry.get(RandoresKeys.INGOT),
-                MaterialTypeRegistry.get(RandoresKeys.GEM),
-                MaterialTypeRegistry.get(RandoresKeys.EMERALD),
-                MaterialTypeRegistry.get(RandoresKeys.CIRCLE_GEM),
-                MaterialTypeRegistry.get(RandoresKeys.SHARD),
-                MaterialTypeRegistry.get(RandoresKeys.DUST)
-        };
-
         blocks = new ArrayList<>();
 
         blockItems = new ArrayList<>();
         RandoresTab oreTab = null;
-        for(OreType oreType : oreTypes) {
-            for(MaterialType materialType : materials) {
+        for(OreType oreType : Randores.getDefaultOres()) {
+            for(MaterialType materialType : Randores.getDefaultMaterials()) {
                 RandoresOre ore = new RandoresOre(Material.ROCK, oreType, materialType);
 
                 RandoresItemBlock oreItem = new RandoresItemBlock(ore);
@@ -91,7 +74,7 @@ public class RandoresBlocks {
             }
         }
 
-        brick = new RandoresBlock(Material.ROCK, ComponentType.craftable(CraftableTypeRegistry.get(RandoresKeys.BRICKS)), SoundType.STONE);
+        brick = new RandoresBlock(Material.ROCK, ComponentType.craftable(CraftableTypeRegistry.instance().get(RandoresKeys.BRICKS)), SoundType.STONE);
 
         brickItem = new RandoresItemBlock(brick);
         brickItem.setUnlocalizedName(RandoresKeys.BRICKS);
