@@ -362,20 +362,6 @@ public class Randores extends AbstractRandoresPlugin {
         info("Calling proxy PostInitialization...");
         Randores.PROXY.postInitSided(ev);
         info("Finished PostInitialization.");
-
-        String k = "\n";
-        for (MaterialType type : MaterialTypeRegistry.instance().values()) {
-            k += "list.add(\"" + type.getName() + "\"" + ");\n";
-        }
-        k += "\n";
-        for (OreType type : OreTypeRegistry.instance().values()) {
-            k += "list.add(\"" + type.getName() + "\"" + ");\n";
-        }
-        k += "\n";
-        for(CraftableType type : CraftableTypeRegistry.instance().values()) {
-            k += "list.add(\"" + type.getName() + "\"" + ");\n";
-        }
-        System.out.println(k);
     }
 
     public static int getCount() {
