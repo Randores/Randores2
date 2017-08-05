@@ -23,10 +23,9 @@ package com.gmail.socraticphoenix.randores.item;
 
 import com.gmail.socraticphoenix.randores.IRandoresItem;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
-import com.gmail.socraticphoenix.randores.component.enumerable.CraftableType;
 import com.gmail.socraticphoenix.randores.component.ability.EmpoweredEnchantment;
+import com.gmail.socraticphoenix.randores.component.enumerable.CraftableType;
 import com.gmail.socraticphoenix.randores.data.RandoresItemData;
-import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
 import com.gmail.socraticphoenix.randores.entity.RandoresArrow;
 import javax.annotation.Nullable;
 import net.minecraft.enchantment.Enchantment;
@@ -72,6 +71,21 @@ public class RandoresBow extends ItemBow implements IRandoresItem {
 
     public RandoresBow(CraftableType type) {
         this(ComponentType.craftable(type));
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return RandoresItemHelper.getItemStackDisplayNameImpl(this, stack);
+    }
+
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        return RandoresItemHelper.getMaxDamageImpl(this, stack);
+    }
+
+    @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return RandoresItemHelper.getIsRepairableImpl(this, toRepair, repair);
     }
 
     @Override
@@ -179,39 +193,6 @@ public class RandoresBow extends ItemBow implements IRandoresItem {
                 }
             }
         }
-    }
-
-    @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        if(RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type.from(m)), () -> super.getItemStackDisplayName(stack));
-        }
-        return super.getItemStackDisplayName(stack);
-    }
-
-    @Override
-    public int getMaxDamage(ItemStack stack) {
-        if(RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), m -> m.getMaterial().getMaxUses(), () -> super.getMaxDamage(stack));
-        }
-
-        return super.getMaxDamage(stack);
-    }
-
-    @Override
-    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        if(RandoresItemData.hasData(toRepair)) {
-            return RandoresWorldData.delegate(new RandoresItemData(toRepair), m -> {
-                if(m.getMaterial().item() == repair.getItem() && RandoresItemData.hasData(repair)) {
-                    RandoresItemData data = new RandoresItemData(repair);
-                    return RandoresWorldData.delegate(data, m2 -> m2.getMaterial() == m.getMaterial(), () -> false);
-                }
-
-                return false;
-            }, () -> super.getIsRepairable(toRepair, repair));
-        }
-
-        return super.getIsRepairable(toRepair, repair);
     }
 
     @Override

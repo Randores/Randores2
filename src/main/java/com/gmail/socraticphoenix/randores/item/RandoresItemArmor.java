@@ -96,6 +96,16 @@ public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRand
     }
 
     @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return RandoresItemHelper.getItemStackDisplayNameImpl(this, stack);
+    }
+
+    @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return RandoresItemHelper.getIsRepairableImpl(this, toRepair, repair);
+    }
+
+    @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
         return this.delegate(armor, i -> new ArmorProperties(0, i.damageReduceAmount / 25d, Integer.MAX_VALUE), () -> new ArmorProperties(0, 1, Integer.MAX_VALUE));
     }
@@ -130,14 +140,6 @@ public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRand
     @Override
     public boolean hasOverlay(ItemStack stack) {
         return RandoresItemData.hasData(stack);
-    }
-
-    @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        if(RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type.from(m)), () -> super.getItemStackDisplayName(stack));
-        }
-        return super.getItemStackDisplayName(stack);
     }
 
     protected void delegateVoid(RandoresItemData data, Consumer<ItemArmor> action, Runnable def) {
@@ -242,11 +244,6 @@ public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRand
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return this.delegate(stack, i -> i.isEnchantable(stack), () -> super.isEnchantable(stack));
-    }
-
-    @Override
-    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        return this.delegate(toRepair, i -> i.getIsRepairable(toRepair, repair), () -> super.getIsRepairable(toRepair, repair));
     }
 
     @Override
@@ -461,4 +458,5 @@ public class RandoresItemArmor extends ItemArmor implements ISpecialArmor, IRand
     public ComponentType type() {
         return this.type;
     }
+
 }

@@ -49,12 +49,14 @@ public class RandoresSledgehammer extends Item implements IRandoresItem {
         this(ComponentType.craftable(type));
     }
 
-
+    @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        if (RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type().from(m)), () -> super.getItemStackDisplayName(stack));
-        }
-        return super.getItemStackDisplayName(stack);
+        return RandoresItemHelper.getItemStackDisplayNameImpl(this, stack);
+    }
+
+    @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return RandoresItemHelper.getIsRepairableImpl(this, toRepair, repair);
     }
 
     @Override

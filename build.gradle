@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'maven-publish'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "2a1"
+version = "2a6"
 group = "com.gmail.socraticphoenix.randores"
 archivesBaseName = "Randores"
 
@@ -117,10 +117,6 @@ publishing {
     publications {
         maven (MavenPublication) {
             artifact jar
-
-            artifact sourceJar {
-                classifier "sources"
-            }
 
             artifact javadocJar {
                 classifier "javadoc"

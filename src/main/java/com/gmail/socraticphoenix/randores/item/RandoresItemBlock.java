@@ -25,7 +25,6 @@ import com.gmail.socraticphoenix.randores.IRandoresItem;
 import com.gmail.socraticphoenix.randores.block.RandoresTileEntity;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
 import com.gmail.socraticphoenix.randores.data.RandoresItemData;
-import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,26 +35,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class RandoresItemBlock extends ItemBlock implements IRandoresItem {
-    public static final Map<Block, RandoresItemBlock> ITEM_BY_BLOCK = new LinkedHashMap<>();
-
     private ComponentType type;
 
     public <T extends Block & IRandoresItem> RandoresItemBlock(T block) {
         super(block);
         this.type = block.type();
-        ITEM_BY_BLOCK.put(block, this);
     }
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        if(RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type.from(m)), () -> super.getItemStackDisplayName(stack));
-        }
-        return super.getItemStackDisplayName(stack);
+        return RandoresItemHelper.getItemStackDisplayNameImpl(this, stack);
     }
 
     @Override

@@ -36,13 +36,11 @@ public class CraftableComponent implements Component {
     private CraftableType type;
     @Serialize(value = "quantity", reflect = false)
     private int quantity;
-    private Item item;
 
     @SerializationConstructor
     public CraftableComponent(@Name("type") CraftableType type, @Name("quantity") int quantity) {
         this.type = type;
         this.quantity = quantity;
-        this.item = type.getItem().get();
     }
 
     public CraftableComponent setType(CraftableType type) {
@@ -60,12 +58,7 @@ public class CraftableComponent implements Component {
     }
 
     public Item getItem() {
-        return this.item;
-    }
-
-    public CraftableComponent setItem(Item item) {
-        this.item = item;
-        return this;
+        return this.type.getItem().get();
     }
 
     public CraftableType getType() {
@@ -74,7 +67,7 @@ public class CraftableComponent implements Component {
 
     @Override
     public Item item() {
-        return this.item;
+        return this.getItem();
     }
 
     @Override

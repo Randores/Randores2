@@ -27,7 +27,6 @@ import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,12 +35,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 public class RandoresTab extends CreativeTabs {
-    private Item icon;
+    private IRandoresItem item;
     private ComponentType type;
 
     public RandoresTab(String name, IRandoresItem item) {
         super(name);
-        this.icon = item.getThis();
+        this.item = item;
         this.type = item.type();
     }
 
@@ -59,7 +58,7 @@ public class RandoresTab extends CreativeTabs {
 
     @Override
     public ItemStack getTabIconItem() {
-        return new ItemStack(this.icon);
+        return new ItemStack(this.item.getThis());
     }
 
 }

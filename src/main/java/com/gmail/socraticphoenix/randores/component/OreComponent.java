@@ -28,16 +28,12 @@ import com.gmail.socraticphoenix.jlsc.serialization.annotation.Serialize;
 import com.gmail.socraticphoenix.randores.RandoresItemRegistry;
 import com.gmail.socraticphoenix.randores.RandoresKeys;
 import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
-import com.gmail.socraticphoenix.randores.item.RandoresItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 
 @Serializable
 public class OreComponent implements Component {
-    private Item item;
-    private Block block;
-
     @Serialize(value = "material", reflect = false)
     private MaterialComponent material;
     @Serialize(value = "oreType", reflect = false)
@@ -93,18 +89,10 @@ public class OreComponent implements Component {
         this.hardness = hardness;
         this.resistance = resistance;
         this.harvestLevel = harvestLevel;
-
-        this.item = RandoresItemRegistry.getOreItem(oreType, material.getType());
-        this.block = RandoresItemRegistry.getOre(oreType, material.getType()).getOreBlock();
     }
 
     public Item getItem() {
-        return this.item;
-    }
-
-    public OreComponent setItem(RandoresItemBlock item) {
-        this.item = item;
-        return this;
+        return RandoresItemRegistry.instance().getOreItem(oreType, material.getType());
     }
 
     public OreComponent setMaterial(MaterialComponent material) {
@@ -183,7 +171,7 @@ public class OreComponent implements Component {
     }
 
     public Block getBlock() {
-        return this.block;
+        return RandoresItemRegistry.instance().getOre(this.oreType, this.material.getType()).getOreBlock();
     }
 
     public MaterialComponent getMaterial() {
@@ -248,7 +236,7 @@ public class OreComponent implements Component {
 
     @Override
     public Item item() {
-        return this.item;
+        return this.getItem();
     }
 
     @Override

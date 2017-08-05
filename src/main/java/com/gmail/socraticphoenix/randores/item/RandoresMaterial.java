@@ -24,8 +24,6 @@ package com.gmail.socraticphoenix.randores.item;
 import com.gmail.socraticphoenix.randores.IRandoresMaterial;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
-import com.gmail.socraticphoenix.randores.data.RandoresItemData;
-import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -45,11 +43,9 @@ public class RandoresMaterial extends Item implements IRandoresMaterial {
         return ComponentType.material();
     }
 
+    @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        if(RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), m -> m.formatLocalName(this.type().from(m)), () -> super.getItemStackDisplayName(stack));
-        }
-        return super.getItemStackDisplayName(stack);
+        return RandoresItemHelper.getItemStackDisplayNameImpl(this, stack);
     }
 
     @Override

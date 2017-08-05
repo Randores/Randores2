@@ -51,6 +51,9 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * The IWorldGenerator that populates the world with {@link IRandoresOre}s.
+ */
 public class RandoresWorldGenerator implements IWorldGenerator {
 
     @Override

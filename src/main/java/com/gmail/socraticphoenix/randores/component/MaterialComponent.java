@@ -32,8 +32,6 @@ import net.minecraft.item.Item;
 
 @Serializable
 public class MaterialComponent implements Component {
-    private Item item;
-
     @Serialize(value = "type", reflect = false)
     private MaterialType type;
     @Serialize(value = "armorReduction", reflect = false)
@@ -61,16 +59,10 @@ public class MaterialComponent implements Component {
         this.damage = damage;
         this.toughness = toughness;
         this.enchantability = enchantability;
-        this.item = RandoresItemRegistry.getMaterial(type).getThis();
     }
 
     public Item getItem() {
-        return this.item;
-    }
-
-    public MaterialComponent setItem(Item item) {
-        this.item = item;
-        return this;
+        return RandoresItemRegistry.instance().getMaterial(this.type).getThis();
     }
 
     public MaterialComponent setType(MaterialType type) {
@@ -115,7 +107,7 @@ public class MaterialComponent implements Component {
 
     @Override
     public Item item() {
-        return this.item;
+        return this.getItem();
     }
 
     @Override

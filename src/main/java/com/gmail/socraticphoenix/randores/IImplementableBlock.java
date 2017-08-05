@@ -21,36 +21,12 @@
  */
 package com.gmail.socraticphoenix.randores;
 
-import com.gmail.socraticphoenix.randores.block.RandoresOre;
-import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
-import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
-import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 
-/**
- * Represents an {@link IRandoresItem} that is an ore that generates in the world and can produce an {@link IRandoresMaterial}.
- */
-public interface IRandoresOre extends IRandoresItem {
+public interface IImplementableBlock {
 
-    /**
-     * @return The {@link OreType} of this IRandoresOre
-     */
-    OreType getOreType();
+    void setHarvester(EntityPlayer player);
 
-    /**
-     * @return The {@link MaterialType} of the material produced from this IRandoresOre.
-     */
-    MaterialType getMaterialType();
-
-    /**
-     * @return The physical block to be placed in the world. The Block returned must have a block state that supports
-     * the {@link RandoresOre#HARVEST_LEVEL} property.
-     */
-    default Block getOreBlock() {
-        if(this instanceof Block) {
-            return (Block) this;
-        } else {
-            throw new UnsupportedOperationException("Can't implement getBlock for " + this.getClass().getName() + ", tried instanceof Block");
-        }
-    }
+    EntityPlayer getHarvester();
 
 }

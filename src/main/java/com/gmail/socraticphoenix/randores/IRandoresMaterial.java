@@ -23,8 +23,14 @@ package com.gmail.socraticphoenix.randores;
 
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
 
+/**
+ * Represents an {@link IRandoresItem} that can be produced from ore and crafted into various items.
+ */
 public interface IRandoresMaterial extends IRandoresItem {
 
+    /**
+     * @return The {@link MaterialType} of this IRandoresMaterial.
+     */
     MaterialType getType();
 
 }

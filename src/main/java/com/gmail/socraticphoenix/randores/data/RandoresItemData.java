@@ -21,8 +21,12 @@
  */
 package com.gmail.socraticphoenix.randores.data;
 
+import com.gmail.socraticphoenix.randores.block.RandoresTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -34,6 +38,19 @@ public class RandoresItemData {
     public RandoresItemData(int index, UUID id) {
         this.index = index;
         this.id = id;
+    }
+
+    public static boolean hasData(IBlockAccess access, BlockPos pos) {
+        TileEntity entity = access.getTileEntity(pos);
+        return entity != null && entity instanceof RandoresTileEntity;
+    }
+
+    public static RandoresItemData getData(IBlockAccess acces, BlockPos pos) {
+        TileEntity entity = acces.getTileEntity(pos);
+        if(entity != null && entity instanceof RandoresTileEntity) {
+            return ((RandoresTileEntity) entity).getData();
+        }
+        return null;
     }
 
     public static boolean hasData(ItemStack stack) {

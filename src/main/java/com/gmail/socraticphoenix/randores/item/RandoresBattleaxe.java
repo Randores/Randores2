@@ -22,8 +22,9 @@
 package com.gmail.socraticphoenix.randores.item;
 
 import com.gmail.socraticphoenix.randores.component.ComponentType;
-import com.gmail.socraticphoenix.randores.component.enumerable.CraftableType;
 import com.gmail.socraticphoenix.randores.component.ability.EmpoweredEnchantment;
+import com.gmail.socraticphoenix.randores.component.enumerable.CraftableType;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentSweepingEdge;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -39,7 +40,7 @@ public class RandoresBattleaxe extends RandoresItem {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return (enchantment instanceof EmpoweredEnchantment || enchantment.type.canEnchantItem(Items.DIAMOND_SWORD) || enchantment.type.canEnchantItem(Items.DIAMOND_AXE)) && !(enchantment instanceof EnchantmentSweepingEdge);
     }
 

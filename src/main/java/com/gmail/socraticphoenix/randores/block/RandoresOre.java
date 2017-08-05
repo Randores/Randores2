@@ -23,24 +23,19 @@ package com.gmail.socraticphoenix.randores.block;
 
 import com.gmail.socraticphoenix.randores.IRandoresOre;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
-import com.gmail.socraticphoenix.randores.component.OreComponent;
-import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
-import com.gmail.socraticphoenix.randores.data.RandoresItemData;
-import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
+import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
+import com.gmail.socraticphoenix.randores.item.RandoresItemHelper;
 import javax.annotation.Nullable;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -48,8 +43,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class RandoresOre extends RandoresBlock implements IRandoresOre {
@@ -74,99 +67,48 @@ public class RandoresOre extends RandoresBlock implements IRandoresOre {
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        ItemStack stack = placer.getHeldItem(hand);
-        if(RandoresItemData.hasData(stack)) {
-            return RandoresWorldData.delegate(new RandoresItemData(stack), def -> this.getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, def.getOre().getHarvestLevel()), () -> this.getDefaultState());
-        }
-        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
+        return RandoresItemHelper.getStateForOrePlacementImpl(this, world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
     }
-
 
     @Override
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
-        player.addStat(StatList.getBlockStats(this));
-        player.addExhaustion(0.005F);
-
-        if (te != null && te instanceof RandoresTileEntity) {
-            RandoresItemData data = ((RandoresTileEntity) te).getData();
-            RandoresWorldData.delegateVoid(data, def -> {
-                boolean flag = this.canSilkHarvest(worldIn, pos, state, player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0;
-                if (flag || def.getOre().isRequiresSmelting()) {
-                    java.util.List<ItemStack> items = new java.util.ArrayList<>();
-                    items.add(def.getOre().createStack(data));
-                    net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, 0, 1.0f, flag, player);
-                    for (ItemStack item : items) {
-                        spawnAsEntity(worldIn, pos, item);
-                    }
-                } else {
-                    harvesters.set(player);
-                    int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-                    OreComponent component = def.getOre();
-                    int max = component.getMaxDrops();
-                    int min = component.getMinDrops();
-                    int amount = this.random.nextInt((max - min) + 1) + min;
-                    if (fortune > 0) {
-                        int i = this.random.nextInt(fortune + 2) - 1;
-                        if (i < 0) {
-                            i = 0;
-                        }
-                        amount = amount * (i + 1);
-                    }
-                    amount = amount == 0 ? 1 : amount;
-
-                    ItemStack res = new ItemStack(def.getMaterial().item());
-                    List<ItemStack> items = new ArrayList<>();
-                    data.applyTo(res);
-                    for (int i = 0; i < amount; i++) {
-                        items.add(res.copy());
-                    }
-                    float chance = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, 0, 1.0f, false, player);
-                    for (ItemStack item : items) {
-                        if (worldIn.rand.nextFloat() <= chance) {
-                            spawnAsEntity(worldIn, pos, item);
-                        }
-                    }
-                    harvesters.set(null);
-                }
-            }, () -> {
-            });
-        }
+        RandoresItemHelper.harvestOreBlockImpl(this, worldIn, player, pos, state, te, stack);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(HARVEST_LEVEL, meta);
+        return RandoresItemHelper.getOreStateFromMetaImpl(this, meta);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(HARVEST_LEVEL);
+        return RandoresItemHelper.getMetaFromOreStateImpl(this, state);
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, HARVEST_LEVEL);
+        return RandoresItemHelper.createOreBlockStateImpl(this);
     }
 
     @Override
     public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
-        return this.delegate(world, pos, d -> RandoresWorldData.delegate(d, m -> m.getOre().getResistance(), () -> 0f), () -> 0f);
+        return RandoresItemHelper.getOreExplosionResistanceImpl(this, world, pos, exploder, explosion);
     }
 
     @Override
     public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
-        return this.delegate(worldIn, pos, d -> RandoresWorldData.delegate(d, m -> m.getOre().getHardness(), () -> 1f), () -> 1f);
+        return RandoresItemHelper.getOreBlockHardnessImpl(this, blockState, worldIn, pos);
+    }
+
+    @Override
+    public int getHarvestLevel(IBlockState state) {
+        return RandoresItemHelper.getOreHarvestLevelImpl(this, state);
     }
 
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
         return "pickaxe";
-    }
-
-    @Override
-    public int getHarvestLevel(IBlockState state) {
-        return state.getValue(HARVEST_LEVEL);
     }
 
     @Override

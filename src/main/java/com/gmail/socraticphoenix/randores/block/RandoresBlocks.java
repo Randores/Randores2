@@ -70,7 +70,7 @@ public class RandoresBlocks {
 
                 ore.setUnlocalizedName(RandoresKeys.ORE + "_" + materialType.getOreName() + "_" + oreType.getName()).setHardness(3.0F).setResistance(5.0F).setCreativeTab(oreTab == null ? (oreTab = new RandoresTab("randores_ores", ore)) : oreTab);
                 blocks.add(ore);
-                RandoresItemRegistry.register(ore);
+                RandoresItemRegistry.instance().register(ore);
             }
         }
 

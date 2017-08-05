@@ -21,43 +21,86 @@
  */
 package com.gmail.socraticphoenix.randores;
 
-import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
+import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
 import net.minecraft.item.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a registry for {@link IRandoresOre}s and {@link IRandoresMaterial}s.
+ */
 public class RandoresItemRegistry {
-    private static List<IRandoresOre> ores = new ArrayList<>();
-    private static List<IRandoresMaterial> materials = new ArrayList<>();
+    private static final RandoresItemRegistry instance = new RandoresItemRegistry();
 
-    public static void register(IRandoresOre ore) {
-        if(getOre(ore.getOreType(), ore.getMaterialType()) != null) {
-            throw new IllegalArgumentException("An ore with dimension " + ore.getOreType().getName() + " and material " + ore.getMaterialType().getName() + " is already registered!");
+    private List<IRandoresOre> ores = new ArrayList<>();
+    private List<IRandoresMaterial> materials = new ArrayList<>();
+
+    /**
+     * @return The current instance of this registry.
+     */
+    public static RandoresItemRegistry instance() {
+        return instance;
+    }
+
+    /**
+     * Registers the given {@link IRandoresOre}.
+     *
+     * @param ore The ore to register.
+     * @throws IllegalArgumentException If an ore with the same {@link OreType} and {@link MaterialType} is already registered.
+     */
+    public void register(IRandoresOre ore) {
+        if (getOre(ore.getOreType(), ore.getMaterialType()) != null) {
+            throw new IllegalArgumentException("An ore with type " + ore.getOreType().getName() + " and material " + ore.getMaterialType().getName() + " is already registered!");
         }
         ores.add(ore);
     }
 
-    public static void register(IRandoresOre... ores) {
-        Collections.addAll(RandoresItemRegistry.ores, ores);
+    /**
+     * Registers all of the given {@link IRandoresOre}.
+     *
+     * @param ores The ores to register.
+     * @see RandoresItemRegistry#register(IRandoresOre)
+     */
+    public void register(IRandoresOre... ores) {
+        Collections.addAll(this.ores, ores);
     }
 
-    public static void register(IRandoresMaterial material) {
-        if(getMaterial(material.getType()) != null) {
+    /**
+     * Registers the given {@link IRandoresMaterial}.
+     *
+     * @param material The material to register.
+     * @throws IllegalArgumentException If a material with the same {@link MaterialType} is already.
+     */
+    public void register(IRandoresMaterial material) {
+        if (getMaterial(material.getType()) != null) {
             throw new IllegalArgumentException("A material with type " + material.getType().getName() + " is already registered!");
         }
         materials.add(material);
     }
 
-    public static void Register(IRandoresMaterial... materials) {
-        Collections.addAll(RandoresItemRegistry.materials, materials);
+    /**
+     * Registers all of the given {@link IRandoresMaterial}.
+     *
+     * @param materials The materials to register.
+     * @see RandoresItemRegistry#register(IRandoresMaterial)
+     */
+    public void register(IRandoresMaterial... materials) {
+        Collections.addAll(this.materials, materials);
     }
 
-    public static IRandoresOre getOre(OreType oreType, MaterialType type) {
-        for(IRandoresOre ore : ores) {
-            if(ore.getOreType() == oreType && ore.getMaterialType() == type) {
+    /**
+     * Searches the registry for an {@link IRandoresOre} with the given {@link OreType} and {@link MaterialType}.
+     *
+     * @param oreType The oreType.
+     * @param type The material type.
+     * @return The ore, or null if no ore could be found.
+     */
+    public IRandoresOre getOre(OreType oreType, MaterialType type) {
+        for (IRandoresOre ore : ores) {
+            if (ore.getOreType() == oreType && ore.getMaterialType() == type) {
                 return ore;
             }
         }
@@ -65,9 +108,15 @@ public class RandoresItemRegistry {
         return null;
     }
 
-    public static IRandoresMaterial getMaterial(MaterialType type) {
-        for(IRandoresMaterial material : materials) {
-            if(material.getType() == type) {
+    /**
+     * Searches the registry for an {@link IRandoresItem} with the give {@link MaterialType}.
+     *
+     * @param type The material type.
+     * @return The material, or null of no material could be found.
+     */
+    public IRandoresMaterial getMaterial(MaterialType type) {
+        for (IRandoresMaterial material : materials) {
+            if (material.getType() == type) {
                 return material;
             }
         }
@@ -75,7 +124,15 @@ public class RandoresItemRegistry {
         return null;
     }
 
-    public static Item getOreItem(OreType oreType, MaterialType type) {
+    /**
+     * Searches the registry for an {@link IRandoresOre} and returns the Item associated with it.
+     *
+     * @param oreType The oreType.
+     * @param type The material type.
+     * @return The Item associated with the ore, ore Item.AIR.
+     */
+    public Item getOreItem(OreType oreType, MaterialType type) {
         return Item.getItemFromBlock(getOre(oreType, type).getOreBlock());
     }
+
 }

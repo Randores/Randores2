@@ -64,7 +64,7 @@ public class RandoresItems {
             RandoresMaterial material = new RandoresMaterial(type);
             material.setUnlocalizedName(type.getName()).setCreativeTab(materialsTab == null ? (materialsTab = new RandoresTab("randores_materials", material)) : materialsTab);
             items.add(material);
-            RandoresItemRegistry.register(material);
+            RandoresItemRegistry.instance().register(material);
         }
 
         pickaxe = new RandoresItem(RandoresKeys.PICKAXE);

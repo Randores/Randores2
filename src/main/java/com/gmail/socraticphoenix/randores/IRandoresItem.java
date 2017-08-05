@@ -33,12 +33,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraftforge.common.util.EnumHelper;
 
+/**
+ * An interface representing a Randores Item or Block. All Items or Blocks used or registered in Randores must implement
+ * this interface.
+ */
 public interface IRandoresItem {
     ItemArmor.ArmorMaterial ARMOR_DEFAULT = EnumHelper.addArmorMaterial("ARMOR_DEFAULT", "randores:armor", 100, new int[]{0, 0, 0, 0}, 1, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0f);
     ItemTool.ToolMaterial TOOL_DEFAULT = EnumHelper.addToolMaterial("MATERIAL_DEFAULT", 1, 100, 1, 1, 1);
 
+    /**
+     * @return The {@link ComponentType} associated with this IRandoresItem
+     */
     ComponentType type();
 
+    /**
+     * @return The Item associated with this IRandoresItem. May be an ItemBlock for blocks.
+     */
     default Item getThis() {
         if(this instanceof Item) {
             return (Item) this;
@@ -49,6 +59,12 @@ public interface IRandoresItem {
         }
     }
 
+    /**
+     * Gets the {@link MaterialDefinition} associated with the given ItemStack.
+     *
+     * @param stack The ItemStack.
+     * @return The {@link MaterialDefinition} associated with the given ItemStack, or null if  there is no associated definition.
+     */
     default MaterialDefinition getDefinition(ItemStack stack) {
         if(RandoresItemData.hasData(stack)) {
             return RandoresWorldData.get(new RandoresItemData(stack));
@@ -57,6 +73,12 @@ public interface IRandoresItem {
         return null;
     }
 
+    /**
+     * Tests whether or not the given ItemStack has an {@link MaterialDefinition}.
+     *
+     * @param stack The ItemStack.
+     * @return True if {@link IRandoresItem#getDefinition(ItemStack)} would return a non-null value, false otherwise.
+     */
     default boolean hasDefinition(ItemStack stack) {
         return RandoresItemData.hasData(stack) && stack.getItem() == this && RandoresWorldData.contains(new RandoresItemData(stack));
     }
