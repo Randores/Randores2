@@ -53,7 +53,7 @@ public abstract class AbstractRandoresPlugin implements RandoresPlugin {
     }
 
     @Override
-    public void registerCraftableTypes(CraftableTypeRegistry registry) {
+    public void registerCraftables(CraftableTypeRegistry registry) {
 
     }
 

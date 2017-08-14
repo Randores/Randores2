@@ -22,7 +22,6 @@
 package com.gmail.socraticphoenix.randores.plugin;
 
 import com.gmail.socraticphoenix.randores.component.ability.AbilityRegistry;
-import com.gmail.socraticphoenix.randores.component.craftable.CraftableRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.OreTypeRegistry;
@@ -36,13 +35,11 @@ public interface RandoresPlugin {
 
     void registerMaterialTypes(MaterialTypeRegistry registry);
 
-    void registerCraftableTypes(CraftableTypeRegistry registry);
+    void registerCraftables(CraftableTypeRegistry registry);
 
     void registerProperties(PropertyRegistry registry);
 
     void registerAbilities(AbilityRegistry registry);
-
-    void registerCraftables(CraftableRegistry registry);
 
     void registerTomeHooks(TomeHookRegistry registry);
 

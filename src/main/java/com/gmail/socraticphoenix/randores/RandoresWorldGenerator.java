@@ -70,13 +70,13 @@ public class RandoresWorldGenerator implements IWorldGenerator {
                 RandoresWorldData data = RandoresWorldData.getSimply(world);
                 for (OreType oreType : OreTypeRegistry.instance().values()) {
                     if (flag || oreType.getIsDimension().apply(world)) {
-                        List<MaterialDefinition> target = data.getAndShuffleDimensionCache(oreType, random);
+                        List<MaterialDefinition> target = data.shuffleAndGetDimensionCache(oreType, random);
                         if (!target.isEmpty()) {
                             int count = Math.min(ores, target.size()) * (flag2 ? 2 : 1);
                             for (int i = 0; i < count; i++) {
                                 MaterialDefinition element = target.get(i);
                                 OreComponent component = element.getOre();
-                                this.generateOre(component.getBlock().getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, component.getHarvestLevel()), element.getData(), world, random, chunkX * 16, chunkZ * 16, component.getMaxVein(), component.getMinVein(), component.getMaxY(), component.getMinY(), component.getMaxOccurrences(), component.getMinOccurrences(), component.getOreType().getGenerateIn());
+                                this.generateOre(component.getBlock().getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, component.getHarvestLevel()), element.getData(), world, random, chunkX * 16, chunkZ * 16, component.getVeinSize(), component.getMaxY(), component.getMinY(), component.getMaxOccurrences(), component.getMinOccurrences(), component.getOreType().getGenerateIn());
                             }
                         }
                     }
@@ -84,13 +84,12 @@ public class RandoresWorldGenerator implements IWorldGenerator {
             }
 
             if (flag || DimensionType.OVERWORLD.getId() == world.provider.getDimension()) {
-                this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, 2, world.getHeight(), 0, 100, 50, new Block[] {Blocks.STONE});
+                this.generateOre(CraftingBlocks.craftiniumOre.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 6, world.getHeight(), 0, 100, 50, new Block[] {Blocks.STONE});
             }
         }
     }
 
-    private void generateOre(IBlockState block, World world, Random random, int blockX, int blockZ, int maxVein, int minVein, int maxY, int minY, int maxOccurrences, int minOccurrences, Block[] generateIn) {
-        IntRange vein = new IntRange(minVein, maxVein);
+    private void generateOre(IBlockState block, World world, Random random, int blockX, int blockZ, int veinSize, int maxY, int minY, int maxOccurrences, int minOccurrences, Block[] generateIn) {
         IntRange height = new IntRange(minY, maxY);
         IntRange occurrences = new IntRange(minOccurrences, maxOccurrences);
 
@@ -106,7 +105,7 @@ public class RandoresWorldGenerator implements IWorldGenerator {
             }
         }
 
-        WorldGenMinable gen = new WorldGenMinable(block, vein.randomElement(random), predicate);
+        WorldGenMinable gen = new WorldGenMinable(block, veinSize, predicate);
 
         int i = 0;
         int o = occurrences.randomElement(random);
@@ -120,8 +119,7 @@ public class RandoresWorldGenerator implements IWorldGenerator {
     }
 
 
-    private void generateOre(IBlockState block, RandoresItemData data, World world, Random random, int blockX, int blockZ, int maxVein, int minVein, int maxY, int minY, int maxOccurrences, int minOccurrences, Predicate<IBlockState> generateIn) {
-        IntRange vein = new IntRange(minVein, maxVein);
+    private void generateOre(IBlockState block, RandoresItemData data, World world, Random random, int blockX, int blockZ, int veinSize, int maxY, int minY, int maxOccurrences, int minOccurrences, Predicate<IBlockState> generateIn) {
         IntRange height = new IntRange(minY, maxY);
         IntRange occurrences = new IntRange(minOccurrences, maxOccurrences);
 
@@ -131,7 +129,7 @@ public class RandoresWorldGenerator implements IWorldGenerator {
             int x = blockX + random.nextInt(16);
             int y = height.randomElement(random);
             int z = blockZ + random.nextInt(16);
-            generate(world, random, new BlockPos(x, y, z), block, vein.randomElement(), generateIn, data);
+            generate(world, random, new BlockPos(x, y, z), block, veinSize, generateIn, data);
             i++;
         }
     }

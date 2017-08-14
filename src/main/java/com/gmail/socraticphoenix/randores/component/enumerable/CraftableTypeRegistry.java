@@ -21,14 +21,19 @@
  */
 package com.gmail.socraticphoenix.randores.component.enumerable;
 
+import com.gmail.socraticphoenix.randores.component.craftable.CraftableComponent;
+import com.gmail.socraticphoenix.randores.component.craftable.CraftableGenerator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class CraftableTypeRegistry {
     private static final CraftableTypeRegistry instance = new CraftableTypeRegistry();
 
+    private List<CraftableGenerator> generators = new ArrayList<>();
     private Map<String, CraftableType> craftableTypes = new HashMap<>();
     private List<CraftableType> craftablesAsList = new ArrayList<>();
 
@@ -61,6 +66,27 @@ public class CraftableTypeRegistry {
 
     public List<CraftableType> values() {
         return craftablesAsList;
+    }
+
+    public void register(CraftableGenerator... factories) {
+        for(CraftableGenerator factory : factories) {
+            register(factory);
+        }
+    }
+
+    public void register(CraftableGenerator factory) {
+        generators.add(factory);
+    }
+
+    public List<CraftableComponent> buildCraftables() {
+        List<CraftableComponent> properties = new ArrayList<>();
+        for(CraftableGenerator factory : generators) {
+            Random random = factory.parent().getRandomContainer().getRandom();
+            if(factory.test(random)) {
+                properties.addAll(factory.generate(random));
+            }
+        }
+        return properties;
     }
 
 }

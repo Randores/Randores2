@@ -30,7 +30,6 @@ import com.gmail.socraticphoenix.randores.block.RandoresBlocks;
 import com.gmail.socraticphoenix.randores.block.RandoresTileEntity;
 import com.gmail.socraticphoenix.randores.component.ability.AbilityRegistry;
 import com.gmail.socraticphoenix.randores.component.ability.abilities.PotionEffectAbility;
-import com.gmail.socraticphoenix.randores.component.craftable.CraftableRegistry;
 import com.gmail.socraticphoenix.randores.component.craftable.factories.AestheticGenerator;
 import com.gmail.socraticphoenix.randores.component.craftable.factories.ArmorGenerator;
 import com.gmail.socraticphoenix.randores.component.craftable.factories.BattleaxeGenerator;
@@ -90,6 +89,8 @@ import com.gmail.socraticphoenix.randores.proxy.RandoresProxy;
 import com.gmail.socraticphoenix.randores.resource.RandoresResourceManager;
 import com.gmail.socraticphoenix.randores.tab.RandoresArmorTab;
 import com.gmail.socraticphoenix.randores.tab.SimpleTab;
+import net.minecraft.block.BlockStone;
+import net.minecraft.block.BlockStone.EnumType;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -122,20 +123,40 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * The main class for the Randores mod, it is both the mod class and the root plugin. The root plugin is the
+ * {@link RandoresPlugin} registered by Randores itself
+ */
 @Mod(modid = "randores")
 @RandoresAddon
 public class Randores extends AbstractRandoresPlugin {
+    /**
+     * The CreativeTabs for Randores armor
+     */
     public static CreativeTabs TAB_ARMOR;
+    /**
+     * The CreativeTabs for Randores crafting
+     */
     public static CreativeTabs TAB_CRAFTING;
 
+    /**
+     * The current {@link RandoresProxy} instance
+     */
     @SidedProxy(modId = "randores", clientSide = "com.gmail.socraticphoenix.randores.proxy.RandoresClientProxy", serverSide = "com.gmail.socraticphoenix.randores.proxy.RandoresServerProxy")
     public static RandoresProxy PROXY = null;
+    /**
+     * The current {@link Randores} instance.
+     */
     public static Randores INSTANCE = null;
 
+    //A list of words that aren't allowed to show up in ore names
     private static List<String> offensiveWords = new ArrayList<>();
+    //The logger
     private Logger logger;
 
+    //The configuration directory
     private File confDir;
+    //The configuration
     private JLSCConfiguration configuration;
 
     public Randores() {
@@ -175,6 +196,9 @@ public class Randores extends AbstractRandoresPlugin {
         info("Registered listeners.");
     }
 
+    /**
+     * @return An array containing the {@link MaterialType}s registered by Randores.
+     */
     public static MaterialType[] getDefaultMaterials() {
         return new MaterialType[]{
                 MaterialTypeRegistry.instance().get(RandoresKeys.INGOT),
@@ -186,6 +210,9 @@ public class Randores extends AbstractRandoresPlugin {
         };
     }
 
+    /**
+     * @return An array containing the {@link OreType}s registered by Randores.
+     */
     public static OreType[] getDefaultOres() {
         return new OreType[]{
                 OreTypeRegistry.instance().get(OreTypeRegistry.OVERWORLD),
@@ -194,14 +221,16 @@ public class Randores extends AbstractRandoresPlugin {
         };
     }
 
-    public static void registerPlugin(RandoresPlugin plugin) {
-        RandoresPluginRegistry.register(plugin);
-    }
-
+    /**
+     * @return The {@link RandoresConfig} object representing the current configuration.
+     */
     public static RandoresConfig getConfigObj() {
         return Randores.getConfiguration().get("config").get().getAs(RandoresConfig.class).get();
     }
 
+    /**
+     * @return True if the current configuration can be mapped to a {@link RandoresConfig} object, false otherwise.
+     */
     public static boolean hasConfigObj() {
         Optional<JLSCValue> conf = Randores.getConfiguration().get("config");
         if (conf.isPresent()) {
@@ -214,9 +243,10 @@ public class Randores extends AbstractRandoresPlugin {
         return false;
     }
 
+    //Loads the config
     private void loadConfig() {
         File conf = new File(this.confDir, "config.jlsc");
-        RandoresConfig config = new RandoresConfig(300, 30, false, false,
+        RandoresConfig config = new RandoresConfig(300, 20, false, false,
                 new RandoresModules(true, true, false, false, true, false));
         try {
             if (!conf.exists()) {
@@ -238,6 +268,7 @@ public class Randores extends AbstractRandoresPlugin {
         }
     }
 
+    //Formats the method class and name
     private static String methodNotation(Class owner, Method method) {
         return owner.getName() + "::" + method.getName();
     }
@@ -264,7 +295,7 @@ public class Randores extends AbstractRandoresPlugin {
                                         try {
                                             RandoresPlugin pluginInst = (RandoresPlugin) method.invoke(null);
                                             if (pluginInst != null) {
-                                                Randores.registerPlugin(pluginInst);
+                                                RandoresPluginRegistry.register(pluginInst);
                                                 Randores.info("Successfully registered plugin from provider " + methodNotation(target, method));
                                             } else {
                                                 Randores.warn("Failed to access plugin provider " + methodNotation(target, method) + ", it returned a null value");
@@ -296,10 +327,9 @@ public class Randores extends AbstractRandoresPlugin {
         for (RandoresPlugin plugin : RandoresPluginRegistry.getPlugins()) {
             plugin.registerOreTypes(OreTypeRegistry.instance());
             plugin.registerMaterialTypes(MaterialTypeRegistry.instance());
-            plugin.registerCraftableTypes(CraftableTypeRegistry.instance());
+            plugin.registerCraftables(CraftableTypeRegistry.instance());
             plugin.registerProperties(PropertyRegistry.instance());
             plugin.registerAbilities(AbilityRegistry.instance());
-            plugin.registerCraftables(CraftableRegistry.instance());
             plugin.registerTomeHooks(TomeHookRegistry.instance());
             plugin.registerEditors(MaterialDefinitionEditorRegistry.instance());
             info("Initialized plugin: " + plugin.id());
@@ -364,16 +394,29 @@ public class Randores extends AbstractRandoresPlugin {
         info("Finished PostInitialization.");
     }
 
+    /**
+     * @return The number of ores to generate.
+     */
     public static int getCount() {
         return Randores.getConfigObj().getCount();
     }
 
+    /**
+     * Logs multiple lines of info.
+     *
+     * @param lines The lines to log.
+     */
     public static void info(String... lines) {
         for (String l : lines) {
             info(l);
         }
     }
 
+    /**
+     * Logs multiple lines of debug, if debug is enabled.
+     *
+     * @param lines The lines to log.
+     */
     public static void debug(String... lines) {
         if (Randores.getConfigObj().isDebug()) {
             for (String l : lines) {
@@ -382,6 +425,11 @@ public class Randores extends AbstractRandoresPlugin {
         }
     }
 
+    /**
+     * Logs multiple lines of warnings.
+     *
+     * @param lines The lines to log.
+     */
     public static void warn(String... lines) {
         if (Randores.getConfigObj().isDebug()) {
             for (String l : lines) {
@@ -390,35 +438,71 @@ public class Randores extends AbstractRandoresPlugin {
         }
     }
 
+    //The logger prefix - fixes a bug in Forge
+    //TODO remove when the bug is fixed
     private String prefix = FMLCommonHandler.instance().getSide().isClient() ? "[Randores] " : "";
 
+    /**
+     * Logs a single line of debug, if debug is enabled.
+     *
+     * @param info The line to log.
+     */
     public static void debug(String info) {
         if (Randores.getConfigObj().isDebug()) {
             Randores.getLogger().info(INSTANCE.prefix + "[Debug] " + info);
         }
     }
 
+    /**
+     * Logs a single line of info.
+     *
+     * @param info The line to log.
+     */
     public static void info(String info) {
         Randores.getLogger().info(INSTANCE.prefix + info);
     }
 
+    /**
+     * Logs a single line of warning.
+     *
+     * @param info The line to log.
+     */
     public static void warn(String info) {
         Randores.getLogger().info(INSTANCE.prefix + "[Warn] " + info);
     }
 
+    /**
+     * Logs a single line of warning, along with the stacktrace of the given Throwable.
+     *
+     * @param info The line to log.
+     * @param exception The throwable to log.
+     */
     public static void warn(String info, Throwable exception) {
         Randores.getLogger().info(INSTANCE.prefix + "[Warn] " + info, exception);
     }
 
+    /**
+     * @return The Randores logger.
+     */
     public static Logger getLogger() {
         return Randores.INSTANCE.logger;
     }
 
+    /**
+     * @return The Randores configuration. Generally, {@link Randores#getConfigObj()} should be used instead of this method.
+     */
     public static JLSCConfiguration getConfiguration() {
         return Randores.INSTANCE.configuration;
     }
 
+    /**
+     * Checks if the given string contains one of the words listed as potentially offensive by Randores.
+     *
+     * @param res The string to check.
+     * @return True if the string contains offensive words, false otherwise.
+     */
     public static boolean containsOffensiveWord(String res) {
+        res = res.toLowerCase();
         for (String word : offensiveWords) {
             if (res.contains(word)) {
                 return true;
@@ -430,6 +514,9 @@ public class Randores extends AbstractRandoresPlugin {
 
     //Begin plugin
 
+    /**
+     * @return {@link Randores#INSTANCE}.
+     */
     @RandoresAddonProvider
     public static Randores instance() {
         return INSTANCE;
@@ -438,7 +525,7 @@ public class Randores extends AbstractRandoresPlugin {
     @Override
     public void registerOreTypes(OreTypeRegistry registry) {
         registry.register(
-                new OreType(w -> w.provider.getDimension() == 0, OreTypeRegistry.OVERWORLD, b -> b.getBlock() == Blocks.STONE),
+                new OreType(w -> w.provider.getDimension() == 0, OreTypeRegistry.OVERWORLD, b -> b.getBlock() == Blocks.STONE && b.getValue(BlockStone.VARIANT) == EnumType.STONE),
                 new OreType(w -> w.provider.getDimension() == 1, OreTypeRegistry.END, b -> b.getBlock() == Blocks.END_STONE),
                 new OreType(w -> w.provider.getDimension() == -1, OreTypeRegistry.NETHER, b -> b.getBlock() == Blocks.NETHERRACK)
         );
@@ -466,7 +553,7 @@ public class Randores extends AbstractRandoresPlugin {
     }
 
     @Override
-    public void registerCraftableTypes(CraftableTypeRegistry registry) {
+    public void registerCraftables(CraftableTypeRegistry registry) {
         registry.register(
                 new CraftableType(RandoresKeys.AXE, false, true, true, false, true, true, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.axe),
                 new CraftableType(RandoresKeys.HOE, false, true, true, false, true, false, EntityEquipmentSlot.MAINHAND, () -> RandoresItems.hoe),
@@ -484,6 +571,14 @@ public class Randores extends AbstractRandoresPlugin {
                 new CraftableType(RandoresKeys.BRICKS, true, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresBlocks.brickItem),
                 new CraftableType(RandoresKeys.TORCH, true, false, false, false, false, false, EntityEquipmentSlot.MAINHAND, () -> RandoresBlocks.torchItem)
         );
+        registry.register(new AestheticGenerator(),
+                new ArmorGenerator(),
+                new BattleaxeGenerator(),
+                new BowGenerator(),
+                new SledgehammerGenerator(),
+                new StickGenerator(),
+                new SwordGenerator(),
+                new ToolGenerator());
     }
 
     @Override
@@ -496,26 +591,10 @@ public class Randores extends AbstractRandoresPlugin {
         registry.register(new PotionEffectAbility.Generator());
     }
 
-    @Override
-    public void registerCraftables(CraftableRegistry registry) {
-        registry.register(new AestheticGenerator(),
-                new ArmorGenerator(),
-                new BattleaxeGenerator(),
-                new BowGenerator(),
-                new SledgehammerGenerator(),
-                new StickGenerator(),
-                new SwordGenerator(),
-                new ToolGenerator());
-    }
 
     @Override
     public void registerTomeHooks(TomeHookRegistry registry) {
         registry.register(new DefaultTomeHook());
-    }
-
-    @Override
-    public void registerEditors(MaterialDefinitionEditorRegistry registry) {
-
     }
 
 }

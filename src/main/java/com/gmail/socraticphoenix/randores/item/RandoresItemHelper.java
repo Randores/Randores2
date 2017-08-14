@@ -194,11 +194,11 @@ public class RandoresItemHelper {
     }
 
     public static IBlockState getOreStateFromMetaImpl(Block self, int meta) {
-        return self.getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, meta);
+        return self.getDefaultState().withProperty(RandoresOre.HARVEST_LEVEL, meta + 1);
     }
 
     public static int getMetaFromOreStateImpl(Block self, IBlockState state) {
-        return state.getValue(RandoresOre.HARVEST_LEVEL);
+        return state.getValue(RandoresOre.HARVEST_LEVEL) - 1;
     }
 
     public static BlockStateContainer createOreBlockStateImpl(Block self) {

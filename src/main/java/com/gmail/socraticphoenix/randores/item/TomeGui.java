@@ -340,7 +340,7 @@ public class TomeGui extends GuiScreen {
 
         @Override
         public List<Element> expand(TomeGui gui) {
-            return Collections.<Element>singletonList(this);
+            return Collections.singletonList(this);
         }
 
         @Override
@@ -448,7 +448,7 @@ public class TomeGui extends GuiScreen {
 
         @Override
         public List<Element> expand(TomeGui gui) {
-            return Collections.<Element>singletonList(this);
+            return Collections.singletonList(this);
         }
 
         @Override

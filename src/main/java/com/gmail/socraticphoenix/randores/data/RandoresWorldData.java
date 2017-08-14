@@ -29,11 +29,11 @@ import com.gmail.socraticphoenix.jlsc.JLSCFormat;
 import com.gmail.socraticphoenix.jlsc.io.JLSCStyle;
 import com.gmail.socraticphoenix.jlsc.io.JLSCSyntax;
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
 import com.gmail.socraticphoenix.randores.component.MaterialDefinitionGenerator;
 import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
 import com.gmail.socraticphoenix.randores.plugin.RandoresPlugin;
+import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
@@ -43,11 +43,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -56,12 +56,12 @@ public class RandoresWorldData extends WorldSavedData {
     public static final UUID DUMMY_ID = new UUID(0, 0);
 
     public static final String NAME = "randores:world_data";
-    public static final Map<UUID, RandoresWorldData> DATA_MAP = new ConcurrentHashMap<>();
+    public static final Map<UUID, RandoresWorldData> DATA_MAP = new HashMap<>();
 
     private List<MaterialDefinition> cache = new ArrayList<>();
 
-    private Map<OreType, List<MaterialDefinition>> dimensionOnly = new ConcurrentHashMap<>();
-    private Map<OreType, List<MaterialDefinition>> dimensionShuffleCaches = new ConcurrentHashMap<>();
+    private Map<OreType, List<MaterialDefinition>> dimensionOnly = new HashMap<>();
+    private Map<OreType, List<MaterialDefinition>> dimensionShuffleCaches = new HashMap<>();
 
     private boolean loaded;
     private Kind kind;
@@ -69,7 +69,7 @@ public class RandoresWorldData extends WorldSavedData {
     //Saved data
     private long seed;
     private UUID id;
-    private Map<String, Long> pluginSeeds = new ConcurrentHashMap<>();
+    private Map<String, Long> pluginSeeds = new HashMap<>();
     //End saved data
 
     public RandoresWorldData(String name) {
@@ -262,7 +262,7 @@ public class RandoresWorldData extends WorldSavedData {
         this.id = id;
     }
 
-    public List<MaterialDefinition> getAndShuffleDimensionCache(OreType oreType, Random random) {
+    public List<MaterialDefinition> shuffleAndGetDimensionCache(OreType oreType, Random random) {
         List<MaterialDefinition> cache = this.getDimensionCache(oreType);
         Collections.shuffle(cache, random);
         return cache;

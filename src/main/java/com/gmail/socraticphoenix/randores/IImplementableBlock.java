@@ -21,12 +21,24 @@
  */
 package com.gmail.socraticphoenix.randores;
 
+import com.gmail.socraticphoenix.randores.item.RandoresItemHelper;
 import net.minecraft.entity.player.EntityPlayer;
 
+/**
+ * Represents Blocks that expose the {@code Block#harvesters} field. This is used in some {@link RandoresItemHelper} methods.
+ */
 public interface IImplementableBlock {
 
+    /**
+     * Sets {@code Block#harvesters} to the given player.
+     *
+     * @param player The player.
+     */
     void setHarvester(EntityPlayer player);
 
+    /**
+     * @return The current player stored in {@code Block#harvesters}, or null if there is no current harvester.
+     */
     EntityPlayer getHarvester();
 
 }

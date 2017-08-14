@@ -198,7 +198,6 @@ public class MaterialDefinitionGenerator {
                     b.getInt("maxDrops"),
                     b.getInt("minDrops"),
                     commonalityInt / 8 + 4,
-                    commonalityInt / 9 + 2,
                     maxY,
                     RandoresProbability.clamp(commonalityInt - (commonalityInt - b.getInt("minYVar")) + 1, 0, maxY - 5),
                     maxOccurrences - b.getInt("occurrencesVar"),

@@ -25,7 +25,7 @@ package com.gmail.socraticphoenix.randores;
  * Holds constant fields with the various item names and translation keys used in Randores.
  */
 public interface RandoresKeys {
-    String EFFICIENCY = "randores.material.efficiency";
+    String EFFICIENCY = "randores.materials.efficiency";
     String FULL_ARMOR = "randores.materials.full_armor";
     String DAMAGE = "randores.materials.base_damage";
     String DURABILITY = "randores.materials.durability";

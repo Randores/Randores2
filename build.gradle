@@ -140,7 +140,7 @@ publishing {
 
 bintray {
     user = "meguy26"
-    key = "$bintrayKey"
+    key = "$bintrayKey" //This is kept in gradle.properties, which is ignored by git through the .gitignore file
     publications = ["maven"]
     publish = true
     pkg {

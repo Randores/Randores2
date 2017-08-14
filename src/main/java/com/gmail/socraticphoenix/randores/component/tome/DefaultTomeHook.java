@@ -134,21 +134,23 @@ public class DefaultTomeHook implements TomeHook {
 
     @SideOnly(Side.CLIENT)
     private void applyAbilityToTome(String title, AbilityType type, AbilitySeries series, List<TomeGui.Element> pages) {
-        List<String> a = new ArrayList<>();
-        a.add(title);
-        a.add(TextFormatting.GOLD + I18n.format(RandoresKeys.ABILITIES) + ": " + type.getLocalName());
         List<Ability> abilities = series.getSeries(type);
-        int i = 0;
-        for (Ability ab : abilities) {
-            i++;
-            a.add(TextFormatting.DARK_GREEN + " " + i + ". " + ab.getLocalName());
-        }
+        if(!abilities.isEmpty()) {
+            List<String> a = new ArrayList<>();
+            a.add(title);
+            a.add(TextFormatting.GOLD + I18n.format(RandoresKeys.ABILITIES) + ": " + type.getLocalName());
+            int i = 0;
+            for (Ability ab : abilities) {
+                i++;
+                a.add(TextFormatting.DARK_GREEN + " " + i + ". " + ab.getLocalName());
+            }
 
-        StringBuilder bu = new StringBuilder();
-        for (String k : a) {
-            bu.append(k).append("\n");
+            StringBuilder bu = new StringBuilder();
+            for (String k : a) {
+                bu.append(k).append("\n");
+            }
+            pages.add(new TomeGui.StringElement(bu.substring(0, bu.length() - 1), RandoresKeys.ABILITIES));
         }
-        pages.add(new TomeGui.StringElement(bu.substring(0, bu.length() - 1), RandoresKeys.ABILITIES));
     }
     
 }

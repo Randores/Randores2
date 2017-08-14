@@ -46,7 +46,7 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class RandoresOre extends RandoresBlock implements IRandoresOre {
-    public static final PropertyInteger HARVEST_LEVEL = PropertyInteger.create("harvest_level", 0, 15);
+    public static final PropertyInteger HARVEST_LEVEL = PropertyInteger.create("harvest_level", 1, 4);
     private Random random = new Random();
     private OreType oreType;
     private MaterialType materialType;
