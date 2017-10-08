@@ -43,6 +43,7 @@ public class RandoresDefineBySeedRequestHandler implements IMessageHandler<Rando
             RandoresWorldData data = RandoresWorldData.getSimply(world);
             data.setSeed(message.getSeed());
             data.defineBySeed();
+            data.markDirty();
         });
         return null;
     }

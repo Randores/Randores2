@@ -57,42 +57,44 @@ public class RandoresMobEquip {
                 if (Randores.getConfigObj().getModules().isMobEquip()) {
                     if (RandoresProbability.percentChance(20, random)) {
                         List<MaterialDefinition> materials = RandoresWorldData.getAll(RandoresWorldData.getId(entity.world));
-                        MaterialDefinition material = materials.get(random.nextInt(materials.size()));
-                        if (entity instanceof AbstractSkeleton || entity instanceof EntityZombie) {
-                            List<Component> applicable = new ArrayList<>();
-                            applicable.add(ComponentType.craftable(RandoresKeys.SWORD).from(material));
-                            applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
-                            applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
-                            applicable.add(ComponentType.craftable(RandoresKeys.SLEDGEHAMMER).from(material));
+                        if (!materials.isEmpty()) {
+                            MaterialDefinition material = materials.get(random.nextInt(materials.size()));
+                            if (entity instanceof AbstractSkeleton || entity instanceof EntityZombie) {
+                                List<Component> applicable = new ArrayList<>();
+                                applicable.add(ComponentType.craftable(RandoresKeys.SWORD).from(material));
+                                applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
+                                applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
+                                applicable.add(ComponentType.craftable(RandoresKeys.SLEDGEHAMMER).from(material));
 
-                            while (applicable.contains(null)) {
-                                applicable.remove(null);
-                            }
-
-                            if (!applicable.isEmpty()) {
-                                entity.setDropChance(EntityEquipmentSlot.MAINHAND, 0.25f);
-                                entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, applyEnchant(applicable.get(random.nextInt(applicable.size())).createStack(material.getData()), entity.getRNG()));
-                            }
-
-                            if (ComponentType.craftable(RandoresKeys.HELMET).has(material)) {
-                                for (String type : armor) {
-                                    Component component = ComponentType.craftable(type).from(material);
-                                    entity.setItemStackToSlot(component.slot(), applyEnchant(component.createStack(material.getData()), entity.getRNG()));
-                                    entity.setDropChance(component.slot(), 0.25f);
+                                while (applicable.contains(null)) {
+                                    applicable.remove(null);
                                 }
-                            }
-                        } else if (entity instanceof EntityVindicator) {
-                            List<Component> applicable = new ArrayList<>();
-                            applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
-                            applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
 
-                            while (applicable.contains(null)) {
-                                applicable.remove(null);
-                            }
+                                if (!applicable.isEmpty()) {
+                                    entity.setDropChance(EntityEquipmentSlot.MAINHAND, 0.25f);
+                                    entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, applyEnchant(applicable.get(random.nextInt(applicable.size())).createStack(material.getData()), entity.getRNG()));
+                                }
 
-                            if (!applicable.isEmpty()) {
-                                entity.setDropChance(EntityEquipmentSlot.MAINHAND, 0.25f);
-                                entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, applyEnchant(applicable.get(random.nextInt(applicable.size())).createStack(material.getData()), entity.getRNG()));
+                                if (ComponentType.craftable(RandoresKeys.HELMET).has(material)) {
+                                    for (String type : armor) {
+                                        Component component = ComponentType.craftable(type).from(material);
+                                        entity.setItemStackToSlot(component.slot(), applyEnchant(component.createStack(material.getData()), entity.getRNG()));
+                                        entity.setDropChance(component.slot(), 0.25f);
+                                    }
+                                }
+                            } else if (entity instanceof EntityVindicator) {
+                                List<Component> applicable = new ArrayList<>();
+                                applicable.add(ComponentType.craftable(RandoresKeys.BATTLEAXE).from(material));
+                                applicable.add(ComponentType.craftable(RandoresKeys.AXE).from(material));
+
+                                while (applicable.contains(null)) {
+                                    applicable.remove(null);
+                                }
+
+                                if (!applicable.isEmpty()) {
+                                    entity.setDropChance(EntityEquipmentSlot.MAINHAND, 0.25f);
+                                    entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, applyEnchant(applicable.get(random.nextInt(applicable.size())).createStack(material.getData()), entity.getRNG()));
+                                }
                             }
                         }
                     }

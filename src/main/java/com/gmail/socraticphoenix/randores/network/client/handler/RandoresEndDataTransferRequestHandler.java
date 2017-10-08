@@ -43,7 +43,9 @@ public class RandoresEndDataTransferRequestHandler implements IMessageHandler<Ra
             World world = Minecraft.getMinecraft().world;
             RandoresWorldData data = RandoresWorldData.getSimply(world);
             data.coalesceCaches();
+            data.markDirty();
             Randores.info("Received definitions from server", "Statistics:");
+            MaterialDefinitionGenerator.applyBackers(data.getCache());
             MaterialDefinitionGenerator.logStatistics(data.getCache());
         });
         return null;

@@ -158,6 +158,8 @@ public class Randores extends AbstractRandoresPlugin {
     private File confDir;
     //The configuration
     private JLSCConfiguration configuration;
+    //Global custom definitions
+    private JLSCConfiguration globalCustoms;
 
     public Randores() {
         Randores.INSTANCE = this;
@@ -261,11 +263,35 @@ public class Randores extends AbstractRandoresPlugin {
                     throw new IllegalStateException("Config does not have necessary ConfigObj mappings! (To fix this error, delete and re-generate your config)");
                 }
             }
+
+
+
+            File custom1 = new File(this.confDir, "randores_custom.cjlsc");
+            File custom2 = new File(this.confDir, "randores_custom.jlsc");
+            if(custom1.exists()) {
+                info("Found compressed global custom definitions... loading file...");
+                JLSCConfiguration configuration = JLSCConfiguration.fromCompressed(custom1);
+                info("Loaded definitions file. Definitions will be deserializedseparatelyy for each world.");
+                this.globalCustoms = configuration;
+            } else if (custom2.exists()) {
+                info("Found global custom definitions... loading file...");
+                JLSCConfiguration configuration = JLSCConfiguration.fromCompressed(custom2);
+                info("Loaded definitions file. Definitions will be deserializedseparatelyy for each world.");
+                this.globalCustoms = configuration;
+            }
         } catch (Throwable e) {
             this.logger.error("FATAL ERROR: Failed to load randores configuration! Falling back to default values.", e);
             this.configuration = new JLSCConfiguration(new JLSCCompound().toConcurrent(), conf, JLSCFormat.TEXT, true);
             this.configuration.put("config", config);
         }
+    }
+
+    public static boolean hasGlobalCustomDefinitions() {
+        return INSTANCE.globalCustoms != null;
+    }
+
+    public static JLSCConfiguration getGlobalCustoms() {
+        return INSTANCE.globalCustoms;
     }
 
     //Formats the method class and name

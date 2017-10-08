@@ -160,12 +160,18 @@ public class RandoresWorldData extends WorldSavedData {
                 Randores.info("Loaded definitions file, loading definitions...");
                 data.cache = createCustomFrom(configuration, data.id);
                 data.kind = Kind.CUSTOM;
+                dirty = true;
             } else if (custom2.exists()) {
                 Randores.info("Found custom definitions... Loading file...");
                 JLSCConfiguration configuration = JLSCConfiguration.fromText(custom2);
                 Randores.info("Loaded definitions file, loading definitions...");
                 data.cache = createCustomFrom(configuration, data.id);
                 data.kind = Kind.CUSTOM;
+                dirty = true;
+            } else if (Randores.hasGlobalCustomDefinitions()) {
+                Randores.info("Using custom global definitions", "Loading definitions...");
+                data.cache = createCustomFrom(Randores.getGlobalCustoms(), data.id);
+                dirty = true;
             } else {
                 Randores.info("Using seed definitions");
                 data.defineBySeed();
@@ -178,6 +184,7 @@ public class RandoresWorldData extends WorldSavedData {
                     configuration.save();
                     Randores.info("Definitions converted.");
                 }
+                dirty = true;
             }
             Randores.info("Statistics:");
             MaterialDefinitionGenerator.logStatistics(data.cache);
@@ -197,7 +204,7 @@ public class RandoresWorldData extends WorldSavedData {
         return data;
     }
 
-    private static List<MaterialDefinition> createCustomFrom(JLSCConfiguration configuration, UUID id) {
+    public static List<MaterialDefinition> createCustomFrom(JLSCConfiguration configuration, UUID id) {
         Randores.info("Loading custom definitions...");
         JLSCArray array = configuration.getArray("definitions").get();
         List<MaterialDefinition> definitions = new ArrayList<>();

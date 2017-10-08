@@ -25,10 +25,12 @@ import com.gmail.socraticphoenix.jlsc.JLSCArray;
 import com.gmail.socraticphoenix.jlsc.JLSCException;
 import com.gmail.socraticphoenix.jlsc.io.JLSCReadWriteUtil;
 import com.gmail.socraticphoenix.pio.ByteStream;
+import com.gmail.socraticphoenix.pio.Bytes;
 import com.gmail.socraticphoenix.randores.component.MaterialDefinition;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -54,11 +56,13 @@ public class RandoresDefineByDataRequest implements IMessage {
         buf.readBytes(val);
 
         try {
-            MaterialDefinition definition = JLSCReadWriteUtil.readArray(ByteStream.of(val), LinkedHashMap::new, ArrayList::new).getAs(0, MaterialDefinition.class).get();
+            MaterialDefinition definition = JLSCReadWriteUtil.readArray(ByteStream.of(Bytes.decompress(val)), LinkedHashMap::new, ArrayList::new).getAs(0, MaterialDefinition.class).get();
             definition.provideData(id, index);
             this.definition = definition;
         } catch (JLSCException e) {
             throw new IllegalStateException("This should be impossible!", e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Invalid compressed data", e);
         }
     }
 
@@ -70,7 +74,7 @@ public class RandoresDefineByDataRequest implements IMessage {
         buf.writeLong(id.getLeastSignificantBits());
 
         try {
-            byte[] val = JLSCArray.of(this.definition).writeBytes();
+            byte[] val = Bytes.compress(JLSCArray.of(this.definition).writeBytes());
             buf.writeInt(val.length);
             buf.writeBytes(val);
         } catch (JLSCException e) {

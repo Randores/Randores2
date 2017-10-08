@@ -43,6 +43,7 @@ public class RandoresClearDataCacheRequestHandler implements IMessageHandler<Ran
                 World world = Minecraft.getMinecraft().world;
                 RandoresWorldData data = RandoresWorldData.getSimply(world);
                 data.clearAll();
+                data.markDirty();
             });
         }
         return null;

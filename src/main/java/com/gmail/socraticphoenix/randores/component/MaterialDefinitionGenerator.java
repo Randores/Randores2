@@ -22,9 +22,8 @@
 package com.gmail.socraticphoenix.randores.component;
 
 import com.gmail.socraticphoenix.randores.Randores;
-import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import com.gmail.socraticphoenix.randores.component.ability.AbilityRegistry;
-import com.gmail.socraticphoenix.randores.component.craftable.CraftableRegistry;
+import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialType;
 import com.gmail.socraticphoenix.randores.component.enumerable.MaterialTypeRegistry;
 import com.gmail.socraticphoenix.randores.component.enumerable.OreType;
@@ -37,6 +36,7 @@ import com.gmail.socraticphoenix.randores.item.RandoresItems;
 import com.gmail.socraticphoenix.randores.item.constructable.ConstructableAxe;
 import com.gmail.socraticphoenix.randores.item.constructable.ConstructablePickaxe;
 import com.gmail.socraticphoenix.randores.plugin.RandoresPlugin;
+import com.gmail.socraticphoenix.randores.plugin.RandoresPluginRegistry;
 import com.gmail.socraticphoenix.randores.probability.RandomNumberBuilder;
 import com.gmail.socraticphoenix.randores.probability.RandoresProbability;
 import net.minecraft.item.Item;
@@ -209,7 +209,7 @@ public class MaterialDefinitionGenerator {
                     b.getInt("oreHarvest"));
 
             MaterialDefinition definition = new MaterialDefinition(color, RandoresNameAlgorithm.name(color), ore,
-                    CraftableRegistry.instance().buildCraftables(),
+                    CraftableTypeRegistry.instance().buildCraftables(),
                     PropertyRegistry.instance().buildProperties(),
                     AbilityRegistry.instance().buildSeries(selector));
             definition.provideData(data.getId(), index);

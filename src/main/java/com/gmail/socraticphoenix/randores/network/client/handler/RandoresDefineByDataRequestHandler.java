@@ -42,6 +42,7 @@ public class RandoresDefineByDataRequestHandler implements IMessageHandler<Rando
             World world = Minecraft.getMinecraft().world;
             RandoresWorldData data = RandoresWorldData.getSimply(world);
             data.getCache().add(message.getDefinition());
+            data.markDirty();
         });
         return null;
     }
