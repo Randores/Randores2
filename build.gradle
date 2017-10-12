@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'maven-publish'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "2a8"
+version = "2a9"
 group = "com.gmail.socraticphoenix.randores"
 archivesBaseName = "Randores"
 

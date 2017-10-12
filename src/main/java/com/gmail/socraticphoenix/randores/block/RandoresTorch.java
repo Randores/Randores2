@@ -27,7 +27,6 @@ import com.gmail.socraticphoenix.randores.RandoresKeys;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
 import com.gmail.socraticphoenix.randores.component.enumerable.CraftableTypeRegistry;
 import com.gmail.socraticphoenix.randores.item.RandoresItemHelper;
-import javax.annotation.Nullable;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -44,6 +43,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class RandoresTorch extends BlockTorch implements IRandoresItem, IImplementableBlock {
@@ -71,6 +71,11 @@ public class RandoresTorch extends BlockTorch implements IRandoresItem, IImpleme
     @Override
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
         RandoresItemHelper.dropBlockAsItemWithChanceImpl(this, worldIn, pos, state, chance, fortune);
+    }
+
+    @Override
+    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune, TileEntity entity) {
+        RandoresItemHelper.dropBlockAsItemWithChanceImpl(this, worldIn, pos, state, chance, fortune, entity);
     }
 
     @Nullable

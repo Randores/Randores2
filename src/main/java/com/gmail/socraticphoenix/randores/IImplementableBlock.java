@@ -22,7 +22,11 @@
 package com.gmail.socraticphoenix.randores;
 
 import com.gmail.socraticphoenix.randores.item.RandoresItemHelper;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 /**
  * Represents Blocks that expose the {@code Block#harvesters} field. This is used in some {@link RandoresItemHelper} methods.
@@ -40,5 +44,7 @@ public interface IImplementableBlock {
      * @return The current player stored in {@code Block#harvesters}, or null if there is no current harvester.
      */
     EntityPlayer getHarvester();
+
+    void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune, TileEntity entity);
 
 }

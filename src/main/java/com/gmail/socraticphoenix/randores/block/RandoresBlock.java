@@ -25,7 +25,6 @@ import com.gmail.socraticphoenix.randores.IImplementableBlock;
 import com.gmail.socraticphoenix.randores.IRandoresItem;
 import com.gmail.socraticphoenix.randores.component.ComponentType;
 import com.gmail.socraticphoenix.randores.item.RandoresItemHelper;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -40,6 +39,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class RandoresBlock extends Block implements IRandoresItem, IImplementableBlock {
     private ComponentType type;
@@ -66,6 +67,11 @@ public class RandoresBlock extends Block implements IRandoresItem, IImplementabl
     }
 
     @Override
+    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune, TileEntity entity) {
+        RandoresItemHelper.dropBlockAsItemWithChanceImpl(this, worldIn, pos, state, chance, fortune, entity);
+    }
+
+    @Override
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
         RandoresItemHelper.dropBlockAsItemWithChanceImpl(this, worldIn, pos, state, chance, fortune);
     }
@@ -79,12 +85,6 @@ public class RandoresBlock extends Block implements IRandoresItem, IImplementabl
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public String getHarvestTool(IBlockState state) {
-        return "pickaxe";
     }
 
     @Override

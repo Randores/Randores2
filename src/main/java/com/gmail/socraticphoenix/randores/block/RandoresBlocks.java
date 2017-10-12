@@ -75,6 +75,7 @@ public class RandoresBlocks {
         }
 
         brick = new RandoresBlock(Material.ROCK, ComponentType.craftable(CraftableTypeRegistry.instance().get(RandoresKeys.BRICKS)), SoundType.STONE);
+        brick.setHarvestLevel("pickaxe", 1);
 
         brickItem = new RandoresItemBlock(brick);
         brickItem.setUnlocalizedName(RandoresKeys.BRICKS);

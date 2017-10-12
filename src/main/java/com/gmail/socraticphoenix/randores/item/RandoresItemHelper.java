@@ -33,7 +33,6 @@ import com.gmail.socraticphoenix.randores.component.ability.EmpoweredEnchantment
 import com.gmail.socraticphoenix.randores.component.craftable.CraftableComponent;
 import com.gmail.socraticphoenix.randores.data.RandoresItemData;
 import com.gmail.socraticphoenix.randores.data.RandoresWorldData;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -56,6 +55,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -121,6 +121,22 @@ public class RandoresItemHelper {
         }
     }
 
+    public static  <T extends Block & IImplementableBlock> void dropBlockAsItemWithChanceImpl(T self, World world, BlockPos pos, IBlockState state, float chance, int fortune, TileEntity entity) {
+        if (!world.isRemote && !world.restoringBlockSnapshots) {
+            if (entity != null && entity instanceof RandoresTileEntity) {
+                NonNullList<ItemStack> drops = NonNullList.create();
+                RandoresItemHelper.getRawDrop(drops, entity, state);
+                chance = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, fortune, chance, false, self.getHarvester());
+
+                for (ItemStack drop : drops) {
+                    if (world.rand.nextFloat() <= chance) {
+                        Block.spawnAsEntity(world, pos, drop);
+                    }
+                }
+            }
+        }
+    }
+
     public static TileEntity createTileEntityImpl(Block self, World world, IBlockState state) {
         return new RandoresTileEntity(new RandoresItemData(0, RandoresWorldData.getId(world)));
     }
@@ -131,7 +147,7 @@ public class RandoresItemHelper {
 
         self.setHarvester(player);
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-        self.dropBlockAsItemWithChance(worldIn, pos, state, 1f, i);
+        self.dropBlockAsItemWithChance(worldIn, pos, state, 1f, i, te);
         self.setHarvester(null);
     }
 
