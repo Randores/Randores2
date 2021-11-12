@@ -138,20 +138,3 @@ publishing {
     }
 
 }
-
-bintray {
-    user = "meguy26"
-    key = "$bintrayKey" //This is kept in gradle.properties, which is ignored by git through the .gitignore file
-    publications = ["maven"]
-    publish = true
-    pkg {
-        repo = "maven"
-        name = "randores"
-        licenses = ["MIT"]
-        vcsUrl = "https://github.com/Randores/Randores2.git"
-
-        version {
-            name = "$version"
-        }
-    }
-}
